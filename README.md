@@ -9,20 +9,20 @@ Within this folder is a directory of...
 - output
 - scripts
 
-#### data: 
+>> data: 
   - Gates_Mydlarz_20142016_ALL_DATA.csv
-      >> the master datasheet of physiology, immunity, color scores, and Symbiodinium genotypes
-  - "environmental folder"
-      >> this folder has PAR and temperature data collected in situ at the two reefs (Lilipuna and Reef 14)
+      - the master datasheet of physiology, immunity, color scores, and Symbiodinium genotypes
+  - environmental folder
+      - this folder has PAR and temperature data collected in situ at the two reefs (Lilipuna and Reef 14)
       - Lilipuna PAR all.csv
       - Lilipuna temp all.csv
       - Reef14 PAR all.csv
       - Reef14 temp all.csv
       
-#### output: 
+>> output: 
   - figures generated in R
 
-#### scripts:
+>> scripts:
   - Mydlarz_bleach recover.Rmd
       >> R-markdown for figure generation and  analysis of all responses
   - Mydlarz_bleach_recover.html
