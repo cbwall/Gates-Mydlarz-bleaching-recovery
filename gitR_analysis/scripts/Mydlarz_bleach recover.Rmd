@@ -675,8 +675,12 @@ SOD.fig
 
 ###Models  
 
-Running models of response variables. First check for assumptions of ANOVA and apply transformations where necessary
-```{r, fig.show=FALSE, echo=FALSE, results="hide"}
+Running models of response variables. First check for assumptions of ANOVA and apply transformations where necessary.  
+  
+*lm(Y~Period x Site x dom, data=model.data, na.action=na.exclude)*  
+*Period* is the 4 events, *Site* is the two reefs, *dom* is the symbiont community (C- or D-dominated)
+
+```{r, include=FALSE}
 #df ## this is the data
 
 model.data<-df[ , !(names(df) %in% c("coral.red.adj","coral.green.adj", "coral.blue.adj", "PC1", "propC", "propD", "syms"))] # remove unwanted columns
@@ -726,7 +730,7 @@ model.data$MEL<-(model.data$MEL)^0.25
 Run linear models for response variables  
 
 **Symbiodinium cm-2**
-```{r, warning=FALSE, message=FALSE}
+```{r symbiont model, warning=FALSE, message=FALSE}
 # symbionts ---- 
 Y<-model.data$zoox
 full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
@@ -739,7 +743,7 @@ plot(allEffects(full), ylab="zoox", par.strip.text=list(cex=0.7))
 ```
 
 **Chlorophyll *a* cm^-2**
-```{r, warning=FALSE, message=FALSE}
+```{r chla model, warning=FALSE, message=FALSE}
 # chla ---- 
 Y<-model.data$chla
 full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
@@ -755,7 +759,7 @@ plot(allEffects(full), ylab="chla", par.strip.text=list(cex=0.7))
 ```
 
 **chlorophyll *a* cell-1**
-```{r, warning=FALSE, message=FALSE}
+```{r chlcell model, warning=FALSE, message=FALSE}
 # chlacell ---- 
 Y<-model.data$chlacell
 full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
@@ -774,7 +778,7 @@ plot(allEffects(full), ylab="AFDW", par.strip.text=list(cex=0.7))
 ```
 
 **Protein cm-2**
-```{r, warning=FALSE, message=FALSE}
+```{r protein model, warning=FALSE, message=FALSE}
 # prot ---- 
 Y<-model.data$prot
 full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
@@ -790,7 +794,7 @@ plot(allEffects(full), ylab="prot", par.strip.text=list(cex=0.7))
 ```
 
 **Catalase (CAT)**
-```{r, warning=FALSE, message=FALSE}
+```{r CAT Model, warning=FALSE, message=FALSE}
 ######################## 
 ### immunology
 ########################
@@ -813,7 +817,7 @@ plot(allEffects(full), ylab="CAT", par.strip.text=list(cex=0.7))
 ```
 
 **Peroxidase (POX)**
-```{r, warning=FALSE, message=FALSE}
+```{r POX model, warning=FALSE, message=FALSE}
 # POX ---- 
 Y<-model.data$POX
 full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
@@ -832,7 +836,7 @@ plot(allEffects(full), ylab="POX", par.strip.text=list(cex=0.7))
 ```
 
 **Superoxide dismutase (SOD)**
-```{r, warning=FALSE, message=FALSE}
+```{r SOD model, warning=FALSE, message=FALSE}
 # SOD ---- 
 Y<-model.data$SOD
 full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
@@ -851,7 +855,7 @@ plot(allEffects(full), ylab="SOD", par.strip.text=list(cex=0.7))
 ```
 
 **Prophenoloxidase (PPO)**
-```{r, warning=FALSE, message=FALSE}
+```{r PPO model, warning=FALSE, message=FALSE}
 # PPO ---- 
 Y<-model.data$PPO
 full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
@@ -867,7 +871,7 @@ plot(allEffects(full), ylab="PPO", par.strip.text=list(cex=0.7))
 ```
 
 **Melanin (MEL)**
-```{r, warning=FALSE, message=FALSE}
+```{r MEL model, warning=FALSE, message=FALSE}
 # MEL ---- 
 Y<-model.data$MEL
 full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
