@@ -1,0 +1,155 @@
+* Block Type = 96well
+* Chemistry = TAQMAN
+* Experiment File Name = E:\Users\mahdi\Desktop\Wall-Mydlarz qPCR\wall mydlarz April 2016.eds
+* Experiment Run End Time = Not Started
+* Instrument Type = steponeplus
+* Passive Reference = ROX
+
+[Results]
+Well	Sample Name	Target Name	Task	Reporter	Quencher	Cт	Cт Mean	Cт SD	Quantity	Quantity Mean	Quantity SD	Automatic Ct Threshold	Ct Threshold	Automatic Baseline	Baseline Start	Baseline End	Comments	HIGHSD	NOAMP
+A1	Bleaching-2014-30	C	UNKNOWN	VIC	NFQ-MGB	Undetermined	34.511					false	0.01	false	3	20		Y	N
+A1	Bleaching-2014-30	D	UNKNOWN	FAM	NFQ-MGB	29.085	32.1661	4.3573				false	0.01	false	3	20		Y	N
+A2	Bleaching-2014-30	C	UNKNOWN	VIC	NFQ-MGB	34.511	34.511					false	0.01	false	3	20		Y	N
+A2	Bleaching-2014-30	D	UNKNOWN	FAM	NFQ-MGB	35.2471	32.1661	4.3573				false	0.01	false	3	20		Y	N
+A3	Bleaching-2014-85	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		Y	N
+A3	Bleaching-2014-85	D	UNKNOWN	FAM	NFQ-MGB	26.9727	27.6107	0.9022				false	0.01	false	3	20		Y	N
+A4	Bleaching-2014-85	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		Y	N
+A4	Bleaching-2014-85	D	UNKNOWN	FAM	NFQ-MGB	28.2486	27.6107	0.9022				false	0.01	false	3	20		Y	N
+A5	Recovery-2015-32	C	UNKNOWN	VIC	NFQ-MGB	29.2244	29.1405	0.1187				false	0.01	false	3	20		N	N
+A5	Recovery-2015-32	D	UNKNOWN	FAM	NFQ-MGB	28.2884	28.4618	0.2452				false	0.01	false	3	20		N	N
+A6	Recovery-2015-32	C	UNKNOWN	VIC	NFQ-MGB	29.0566	29.1405	0.1187				false	0.01	false	3	20		N	N
+A6	Recovery-2015-32	D	UNKNOWN	FAM	NFQ-MGB	28.6351	28.4618	0.2452				false	0.01	false	3	20		N	N
+A7	NA	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	Y
+A7	NA	D	UNKNOWN	FAM	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	Y
+A8																		N	N
+A9																		N	N
+A10																		N	N
+A11																		N	N
+A12																		N	N
+B1	Recovery-2015-22	C	UNKNOWN	VIC	NFQ-MGB	38.1314	34.626	4.9574				false	0.01	false	3	20		Y	N
+B1	Recovery-2015-22	D	UNKNOWN	FAM	NFQ-MGB	28.7521	28.7521					false	0.01	false	3	20		Y	N
+B2	Recovery-2015-22	C	UNKNOWN	VIC	NFQ-MGB	31.1206	34.626	4.9574				false	0.01	false	3	20		Y	N
+B2	Recovery-2015-22	D	UNKNOWN	FAM	NFQ-MGB	Undetermined	28.7521					false	0.01	false	3	20		Y	N
+B3	Recovery-2015-15	C	UNKNOWN	VIC	NFQ-MGB	25.8889	27.222	1.8854				false	0.01	false	3	20		Y	N
+B3	Recovery-2015-15	D	UNKNOWN	FAM	NFQ-MGB	31.0011	31.0011					false	0.01	false	3	20		Y	N
+B4	Recovery-2015-15	C	UNKNOWN	VIC	NFQ-MGB	28.5552	27.222	1.8854				false	0.01	false	3	20		Y	N
+B4	Recovery-2015-15	D	UNKNOWN	FAM	NFQ-MGB	Undetermined	31.0011					false	0.01	false	3	20		Y	N
+B5	T13Amb-Feb2014-R14_37	C	UNKNOWN	VIC	NFQ-MGB	35.0353	34.3529	0.965				false	0.01	false	3	20		Y	N
+B5	T13Amb-Feb2014-R14_37	D	UNKNOWN	FAM	NFQ-MGB	29.9805	30.1344	0.2176				false	0.01	false	3	20		Y	N
+B6	T13Amb-Feb2014-R14_37	C	UNKNOWN	VIC	NFQ-MGB	33.6706	34.3529	0.965				false	0.01	false	3	20		Y	N
+B6	T13Amb-Feb2014-R14_37	D	UNKNOWN	FAM	NFQ-MGB	30.2883	30.1344	0.2176				false	0.01	false	3	20		Y	N
+B7	NA	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	Y
+B7	NA	D	UNKNOWN	FAM	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	Y
+B8																		N	N
+B9																		N	N
+B10																		N	N
+B11																		N	N
+B12																		N	N
+C1	Recovery-2015-26	C	UNKNOWN	VIC	NFQ-MGB	Undetermined	39.3086					false	0.01	false	3	20		Y	N
+C1	Recovery-2015-26	D	UNKNOWN	FAM	NFQ-MGB	26.7428	28.2266	2.0985				false	0.01	false	3	20		Y	N
+C2	Recovery-2015-26	C	UNKNOWN	VIC	NFQ-MGB	39.3086	39.3086					false	0.01	false	3	20		Y	N
+C2	Recovery-2015-26	D	UNKNOWN	FAM	NFQ-MGB	29.7104	28.2266	2.0985				false	0.01	false	3	20		Y	N
+C3	Bleaching-2014-16	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		Y	N
+C3	Bleaching-2014-16	D	UNKNOWN	FAM	NFQ-MGB	28.3374	28.8989	0.7941				false	0.01	false	3	20		Y	N
+C4	Bleaching-2014-16	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		Y	N
+C4	Bleaching-2014-16	D	UNKNOWN	FAM	NFQ-MGB	29.4605	28.8989	0.7941				false	0.01	false	3	20		Y	N
+C5	T14Amb-Feb2014-Lil_47	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	N
+C5	T14Amb-Feb2014-Lil_47	D	UNKNOWN	FAM	NFQ-MGB	29.8736	29.8375	0.051				false	0.01	false	3	20		N	N
+C6	T14Amb-Feb2014-Lil_47	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	N
+C6	T14Amb-Feb2014-Lil_47	D	UNKNOWN	FAM	NFQ-MGB	29.8015	29.8375	0.051				false	0.01	false	3	20		N	N
+C7																		N	N
+C8																		N	N
+C9																		N	N
+C10																		N	N
+C11																		N	N
+C12																		N	N
+D1	Bleaching-2014-81	C	UNKNOWN	VIC	NFQ-MGB	Undetermined	38.0158					false	0.01	false	3	20		N	N
+D1	Bleaching-2014-81	D	UNKNOWN	FAM	NFQ-MGB	28.454	28.6636	0.2965				false	0.01	false	3	20		N	N
+D2	Bleaching-2014-81	C	UNKNOWN	VIC	NFQ-MGB	38.0158	38.0158					false	0.01	false	3	20		N	N
+D2	Bleaching-2014-81	D	UNKNOWN	FAM	NFQ-MGB	28.8733	28.6636	0.2965				false	0.01	false	3	20		N	N
+D3	Recovery-2015-24	C	UNKNOWN	VIC	NFQ-MGB	24.0756	29.2933	7.3789				false	0.01	false	3	20		Y	Y
+D3	Recovery-2015-24	D	UNKNOWN	FAM	NFQ-MGB	Undetermined	28.6759					false	0.01	false	3	20		Y	Y
+D4	Recovery-2015-24	C	UNKNOWN	VIC	NFQ-MGB	34.5109	29.2933	7.3789				false	0.01	false	3	20		Y	N
+D4	Recovery-2015-24	D	UNKNOWN	FAM	NFQ-MGB	28.6759	28.6759					false	0.01	false	3	20		Y	N
+D5	T14Amb-Feb2014-Lil_46	C	UNKNOWN	VIC	NFQ-MGB	36.5929	37.2353	0.9085				false	0.01	false	3	20		Y	N
+D5	T14Amb-Feb2014-Lil_46	D	UNKNOWN	FAM	NFQ-MGB	29.4998	29.5726	0.1029				false	0.01	false	3	20		Y	N
+D6	T14Amb-Feb2014-Lil_46	C	UNKNOWN	VIC	NFQ-MGB	37.8777	37.2353	0.9085				false	0.01	false	3	20		Y	N
+D6	T14Amb-Feb2014-Lil_46	D	UNKNOWN	FAM	NFQ-MGB	29.6453	29.5726	0.1029				false	0.01	false	3	20		Y	N
+D7																		N	N
+D8																		N	N
+D9																		N	N
+D10																		N	N
+D11																		N	N
+D12																		N	N
+E1	Bleaching-2014-9	C	UNKNOWN	VIC	NFQ-MGB	37.4327	37.4327					false	0.01	false	3	20		Y	N
+E1	Bleaching-2014-9	D	UNKNOWN	FAM	NFQ-MGB	29.3053	28.3513	1.3492				false	0.01	false	3	20		Y	N
+E2	Bleaching-2014-9	C	UNKNOWN	VIC	NFQ-MGB	Undetermined	37.4327					false	0.01	false	3	20		Y	N
+E2	Bleaching-2014-9	D	UNKNOWN	FAM	NFQ-MGB	27.3973	28.3513	1.3492				false	0.01	false	3	20		Y	N
+E3	T13Amb-Feb2014-R14_43	C	UNKNOWN	VIC	NFQ-MGB	33.8448	29.0921	6.7213				false	0.01	false	3	20		Y	N
+E3	T13Amb-Feb2014-R14_43	D	UNKNOWN	FAM	NFQ-MGB	28.6983	28.6983					false	0.01	false	3	20		Y	N
+E4	T13Amb-Feb2014-R14_43	C	UNKNOWN	VIC	NFQ-MGB	24.3395	29.0921	6.7213				false	0.01	false	3	20		Y	N
+E4	T13Amb-Feb2014-R14_43	D	UNKNOWN	FAM	NFQ-MGB	Undetermined	28.6983					false	0.01	false	3	20		Y	N
+E5	Bleaching-2014-53	C	UNKNOWN	VIC	NFQ-MGB	30.0465	30.0564	0.014				false	0.01	false	3	20		Y	N
+E5	Bleaching-2014-53	D	UNKNOWN	FAM	NFQ-MGB	36.2691	35.8336	0.6159				false	0.01	false	3	20		Y	N
+E6	Bleaching-2014-53	C	UNKNOWN	VIC	NFQ-MGB	30.0663	30.0564	0.014				false	0.01	false	3	20		Y	N
+E6	Bleaching-2014-53	D	UNKNOWN	FAM	NFQ-MGB	35.3981	35.8336	0.6159				false	0.01	false	3	20		Y	N
+E7																		N	N
+E8																		N	N
+E9																		N	N
+E10																		N	N
+E11																		N	N
+E12																		N	N
+F1	T3Hot-Feb2014-R14_3	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		Y	N
+F1	T3Hot-Feb2014-R14_3	D	UNKNOWN	FAM	NFQ-MGB	30.1169	28.3096	2.5559				false	0.01	false	3	20		Y	N
+F2	T3Hot-Feb2014-R14_3	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		Y	N
+F2	T3Hot-Feb2014-R14_3	D	UNKNOWN	FAM	NFQ-MGB	26.5023	28.3096	2.5559				false	0.01	false	3	20		Y	N
+F3	Bleaching-2014-6.1	C	UNKNOWN	VIC	NFQ-MGB	39.216	39.216					false	0.01	false	3	20		N	N
+F3	Bleaching-2014-6.1	D	UNKNOWN	FAM	NFQ-MGB	28.8701	28.8042	0.0931				false	0.01	false	3	20		N	N
+F4	Bleaching-2014-6.1	C	UNKNOWN	VIC	NFQ-MGB	Undetermined	39.216					false	0.01	false	3	20		N	N
+F4	Bleaching-2014-6.1	D	UNKNOWN	FAM	NFQ-MGB	28.7384	28.8042	0.0931				false	0.01	false	3	20		N	N
+F5	Recovery-2015-5	C	UNKNOWN	VIC	NFQ-MGB	38.1312	37.8642	0.3776				false	0.01	false	3	20		N	N
+F5	Recovery-2015-5	D	UNKNOWN	FAM	NFQ-MGB	30.1986	30.4375	0.3378				false	0.01	false	3	20		N	N
+F6	Recovery-2015-5	C	UNKNOWN	VIC	NFQ-MGB	37.5972	37.8642	0.3776				false	0.01	false	3	20		N	N
+F6	Recovery-2015-5	D	UNKNOWN	FAM	NFQ-MGB	30.6764	30.4375	0.3378				false	0.01	false	3	20		N	N
+F7																		N	N
+F8																		N	N
+F9																		N	N
+F10																		N	N
+F11																		N	N
+F12																		N	N
+G1	T3Hot-Feb2014-Lil_32	C	UNKNOWN	VIC	NFQ-MGB	32.292	35.8034	4.9658				false	0.01	false	3	20		Y	N
+G1	T3Hot-Feb2014-Lil_32	D	UNKNOWN	FAM	NFQ-MGB	36.9472	32.5535	6.2137				false	0.01	false	3	20		Y	N
+G2	T3Hot-Feb2014-Lil_32	C	UNKNOWN	VIC	NFQ-MGB	39.3148	35.8034	4.9658				false	0.01	false	3	20		Y	N
+G2	T3Hot-Feb2014-Lil_32	D	UNKNOWN	FAM	NFQ-MGB	28.1597	32.5535	6.2137				false	0.01	false	3	20		Y	N
+G3	Bleaching-2014-80	C	UNKNOWN	VIC	NFQ-MGB	28.5173	27.2371	1.8105				false	0.01	false	3	20		Y	N
+G3	Bleaching-2014-80	D	UNKNOWN	FAM	NFQ-MGB	Undetermined	31.0784					false	0.01	false	3	20		Y	N
+G4	Bleaching-2014-80	C	UNKNOWN	VIC	NFQ-MGB	25.9568	27.2371	1.8105				false	0.01	false	3	20		Y	N
+G4	Bleaching-2014-80	D	UNKNOWN	FAM	NFQ-MGB	31.0784	31.0784					false	0.01	false	3	20		Y	N
+G5	Bleaching-2014-6	C	UNKNOWN	VIC	NFQ-MGB	28.6175	28.4863	0.1855				false	0.01	false	3	20		N	N
+G5	Bleaching-2014-6	D	UNKNOWN	FAM	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	N
+G6	Bleaching-2014-6	C	UNKNOWN	VIC	NFQ-MGB	28.3551	28.4863	0.1855				false	0.01	false	3	20		N	Y
+G6	Bleaching-2014-6	D	UNKNOWN	FAM	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	Y
+G7																		N	N
+G8																		N	N
+G9																		N	N
+G10																		N	N
+G11																		N	N
+G12																		N	N
+H1	T3Hot-Feb2014-Lil_5	C	UNKNOWN	VIC	NFQ-MGB	36.7217	36.7217					false	0.01	false	3	20		Y	N
+H1	T3Hot-Feb2014-Lil_5	D	UNKNOWN	FAM	NFQ-MGB	37.8781	32.9813	6.9252				false	0.01	false	3	20		Y	N
+H2	T3Hot-Feb2014-Lil_5	C	UNKNOWN	VIC	NFQ-MGB	Undetermined	36.7217					false	0.01	false	3	20		Y	N
+H2	T3Hot-Feb2014-Lil_5	D	UNKNOWN	FAM	NFQ-MGB	28.0845	32.9813	6.9252				false	0.01	false	3	20		Y	N
+H3	Bleaching-2014-64	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		Y	N
+H3	Bleaching-2014-64	D	UNKNOWN	FAM	NFQ-MGB	28.5894	30.0052	2.0022				false	0.01	false	3	20		Y	N
+H4	Bleaching-2014-64	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		Y	N
+H4	Bleaching-2014-64	D	UNKNOWN	FAM	NFQ-MGB	31.421	30.0052	2.0022				false	0.01	false	3	20		Y	N
+H5	TE Blank	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	Y
+H5	TE Blank	D	UNKNOWN	FAM	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	Y
+H6	TE Blank	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	Y
+H6	TE Blank	D	UNKNOWN	FAM	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	Y
+H7																		N	N
+H8																		N	N
+H9																		N	N
+H10																		N	N
+H11																		N	N
+H12																		N	N

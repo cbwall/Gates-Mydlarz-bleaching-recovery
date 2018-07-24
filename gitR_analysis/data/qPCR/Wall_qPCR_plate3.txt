@@ -1,0 +1,201 @@
+* Block Type = 96well
+* Chemistry = TAQMAN
+* Experiment File Name = E:\Users\mahdi\Desktop\Wall-Mydlarz qPCR\20151204_CW_Mydlarz-plate3.eds
+* Experiment Run End Time = Not Started
+* Instrument Type = steponeplus
+* Passive Reference = ROX
+
+[Results]
+Well	Sample Name	Target Name	Task	Reporter	Quencher	Cт	Cт Mean	Cт SD	Quantity	Quantity Mean	Quantity SD	Automatic Ct Threshold	Ct Threshold	Automatic Baseline	Baseline Start	Baseline End	Comments	HIGHSD	NOAMP
+A1	Recovery-2015-39	C	UNKNOWN	VIC	NFQ-MGB	33.8685	33.8685					false	0.01	false	3	20		N	N
+A1	Recovery-2015-39	D	UNKNOWN	FAM	NFQ-MGB	32.4741	32.4741					false	0.01	false	3	20		N	N
+A2	Recovery-2015-39	C	UNKNOWN	VIC	NFQ-MGB	Undetermined	33.8685					false	0.01	false	3	20		N	Y
+A2	Recovery-2015-39	D	UNKNOWN	FAM	NFQ-MGB	Undetermined	32.4741					false	0.01	false	3	20		N	Y
+A3	Recovery-2015-5	C	UNKNOWN	VIC	NFQ-MGB	Undetermined	39.4763					false	0.01	false	3	20		Y	Y
+A3	Recovery-2015-5	D	UNKNOWN	FAM	NFQ-MGB	33.8532	31.9798	2.6494				false	0.01	false	3	20		Y	Y
+A4	Recovery-2015-5	C	UNKNOWN	VIC	NFQ-MGB	39.4763	39.4763					false	0.01	false	3	20		Y	N
+A4	Recovery-2015-5	D	UNKNOWN	FAM	NFQ-MGB	30.1064	31.9798	2.6494				false	0.01	false	3	20		Y	N
+A5	Recovery-2015-29	C	UNKNOWN	VIC	NFQ-MGB	Undetermined	29.4837					false	0.01	false	3	20		N	Y
+A5	Recovery-2015-29	D	UNKNOWN	FAM	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	Y
+A6	Recovery-2015-29	C	UNKNOWN	VIC	NFQ-MGB	29.4837	29.4837					false	0.01	false	3	20		N	N
+A6	Recovery-2015-29	D	UNKNOWN	FAM	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	N
+A7	Recovery-2015-7	C	UNKNOWN	VIC	NFQ-MGB	29.5756	29.2992	0.391				false	0.01	false	3	20		N	N
+A7	Recovery-2015-7	D	UNKNOWN	FAM	NFQ-MGB	34.04	34.0905	0.0715				false	0.01	false	3	20		N	N
+A8	Recovery-2015-7	C	UNKNOWN	VIC	NFQ-MGB	29.0227	29.2992	0.391				false	0.01	false	3	20		N	N
+A8	Recovery-2015-7	D	UNKNOWN	FAM	NFQ-MGB	34.1411	34.0905	0.0715				false	0.01	false	3	20		N	N
+A9	Recovery-2015-31	C	UNKNOWN	VIC	NFQ-MGB	28.8766	28.7739	0.1452				false	0.01	false	3	20		N	N
+A9	Recovery-2015-31	D	UNKNOWN	FAM	NFQ-MGB	39.6057	39.6057					false	0.01	false	3	20		N	N
+A10	Recovery-2015-31	C	UNKNOWN	VIC	NFQ-MGB	28.6712	28.7739	0.1452				false	0.01	false	3	20		N	N
+A10	Recovery-2015-31	D	UNKNOWN	FAM	NFQ-MGB	Undetermined	39.6057					false	0.01	false	3	20		N	N
+A11	Recovery-2015-15	C	UNKNOWN	VIC	NFQ-MGB	27.9142	28.7074	1.1219				false	0.01	false	3	20		Y	N
+A11	Recovery-2015-15	D	UNKNOWN	FAM	NFQ-MGB	31.8332	32.5889	1.0686				false	0.01	false	3	20		Y	N
+A12	Recovery-2015-15	C	UNKNOWN	VIC	NFQ-MGB	29.5007	28.7074	1.1219				false	0.01	false	3	20		Y	N
+A12	Recovery-2015-15	D	UNKNOWN	FAM	NFQ-MGB	33.3445	32.5889	1.0686				false	0.01	false	3	20		Y	N
+B1	Recovery-2015-78	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	Y
+B1	Recovery-2015-78	D	UNKNOWN	FAM	NFQ-MGB	29.4685	29.7877	0.4515				false	0.01	false	3	20		N	Y
+B2	Recovery-2015-78	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	N
+B2	Recovery-2015-78	D	UNKNOWN	FAM	NFQ-MGB	30.107	29.7877	0.4515				false	0.01	false	3	20		N	N
+B3	Recovery-2015-64	C	UNKNOWN	VIC	NFQ-MGB	27.2864	27.6357	0.494				false	0.01	false	3	20		N	N
+B3	Recovery-2015-64	D	UNKNOWN	FAM	NFQ-MGB	30.0993	30.4426	0.4855				false	0.01	false	3	20		N	N
+B4	Recovery-2015-64	C	UNKNOWN	VIC	NFQ-MGB	27.985	27.6357	0.494				false	0.01	false	3	20		N	N
+B4	Recovery-2015-64	D	UNKNOWN	FAM	NFQ-MGB	30.7858	30.4426	0.4855				false	0.01	false	3	20		N	N
+B5	Recovery-2015-61	C	UNKNOWN	VIC	NFQ-MGB	29.7019	29.6012	0.1424				false	0.01	false	3	20		N	N
+B5	Recovery-2015-61	D	UNKNOWN	FAM	NFQ-MGB	32.5813	32.3707	0.2978				false	0.01	false	3	20		N	N
+B6	Recovery-2015-61	C	UNKNOWN	VIC	NFQ-MGB	29.5005	29.6012	0.1424				false	0.01	false	3	20		N	N
+B6	Recovery-2015-61	D	UNKNOWN	FAM	NFQ-MGB	32.1601	32.3707	0.2978				false	0.01	false	3	20		N	N
+B7	Recovery-2015-19	C	UNKNOWN	VIC	NFQ-MGB	27.4896	27.3485	0.1996				false	0.01	false	3	20		N	N
+B7	Recovery-2015-19	D	UNKNOWN	FAM	NFQ-MGB	29.1797	29.2226	0.0606				false	0.01	false	3	20		N	N
+B8	Recovery-2015-19	C	UNKNOWN	VIC	NFQ-MGB	27.2073	27.3485	0.1996				false	0.01	false	3	20		N	N
+B8	Recovery-2015-19	D	UNKNOWN	FAM	NFQ-MGB	29.2655	29.2226	0.0606				false	0.01	false	3	20		N	N
+B9	Recovery-2015-13	C	UNKNOWN	VIC	NFQ-MGB	38.4057	38.0246	0.539				false	0.01	false	3	20		Y	N
+B9	Recovery-2015-13	D	UNKNOWN	FAM	NFQ-MGB	28.6933	28.7087	0.0219				false	0.01	false	3	20		Y	N
+B10	Recovery-2015-13	C	UNKNOWN	VIC	NFQ-MGB	37.6435	38.0246	0.539				false	0.01	false	3	20		Y	N
+B10	Recovery-2015-13	D	UNKNOWN	FAM	NFQ-MGB	28.7242	28.7087	0.0219				false	0.01	false	3	20		Y	N
+B11	Recovery-2015-12	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		Y	N
+B11	Recovery-2015-12	D	UNKNOWN	FAM	NFQ-MGB	28.218	28.7031	0.686				false	0.01	false	3	20		Y	N
+B12	Recovery-2015-12	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		Y	N
+B12	Recovery-2015-12	D	UNKNOWN	FAM	NFQ-MGB	29.1881	28.7031	0.686				false	0.01	false	3	20		Y	N
+C1	Recovery-2015-34	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	Y
+C1	Recovery-2015-34	D	UNKNOWN	FAM	NFQ-MGB	30.121	29.9971	0.1752				false	0.01	false	3	20		N	Y
+C2	Recovery-2015-34	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	N
+C2	Recovery-2015-34	D	UNKNOWN	FAM	NFQ-MGB	29.8731	29.9971	0.1752				false	0.01	false	3	20		N	N
+C3	Recovery-2015-67	C	UNKNOWN	VIC	NFQ-MGB	36.3853	36.5708	0.2623				false	0.01	false	3	20		Y	N
+C3	Recovery-2015-67	D	UNKNOWN	FAM	NFQ-MGB	28.9076	28.5413	0.5181				false	0.01	false	3	20		Y	N
+C4	Recovery-2015-67	C	UNKNOWN	VIC	NFQ-MGB	36.7562	36.5708	0.2623				false	0.01	false	3	20		Y	N
+C4	Recovery-2015-67	D	UNKNOWN	FAM	NFQ-MGB	28.1749	28.5413	0.5181				false	0.01	false	3	20		Y	N
+C5	Recovery-2015-80	C	UNKNOWN	VIC	NFQ-MGB	27.9909	28.4779	0.6887				false	0.01	false	3	20		Y	N
+C5	Recovery-2015-80	D	UNKNOWN	FAM	NFQ-MGB	39.4807	39.4807					false	0.01	false	3	20		Y	N
+C6	Recovery-2015-80	C	UNKNOWN	VIC	NFQ-MGB	28.9649	28.4779	0.6887				false	0.01	false	3	20		Y	Y
+C6	Recovery-2015-80	D	UNKNOWN	FAM	NFQ-MGB	Undetermined	39.4807					false	0.01	false	3	20		Y	Y
+C7	Recovery-2015-30	C	UNKNOWN	VIC	NFQ-MGB	35.7764	35.7764					false	0.01	false	3	20		N	N
+C7	Recovery-2015-30	D	UNKNOWN	FAM	NFQ-MGB	27.3908	27.5309	0.1981				false	0.01	false	3	20		N	N
+C8	Recovery-2015-30	C	UNKNOWN	VIC	NFQ-MGB	Undetermined	35.7764					false	0.01	false	3	20		N	N
+C8	Recovery-2015-30	D	UNKNOWN	FAM	NFQ-MGB	27.671	27.5309	0.1981				false	0.01	false	3	20		N	N
+C9	Recovery-2015-33	C	UNKNOWN	VIC	NFQ-MGB	31.5988	31.3372	0.37				false	0.01	false	3	20		N	N
+C9	Recovery-2015-33	D	UNKNOWN	FAM	NFQ-MGB	28.3916	28.0934	0.4217				false	0.01	false	3	20		N	N
+C10	Recovery-2015-33	C	UNKNOWN	VIC	NFQ-MGB	31.0755	31.3372	0.37				false	0.01	false	3	20		N	N
+C10	Recovery-2015-33	D	UNKNOWN	FAM	NFQ-MGB	27.7952	28.0934	0.4217				false	0.01	false	3	20		N	N
+C11	Recovery-2015-25	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	N
+C11	Recovery-2015-25	D	UNKNOWN	FAM	NFQ-MGB	29.9594	30.1132	0.2175				false	0.01	false	3	20		N	N
+C12	Recovery-2015-25	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	N
+C12	Recovery-2015-25	D	UNKNOWN	FAM	NFQ-MGB	30.2669	30.1132	0.2175				false	0.01	false	3	20		N	N
+D1	Recovery-2015-22	C	UNKNOWN	VIC	NFQ-MGB	35.768	36.6173	1.2011				false	0.01	false	3	20		Y	N
+D1	Recovery-2015-22	D	UNKNOWN	FAM	NFQ-MGB	29.759	29.8171	0.0822				false	0.01	false	3	20		Y	N
+D2	Recovery-2015-22	C	UNKNOWN	VIC	NFQ-MGB	37.4666	36.6173	1.2011				false	0.01	false	3	20		Y	N
+D2	Recovery-2015-22	D	UNKNOWN	FAM	NFQ-MGB	29.8752	29.8171	0.0822				false	0.01	false	3	20		Y	N
+D3	Recovery-2015-23	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		Y	N
+D3	Recovery-2015-23	D	UNKNOWN	FAM	NFQ-MGB	29.3729	29.9478	0.8131				false	0.01	false	3	20		Y	N
+D4	Recovery-2015-23	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		Y	N
+D4	Recovery-2015-23	D	UNKNOWN	FAM	NFQ-MGB	30.5227	29.9478	0.8131				false	0.01	false	3	20		Y	N
+D5	Recovery-2015-9	C	UNKNOWN	VIC	NFQ-MGB	37.0389	37.8706	1.1762				false	0.01	false	3	20		Y	N
+D5	Recovery-2015-9	D	UNKNOWN	FAM	NFQ-MGB	29.7151	29.6732	0.0593				false	0.01	false	3	20		Y	N
+D6	Recovery-2015-9	C	UNKNOWN	VIC	NFQ-MGB	38.7023	37.8706	1.1762				false	0.01	false	3	20		Y	N
+D6	Recovery-2015-9	D	UNKNOWN	FAM	NFQ-MGB	29.6313	29.6732	0.0593				false	0.01	false	3	20		Y	N
+D7	Recovery-2015-11	C	UNKNOWN	VIC	NFQ-MGB	30.0185	29.3959	0.8805				false	0.01	false	3	20		Y	N
+D7	Recovery-2015-11	D	UNKNOWN	FAM	NFQ-MGB	36.0272	36.0272					false	0.01	false	3	20		Y	N
+D8	Recovery-2015-11	C	UNKNOWN	VIC	NFQ-MGB	28.7733	29.3959	0.8805				false	0.01	false	3	20		Y	Y
+D8	Recovery-2015-11	D	UNKNOWN	FAM	NFQ-MGB	Undetermined	36.0272					false	0.01	false	3	20		Y	Y
+D9	Recovery-2015-16	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	N
+D9	Recovery-2015-16	D	UNKNOWN	FAM	NFQ-MGB	28.2859	28.2816	0.0061				false	0.01	false	3	20		N	N
+D10	Recovery-2015-16	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	Y
+D10	Recovery-2015-16	D	UNKNOWN	FAM	NFQ-MGB	28.2773	28.2816	0.0061				false	0.01	false	3	20		N	Y
+D11	BLANK	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	Y
+D11	BLANK	D	UNKNOWN	FAM	NFQ-MGB	Undetermined	37.8008					false	0.01	false	3	20		N	Y
+D12	BLANK	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	Y
+D12	BLANK	D	UNKNOWN	FAM	NFQ-MGB	37.8008	37.8008					false	0.01	false	3	20		N	Y
+E1	Recovery-2015-24	C	UNKNOWN	VIC	NFQ-MGB	29.3425	28.0995	1.758				false	0.01	false	3	20		Y	N
+E1	Recovery-2015-24	D	UNKNOWN	FAM	NFQ-MGB	Undetermined	36.2518					false	0.01	false	3	20		Y	N
+E2	Recovery-2015-24	C	UNKNOWN	VIC	NFQ-MGB	26.8564	28.0995	1.758				false	0.01	false	3	20		Y	N
+E2	Recovery-2015-24	D	UNKNOWN	FAM	NFQ-MGB	36.2518	36.2518					false	0.01	false	3	20		Y	N
+E3	Recovery-2015-54	C	UNKNOWN	VIC	NFQ-MGB	39.195	39.195					false	0.01	false	3	20		N	N
+E3	Recovery-2015-54	D	UNKNOWN	FAM	NFQ-MGB	29.5398	29.3265	0.3017				false	0.01	false	3	20		N	N
+E4	Recovery-2015-54	C	UNKNOWN	VIC	NFQ-MGB	Undetermined	39.195					false	0.01	false	3	20		N	N
+E4	Recovery-2015-54	D	UNKNOWN	FAM	NFQ-MGB	29.1132	29.3265	0.3017				false	0.01	false	3	20		N	N
+E5	Recovery-2015-14	C	UNKNOWN	VIC	NFQ-MGB	27.8415	27.8795	0.0537				false	0.01	false	3	20		N	N
+E5	Recovery-2015-14	D	UNKNOWN	FAM	NFQ-MGB	31.2174	31.095	0.1731				false	0.01	false	3	20		N	N
+E6	Recovery-2015-14	C	UNKNOWN	VIC	NFQ-MGB	27.9174	27.8795	0.0537				false	0.01	false	3	20		N	N
+E6	Recovery-2015-14	D	UNKNOWN	FAM	NFQ-MGB	30.9726	31.095	0.1731				false	0.01	false	3	20		N	N
+E7	Recovery-2015-72	C	UNKNOWN	VIC	NFQ-MGB	37.9722	37.9722					false	0.01	false	3	20		N	N
+E7	Recovery-2015-72	D	UNKNOWN	FAM	NFQ-MGB	27.2083	27.4019	0.2739				false	0.01	false	3	20		N	N
+E8	Recovery-2015-72	C	UNKNOWN	VIC	NFQ-MGB	Undetermined	37.9722					false	0.01	false	3	20		N	Y
+E8	Recovery-2015-72	D	UNKNOWN	FAM	NFQ-MGB	27.5956	27.4019	0.2739				false	0.01	false	3	20		N	Y
+E9	Recovery-2015-26	C	UNKNOWN	VIC	NFQ-MGB	37.8569	37.8569					false	0.01	false	3	20		N	N
+E9	Recovery-2015-26	D	UNKNOWN	FAM	NFQ-MGB	28.1922	28.0898	0.1448				false	0.01	false	3	20		N	N
+E10	Recovery-2015-26	C	UNKNOWN	VIC	NFQ-MGB	Undetermined	37.8569					false	0.01	false	3	20		N	N
+E10	Recovery-2015-26	D	UNKNOWN	FAM	NFQ-MGB	27.9875	28.0898	0.1448				false	0.01	false	3	20		N	N
+E11	Recovery-2015-1	C	UNKNOWN	VIC	NFQ-MGB	39.3506	39.3506					false	0.01	false	3	20		Y	N
+E11	Recovery-2015-1	D	UNKNOWN	FAM	NFQ-MGB	28.8687	29.2533	0.544				false	0.01	false	3	20		Y	N
+E12	Recovery-2015-1	C	UNKNOWN	VIC	NFQ-MGB	Undetermined	39.3506					false	0.01	false	3	20		Y	N
+E12	Recovery-2015-1	D	UNKNOWN	FAM	NFQ-MGB	29.638	29.2533	0.544				false	0.01	false	3	20		Y	N
+F1	Recovery-2015-28	C	UNKNOWN	VIC	NFQ-MGB	Undetermined	39.2386					false	0.01	false	3	20		N	Y
+F1	Recovery-2015-28	D	UNKNOWN	FAM	NFQ-MGB	28.8367	28.4995	0.4769				false	0.01	false	3	20		N	Y
+F2	Recovery-2015-28	C	UNKNOWN	VIC	NFQ-MGB	39.2386	39.2386					false	0.01	false	3	20		N	N
+F2	Recovery-2015-28	D	UNKNOWN	FAM	NFQ-MGB	28.1623	28.4995	0.4769				false	0.01	false	3	20		N	N
+F3	Recovery-2015-27	C	UNKNOWN	VIC	NFQ-MGB	27.5247	27.7033	0.2525				false	0.01	false	3	20		Y	N
+F3	Recovery-2015-27	D	UNKNOWN	FAM	NFQ-MGB	38.0118	36.7478	1.7876				false	0.01	false	3	20		Y	N
+F4	Recovery-2015-27	C	UNKNOWN	VIC	NFQ-MGB	27.8819	27.7033	0.2525				false	0.01	false	3	20		Y	N
+F4	Recovery-2015-27	D	UNKNOWN	FAM	NFQ-MGB	35.4838	36.7478	1.7876				false	0.01	false	3	20		Y	N
+F5	Recovery-2015-40	C	UNKNOWN	VIC	NFQ-MGB	39.1498	39.1498					false	0.01	false	3	20		N	N
+F5	Recovery-2015-40	D	UNKNOWN	FAM	NFQ-MGB	29.1424	29.0949	0.0672				false	0.01	false	3	20		N	N
+F6	Recovery-2015-40	C	UNKNOWN	VIC	NFQ-MGB	Undetermined	39.1498					false	0.01	false	3	20		N	N
+F6	Recovery-2015-40	D	UNKNOWN	FAM	NFQ-MGB	29.0474	29.0949	0.0672				false	0.01	false	3	20		N	N
+F7	Recovery-2015-37	C	UNKNOWN	VIC	NFQ-MGB	27.2449	27.3247	0.1129				false	0.01	false	3	20		N	N
+F7	Recovery-2015-37	D	UNKNOWN	FAM	NFQ-MGB	29.4561	29.4986	0.0601				false	0.01	false	3	20		N	N
+F8	Recovery-2015-37	C	UNKNOWN	VIC	NFQ-MGB	27.4046	27.3247	0.1129				false	0.01	false	3	20		N	N
+F8	Recovery-2015-37	D	UNKNOWN	FAM	NFQ-MGB	29.5411	29.4986	0.0601				false	0.01	false	3	20		N	N
+F9	Recovery-2015-8	C	UNKNOWN	VIC	NFQ-MGB	36.5484	36.5484					false	0.01	false	3	20		N	N
+F9	Recovery-2015-8	D	UNKNOWN	FAM	NFQ-MGB	27.4816	27.7779	0.4191				false	0.01	false	3	20		N	N
+F10	Recovery-2015-8	C	UNKNOWN	VIC	NFQ-MGB	Undetermined	36.5484					false	0.01	false	3	20		N	N
+F10	Recovery-2015-8	D	UNKNOWN	FAM	NFQ-MGB	28.0743	27.7779	0.4191				false	0.01	false	3	20		N	N
+F11	Recovery-2015-6	C	UNKNOWN	VIC	NFQ-MGB	36.9953	37.1468	0.2143				false	0.01	false	3	20		N	N
+F11	Recovery-2015-6	D	UNKNOWN	FAM	NFQ-MGB	27.8461	28.056	0.2968				false	0.01	false	3	20		N	N
+F12	Recovery-2015-6	C	UNKNOWN	VIC	NFQ-MGB	37.2983	37.1468	0.2143				false	0.01	false	3	20		N	N
+F12	Recovery-2015-6	D	UNKNOWN	FAM	NFQ-MGB	28.2659	28.056	0.2968				false	0.01	false	3	20		N	N
+G1	Recovery-2015-10	C	UNKNOWN	VIC	NFQ-MGB	32.0385	31.878	0.227				false	0.01	false	3	20		Y	N
+G1	Recovery-2015-10	D	UNKNOWN	FAM	NFQ-MGB	31.4151	30.7378	0.9577				false	0.01	false	3	20		Y	N
+G2	Recovery-2015-10	C	UNKNOWN	VIC	NFQ-MGB	31.7175	31.878	0.227				false	0.01	false	3	20		Y	N
+G2	Recovery-2015-10	D	UNKNOWN	FAM	NFQ-MGB	30.0606	30.7378	0.9577				false	0.01	false	3	20		Y	N
+G3	Recovery-2015-49	C	UNKNOWN	VIC	NFQ-MGB	29.575	28.798	1.0987				false	0.01	false	3	20		Y	Y
+G3	Recovery-2015-49	D	UNKNOWN	FAM	NFQ-MGB	Undetermined						false	0.01	false	3	20		Y	Y
+G4	Recovery-2015-49	C	UNKNOWN	VIC	NFQ-MGB	28.0211	28.798	1.0987				false	0.01	false	3	20		Y	Y
+G4	Recovery-2015-49	D	UNKNOWN	FAM	NFQ-MGB	Undetermined						false	0.01	false	3	20		Y	Y
+G5	Recovery-2015-36	C	UNKNOWN	VIC	NFQ-MGB	27.3699	27.2197	0.2124				false	0.01	false	3	20		N	Y
+G5	Recovery-2015-36	D	UNKNOWN	FAM	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	Y
+G6	Recovery-2015-36	C	UNKNOWN	VIC	NFQ-MGB	27.0695	27.2197	0.2124				false	0.01	false	3	20		N	Y
+G6	Recovery-2015-36	D	UNKNOWN	FAM	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	Y
+G7	Recovery-2015-38	C	UNKNOWN	VIC	NFQ-MGB	Undetermined	39.7334					false	0.01	false	3	20		N	Y
+G7	Recovery-2015-38	D	UNKNOWN	FAM	NFQ-MGB	26.787	26.6302	0.2217				false	0.01	false	3	20		N	Y
+G8	Recovery-2015-38	C	UNKNOWN	VIC	NFQ-MGB	39.7334	39.7334					false	0.01	false	3	20		N	N
+G8	Recovery-2015-38	D	UNKNOWN	FAM	NFQ-MGB	26.4735	26.6302	0.2217				false	0.01	false	3	20		N	N
+G9	Recovery-2015-20	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	N
+G9	Recovery-2015-20	D	UNKNOWN	FAM	NFQ-MGB	27.7423	27.7691	0.0379				false	0.01	false	3	20		N	N
+G10	Recovery-2015-20	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	N
+G10	Recovery-2015-20	D	UNKNOWN	FAM	NFQ-MGB	27.796	27.7691	0.0379				false	0.01	false	3	20		N	N
+G11	Recovery-2015-57	C	UNKNOWN	VIC	NFQ-MGB	29.7285	29.7285					false	0.01	false	3	20		N	N
+G11	Recovery-2015-57	D	UNKNOWN	FAM	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	N
+G12	Recovery-2015-57	C	UNKNOWN	VIC	NFQ-MGB	Undetermined	29.7285					false	0.01	false	3	20		N	Y
+G12	Recovery-2015-57	D	UNKNOWN	FAM	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	Y
+H1	Recovery-2015-32	C	UNKNOWN	VIC	NFQ-MGB	37.2133	34.5914	3.7079				false	0.01	false	3	20		Y	N
+H1	Recovery-2015-32	D	UNKNOWN	FAM	NFQ-MGB	34.9049	32.3248	3.6488				false	0.01	false	3	20		Y	N
+H2	Recovery-2015-32	C	UNKNOWN	VIC	NFQ-MGB	31.9695	34.5914	3.7079				false	0.01	false	3	20		Y	N
+H2	Recovery-2015-32	D	UNKNOWN	FAM	NFQ-MGB	29.7447	32.3248	3.6488				false	0.01	false	3	20		Y	N
+H3	Recovery-2015-35	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	Y
+H3	Recovery-2015-35	D	UNKNOWN	FAM	NFQ-MGB	29.388	29.1123	0.3899				false	0.01	false	3	20		N	Y
+H4	Recovery-2015-35	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	N
+H4	Recovery-2015-35	D	UNKNOWN	FAM	NFQ-MGB	28.8366	29.1123	0.3899				false	0.01	false	3	20		N	N
+H5	Recovery-2015-65	C	UNKNOWN	VIC	NFQ-MGB	29.4064	29.9215	0.7285				false	0.01	false	3	20		Y	N
+H5	Recovery-2015-65	D	UNKNOWN	FAM	NFQ-MGB	Undetermined						false	0.01	false	3	20		Y	N
+H6	Recovery-2015-65	C	UNKNOWN	VIC	NFQ-MGB	30.4366	29.9215	0.7285				false	0.01	false	3	20		Y	N
+H6	Recovery-2015-65	D	UNKNOWN	FAM	NFQ-MGB	Undetermined						false	0.01	false	3	20		Y	N
+H7	Recovery-2015-62	C	UNKNOWN	VIC	NFQ-MGB	29.4042	29.6255	0.3129				false	0.01	false	3	20		Y	N
+H7	Recovery-2015-62	D	UNKNOWN	FAM	NFQ-MGB	35.1117	34.469	0.9089				false	0.01	false	3	20		Y	N
+H8	Recovery-2015-62	C	UNKNOWN	VIC	NFQ-MGB	29.8468	29.6255	0.3129				false	0.01	false	3	20		Y	N
+H8	Recovery-2015-62	D	UNKNOWN	FAM	NFQ-MGB	33.8263	34.469	0.9089				false	0.01	false	3	20		Y	N
+H9	Recovery-2015-21	C	UNKNOWN	VIC	NFQ-MGB	37.1027	37.1027					false	0.01	false	3	20		Y	N
+H9	Recovery-2015-21	D	UNKNOWN	FAM	NFQ-MGB	28.9694	29.419	0.6359				false	0.01	false	3	20		Y	N
+H10	Recovery-2015-21	C	UNKNOWN	VIC	NFQ-MGB	Undetermined	37.1027					false	0.01	false	3	20		Y	Y
+H10	Recovery-2015-21	D	UNKNOWN	FAM	NFQ-MGB	29.8687	29.419	0.6359				false	0.01	false	3	20		Y	Y
+H11	NONE	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	Y
+H11	NONE	D	UNKNOWN	FAM	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	Y
+H12	NONE	C	UNKNOWN	VIC	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	Y
+H12	NONE	D	UNKNOWN	FAM	NFQ-MGB	Undetermined						false	0.01	false	3	20		N	Y
