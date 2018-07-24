@@ -16,6 +16,9 @@ Within this folder is a directory of...
       - Lilipuna temp all.csv
       - Reef14 PAR all.csv
       - Reef14 temp all.csv
+   - qPCR
+      - this folder has the 12 raw .txt files used in script to determine symbiont community
+     
       
 #### output: 
   - figures generated in R
