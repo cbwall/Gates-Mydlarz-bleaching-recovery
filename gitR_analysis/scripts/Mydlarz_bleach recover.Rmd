@@ -134,7 +134,6 @@ Overall, color is a poor measure of bleaching in these fragments, and there is n
 - red and green are best explantory variable for chla (~25 % R2)  
 - blue and green slightly better to explain zoox density (~33 % R2)  
 
-**Color score by Chlorophyll *a* cm-2**
 ```{r, fig.width= 2, fig.height= 2, eval=FALSE}
 par(mfrow=c(1,3), mar=c(5,4,1,2), pty="sq")
 
@@ -389,7 +388,6 @@ fig.df.immuno$int<-factor(fig.df.immuno$int)
 
 ## Figures
 
-
 ```{r}
 # side by side figures separated by Sites 
 ### Physiological figures
@@ -429,7 +427,10 @@ pd <- position_dodge(0.15) #offset for error bars
 ######################## 
 
 fig.df.phys$int<-factor(fig.df.phys$int, levels=c("Lilipuna.Pre.C", "Lilipuna.Pre.D", "Lilipuna.C", "Lilipuna.D", "Reef 14.Pre.C", "Reef 14.Pre.D", "Reef 14.C", "Reef 14.D"))
+```
 
+**Symbiodinium cm-2**
+```{r}
 ###################
 # zoox 
 zoox.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=zoox/10^6, group=int, color=int)) + geom_errorbar(aes(ymin=zoox/10^6-zoox.SE/10^6, ymax=zoox/10^6+zoox.SE/10^6), size=.8, width=0, position=pd) +
@@ -467,8 +468,8 @@ chla.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=chla, group=int, color=int)) 
 chla.fig
 ```
 
-**Chlorophyll *a* cell-2**
-```{r}
+**Chlorophyll *a* cell-1**
+```{r, message=FALSE}
 ########## chla cell ############
 chlacell.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=chlacell, group=int, color=int)) + geom_errorbar(aes(ymin=chlacell-chlacell.SE, ymax=chlacell+chlacell.SE), size=.8, width=0, position=pd) +
   geom_line(position=pd, size=.8) +
@@ -672,10 +673,11 @@ SOD.fig
 ```
 
 
-*Models*
+###Models  
+
 Running models of response variables. First check for assumptions of ANOVA and apply transformations where necessary
-```{r, fig.show=FALSE, results='hide'}
-df # this is the data
+```{r, fig.show=FALSE, echo=FALSE, results="hide"}
+#df ## this is the data
 
 model.data<-df[ , !(names(df) %in% c("coral.red.adj","coral.green.adj", "coral.blue.adj", "PC1", "propC", "propD", "syms"))] # remove unwanted columns
 
@@ -721,25 +723,27 @@ model.data$MEL<-(model.data$MEL)^0.25
 ## dataframe 'model.data' now ready for full model analysis
 ```
 
-Run linear models for response variables
-```{r}
-# Models
+Run linear models for response variables  
 
+**Symbiodinium cm-2**
+```{r, warning=FALSE, message=FALSE}
 # symbionts ---- 
 Y<-model.data$zoox
 full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
-summary(full)
+#summary(full)
 print(Anova(full, type=2), digits=4)
 
 posthoc<-lsmeans(full, ~Site*dom|Period)
 cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="zoox", par.strip.text=list(cex=0.7))
+```
 
-
+**Chlorophyll *a* cm^-2**
+```{r, warning=FALSE, message=FALSE}
 # chla ---- 
 Y<-model.data$chla
 full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
-summary(full)
+#summary(full)
 print(Anova(full, type=2), digits=4)
 
 posthoc<-lsmeans(full, ~dom*Period)
@@ -748,26 +752,14 @@ cld(posthoc, Letters=letters)
 posthoc<-lsmeans(full, ~dom|Period)
 cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="chla", par.strip.text=list(cex=0.7))
+```
 
-
+**chlorophyll *a* cell-1**
+```{r, warning=FALSE, message=FALSE}
 # chlacell ---- 
 Y<-model.data$chlacell
 full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
-summary(full)
-print(Anova(full, type=2), digits=4)
-
-posthoc<-lsmeans(full, ~dom*Period)
-cld(posthoc, Letters=letters)
-
-posthoc<-lsmeans(full, ~dom|Period)
-cld(posthoc, Letters=letters)
-plot(allEffects(full), ylab="chlacell", par.strip.text=list(cex=0.7))
-
-
-# AFDW ---- 
-Y<-model.data$AFDW
-full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
-summary(full)
+##summary(full)
 print(Anova(full, type=2), digits=4)
 
 posthoc<-lsmeans(full, ~Site*dom)
@@ -779,12 +771,14 @@ cld(posthoc, Letters=letters)
 posthoc<-lsmeans(full, ~dom|Period)
 cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="AFDW", par.strip.text=list(cex=0.7))
+```
 
-
+**Protein cm-2**
+```{r, warning=FALSE, message=FALSE}
 # prot ---- 
 Y<-model.data$prot
 full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
-summary(full)
+#summary(full)
 print(Anova(full, type=2), digits=4)
 
 posthoc<-lsmeans(full, ~dom)
@@ -793,8 +787,10 @@ cld(posthoc, Letters=letters)
 posthoc<-lsmeans(full, ~Site|Period)
 cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="prot", par.strip.text=list(cex=0.7))
+```
 
-
+**Catalase (CAT)**
+```{r, warning=FALSE, message=FALSE}
 ######################## 
 ### immunology
 ########################
@@ -802,7 +798,7 @@ plot(allEffects(full), ylab="prot", par.strip.text=list(cex=0.7))
 # CAT ---- 
 Y<-model.data$CAT
 full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
-summary(full)
+#summary(full)
 print(Anova(full, type=2), digits=4)
 
 posthoc<-lsmeans(full, ~dom)
@@ -814,12 +810,14 @@ cld(posthoc, Letters=letters)
 posthoc<-lsmeans(full, ~Site|Period)
 cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="CAT", par.strip.text=list(cex=0.7))
+```
 
-
+**Peroxidase (POX)**
+```{r, warning=FALSE, message=FALSE}
 # POX ---- 
 Y<-model.data$POX
 full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
-summary(full)
+#summary(full)
 print(Anova(full, type=2), digits=4)
 
 posthoc<-lsmeans(full, ~Period)
@@ -831,13 +829,14 @@ cld(posthoc, Letters=letters)
 posthoc<-lsmeans(full, ~Site|Period)
 cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="POX", par.strip.text=list(cex=0.7))
+```
 
-
-
+**Superoxide dismutase (SOD)**
+```{r, warning=FALSE, message=FALSE}
 # SOD ---- 
 Y<-model.data$SOD
 full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
-summary(full)
+#summary(full)
 print(Anova(full, type=2), digits=4)
 
 posthoc<-lsmeans(full, ~Period)
@@ -849,13 +848,14 @@ cld(posthoc, Letters=letters)
 posthoc<-lsmeans(full, ~Site|Period)
 cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="SOD", par.strip.text=list(cex=0.7))
+```
 
-
-
+**Prophenoloxidase (PPO)**
+```{r, warning=FALSE, message=FALSE}
 # PPO ---- 
 Y<-model.data$PPO
 full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
-summary(full)
+#summary(full)
 print(Anova(full, type=2), digits=4)
 
 posthoc<-lsmeans(full, ~dom)
@@ -864,12 +864,14 @@ cld(posthoc, Letters=letters)
 posthoc<-lsmeans(full, ~Period)
 cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="PPO", par.strip.text=list(cex=0.7))
+```
 
-
+**Melanin (MEL)**
+```{r, warning=FALSE, message=FALSE}
 # MEL ---- 
 Y<-model.data$MEL
 full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
-summary(full)
+#summary(full)
 print(Anova(full, type=2), digits=4)
 
 posthoc<-lsmeans(full, ~Period)
@@ -878,7 +880,6 @@ cld(posthoc, Letters=letters)
 posthoc<-lsmeans(full, ~Site|Period)
 cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="prot", par.strip.text=list(cex=0.7))
-
 ```
 
 
