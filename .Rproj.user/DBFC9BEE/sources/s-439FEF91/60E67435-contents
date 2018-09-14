@@ -1,0 +1,952 @@
+---
+title: 'Gates & Mydlarz et al: 2014 - 2016 bleaching and recovery of Montipora capitata'
+author: "Chris Wall"
+date: "7/7/2017"
+output:
+  html_document:
+    code_folding: hide
+    toc: yes
+    toc_depth: 4
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '4'
+---
+```{r setup, message=FALSE, warning=FALSE, ECHO=FALSE}
+## load packages
+library(lmerTest)
+library(lmtest)
+library(lme4)
+library(car)
+library(effects)
+library(gplots)
+library(plotrix)
+library(psych)
+library(ggplot2)
+library(grid)
+library(gridExtra)
+library(scales)
+library(MASS)
+library(lsmeans)
+library(pbkrtest)
+library(cowplot)
+library(devtools)
+library(dplyr)
+#install_github("vqv/ggbiplot")
+#library(ggbiplot)
+
+```
+## Background
+Data is from Kāne'ohe Bay, O'ahu, Hawai'i. Data extends across **two archipelagic bleaching events and the subsequent recovery periods** where tempertaure stress subsided. Data periods represent:  
+- first bleaching (October 2014) 
+- first recovery (February 2015) 
+- second bleaching (October 2015)  
+- second recovery (February 2016)  
+
+Physiological and immunological parameters were collected from from *Montipora capitata* collected from two locations (Sites):  
+- Lilipuna -- a shallow fringing reef west of the Hawaii Insititute of Marine Biology  
+- Reef 14 -- a shallow inshore patch reef in central Kāne'ohe Bay
+
+**Lilipuna** has been categorized as experiencing near shore impacts from freshwater inundation, subteranean groundwater discharge, and seawater biogeochemistry influeces by long residence times, low flow, and riverine/terrigenous nutrient inputs. Additionally, pCO2 flux at this site is "moderate", with on average ~200ppm pCO2 +/- flux
+
+**Reef 14** has seawater with a shorter residence time, little terrestrial impact, but has a greater pCO2 flux due to reef metabolism. This flux can be substantial, being > 600 ppm pCO2 in a 24h period and reaching maximum values of >900ppm pCO2.
+
+## Import and Normalize
+Raw data from physiological assessments is imported and normalized according to established protocols. Immunolgical data has been normalized previously and is represented as the final dataframe.
+
+```{r}
+###########################################################################
+## data period: October 2014, February 2015, October 2015, February 2016 ##
+###########################################################################
+
+# working directory
+main<-setwd(getwd())
+rm(list=ls())
+
+### data file
+# all lab data from all time points (physio and immuno, PLUS color analysis)
+physimmun<-read.csv("data/Gates_Mydlarz_20142016_physimmun.csv", header=T, na.string=NA) #physimmuno data
+qPCR.data<-read.csv("data/Gates_Mydlarz_20142016_qPCR.csv", header=T, na.string=NA) #qPCR data
+
+data<-read.csv("data/Gates_Mydlarz_20142016_ALL_DATA.csv", header=T, na.string=NA) #qPCR data
+
+
+################################################
+# PHYSIOLOGY: calculate, normalize dependent variables
+################################################
+data$cells..ml<-as.numeric(data$cells..ml)
+data$ID<-as.factor(data$ID)
+
+
+# helpful shorthand
+SA<-data$surface.area.cm2 # surface area in cm2
+blastate<-data$total.blastate.ml # tissue slurry blastate in ml
+
+# Symbiodinium.cells..cm2 == cell.ml * blastate / SA
+data$zoox<- (data$cells..ml*blastate)/SA
+
+# ug.chlorophyll.a..cm2 == ug.chl.a.ml * blastate / SA
+data$chla<- (data$ug.chla..ml*blastate)/SA
+
+# pg.chlorophyll.a..cell == ug.chl.a.ml * 10^6 / cells.ml
+data$chlacell<- (data$ug.chla..ml*10^6)/data$cells..ml
+
+# AFDW.mg..cm2 == convert AFDW g to mg, mutiply by blastate volume, divide by cm2
+data$AFDW<- (data$g.AFDW..ml*1000*blastate)/SA
+
+# mg.protein..cm2 == mg.protein.ml * blastate / SA
+data$prot<- (data$mg.prot..ml*blastate)/SA
+
+
+#### rearrange and clean up
+
+# drop unwanted columns by name
+data<-data[!colnames(data) %in% c("total.blastate.ml", "surface.area.cm2", "mg.prot..ml", "cells..ml", "ug.chla..ml", "g.AFDW..ml")]
+
+data<-data[!(data$ID=="N37"), ] # this coral has an NA for symbiont type, remove from df
+
+# reorder columns to show: hierarchy of structure, physio., immuno., colorimetry
+# this is now the working dataframe
+df<-data[, c(1:6, 20:24, 7:19)]
+
+# remove negative values for MEL and POX and
+df$MEL[df$MEL <= 0]<- NA
+df$MEL[df$MEL > 0.05]<- NA
+
+df$POX[df$POX <= 0]<- NA
+df$CAT[df$CAT <= 0]<- NA
+df$PPO[df$PPO <= 0]<- NA
+
+
+df$chlacell[df$chlacell >= 10]<- NA # removing 2 outliers
+df$CAT[df$CAT >= 900]<- NA # 2 outliers removed
+
+
+# don't need "Ramp" lab data, this was lab thermally stressed. Remove this.
+df<-df[!(df$Status=="Lab-Ramp"),]
+
+#write.csv(df, "df.normalized.csv")
+```
+
+## Color scores
+
+Overall, color is a poor measure of bleaching in these fragments, and there is not a strong relationship between color (R/G/B) and physiological bleaching quantification. Issues may be in the approach to get color scores (in shooting images, or downstream in photoshop), as well as in the fact the same color score can represent significant changes in cell density or chla content thereby making the relationship noisy (although significant).  
+- red and green are best explantory variable for chla (~25 % R2)  
+- blue and green slightly better to explain zoox density (~33 % R2)  
+
+```{r, fig.width= 2, fig.height= 2, eval=FALSE}
+par(mfrow=c(1,3), mar=c(5,4,1,2), pty="sq")
+
+##########################################
+# testing color scores and chla relationship
+mod<-lm(coral.red.adj~chla, data=df)
+plot(coral.red.adj~chla, data=df)
+abline(mod, col="red")
+
+mod<-lm(coral.blue.adj~chla, data=df)
+plot(coral.blue.adj~chla, data=df)
+abline(mod, col="blue")
+
+mod<-lm(coral.green.adj~chla, data=df)
+plot(coral.green.adj~chla, data=df)
+abline(mod, col="green")
+
+
+### Color score by *Symbiodinium* cells cm-2
+##########################################
+# testing color score and zoox relationship
+mod<-lm(coral.red.adj~zoox, data=df)
+plot(coral.red.adj~zoox, data=df)
+abline(mod, col="red")
+
+mod<-lm(coral.blue.adj~zoox, data=df)
+plot(coral.blue.adj~zoox, data=df)
+abline(mod, col="blue")
+
+mod<-lm(coral.green.adj~zoox, data=df)
+plot(coral.green.adj~zoox, data=df)
+abline(mod, col="green")
+
+
+####### PCA and color score
+####### Run the PCA first and save PC1 data 
+
+pca.df<-(df[-c(1:113),c(2:6, 17:19)]) # all data with only "Event" and "Site" as categories
+colnames(pca.df)<-c("Period", "Status", "Site", "Status_Site", "ID", "red", "green", "blue")
+pca.df<-pca.df[-9, ] #remove NA row
+
+# apply PCA - scale. = TRUE for center as advised
+PC <- prcomp(pca.df[, 6:8], center = TRUE, scale.= TRUE)  
+
+#correlatin matrix helps to standardize the data and account for different scales
+# print(PC) # to print PC loadings
+
+# summary(PC) #signficance of PCs: proportion of variance captured, cumulative variance
+# plot(PC, type="lines") will plot PCs
+
+newdat<-PC$x[,1:3]; # newdata frame with only PCs 
+# PC1 explain ~>82% of variance
+
+# save the file of PCs
+write.csv(newdat, "PC1-allcolors_alltimes.csv")
+
+# the SDEV^2 is the eignevalue
+ev<-PC$sdev^2 # PC1-3 have eignevalues >1
+# ev/sum(ev) # to give proportional eignevalues
+
+#########
+# plot it as PCA analysis by bleaching period
+
+## PC1 and PC2
+g <- ggbiplot(PC, choices = 1:2, obs.scale = 1, var.scale = 1, 
+              groups= pca.df[,1], ellipse = TRUE, 
+              circle = FALSE) +
+              scale_color_discrete(name = '') +
+  theme_bw() +
+  theme(legend.text=element_text(size=15)) +
+  theme(panel.background = element_rect(colour = "black", size=1))+
+  theme(legend.key = element_blank())+
+  theme(legend.direction = 'horizontal', legend.position = 'top') +theme(aspect.ratio=0.7)
+print(g)
+
+##################
+
+### graphing the PC1 color score relationship with chlorophyll or *Symbiodinium* density**
+### significant relationships, but only 27% (chla) and 35% (zoox) of variance explained
+
+##########################################
+# testing color scores and chla relationship
+mod<-lm(PC1~chla, data=df)
+plot(PC1~chla, data=df)
+abline(mod, col="mediumorchid3")
+
+##########################################
+# testing PC1 score and zoox relationship
+mod<-lm(PC1~zoox, data=df)
+plot(PC1~zoox, data=df)
+abline(mod, col="mediumorchid")
+
+
+
+### Categorical binning for bleaching
+# First, looked at all the data as histograms of chlorophyll a and zoox density across all 4 time periods. Second, looked at the histograms forjust bleaching, and then just recovery periods. While it is difficult to say when a coral is truly bleached, a conservative measure of < 3 ug chla/cm2 or < 1.5 million cells may be used as a relative measure of bleaching.
+
+
+#############################
+# all data: bleaching and recovery periods
+par(mfrow=c(1,2), mar=c(5,4,1,2), pty="sq")
+hist(df$zoox, main="all time points"); hist(df$chla, main="all time points")
+
+
+#############################
+#### just "bleaching" periods
+bleaching.df<-df[df$Status=="Bleaching", ]
+
+par(mfrow=c(1,2), mar=c(5,4,1,2), pty="sq")
+hist(bleaching.df$zoox, main="bleaching periods")
+hist(bleaching.df$chla, main="bleaching periods") 
+# less than 3 ug chla/cm2 is good indication of "bleached"
+# less than 1.5 million cells/cm2 is good indication of "bleached
+
+# what about symbiont community
+hist(bleaching.df[bleaching.df$dom=="D",]$chla)
+hist(bleaching.df[bleaching.df$dom=="C",]$chla)
+
+
+#############################
+#### just "recovery" periods
+recovery.df<-df[df$Status=="Recovery", ]
+
+par(mfrow=c(1,2), mar=c(5,4,1,2), pty="sq")
+hist(recovery.df$zoox, main="recovery periods")
+hist(recovery.df$chla,  main="recovery periods")
+
+### Bleaching categories
+# Decided to bin the data based on bleaching (< 40%  ug chla cm-2) and pigmented (> 60% ug chla cm-2). This should help in finding those corals more affected by the thermal stress, and those not affected as severely.
+
+#### applying binning
+
+#### no break here for Lab 2014--these are all effectively field controls for physiology
+Field.2014<-df[(df$Period=="2014 Field.Feb"),]
+Field.2014<- Field.2014 %>% mutate(
+            bleach.category = "Field-Pre")
+
+#### no break here for Lab 2014--these are all effectively field controls for physiology
+Lab.2014<-df[(df$Period=="2014 Lab"),]
+quantile(Lab.2014$chla, 0.4, na.rm=TRUE) # = 3.86
+Lab.2014<- Lab.2014 %>% mutate(
+            bleach.category = "Lab-pigmented")
+
+#### 40% quantile for October 2014
+Oct.2014<-df[(df$Period=="2014 Oct"),]
+quantile(Oct.2014$chla, 0.4, na.rm=TRUE) # = 2.97
+Oct.2014<- Oct.2014 %>% mutate(
+            bleach.category = ifelse(chla < "2.97", "pale", "pigmented"))
+
+#### 40% quantile for February 2015
+Feb.2015<-df[(df$Period=="2015 Feb"),]
+quantile(Feb.2015$chla, 0.4, na.rm=TRUE) # = 3.72
+Feb.2015<- Feb.2015 %>% mutate(
+            bleach.category = ifelse(chla < "3.72", "pale", "pigmented"))
+
+#### 40% quantile for October 2015
+Oct.2015<-df[(df$Period=="2015 Oct"),]
+quantile(Oct.2015$chla, 0.4, na.rm=TRUE)  # = 2.49
+Oct.2015<- Oct.2015 %>% mutate(
+            bleach.category = ifelse(chla < "2.49", "pale", "pigmented"))
+
+#### 40% quantile for January 2016
+Feb.2016<-df[(df$Period=="2016 Feb"),]
+quantile(Feb.2016$chla, 0.4, na.rm=TRUE)  # = 3.84
+Feb.2016<- Feb.2016 %>% mutate(
+            bleach.category = ifelse(chla < "3.84", "pale", "pigmented"))
+
+
+##########
+## Now combine all the dataframes above back into a single df
+df<-rbind(Field.2014, Lab.2014, Oct.2014, Feb.2015, Oct.2015, Feb.2016)
+
+```
+
+### Summary dataframes
+These dataframes show mean, SE and n for each group. This can be subset to make figures or exported as a summary file. The header of the dataframe is shown below...
+
+```{r, ECHO=FALSE}
+# make summary dataframes
+
+# dataframes of means can later be divided into categories by "C or D" dominated
+
+###------#### means
+
+# physiology
+zoox.m<-aggregate(zoox~Site+Status+Period+dom,data=df, mean)
+chla.m<-aggregate(chla~Site+Status+Period+dom,data=df, mean)
+chlacell.m<-aggregate(chlacell~Site+Status+Period+dom, data=df, mean)
+prot.m<-aggregate(prot~Site+Status+Period+dom, data=df, mean)
+AFDW.m<-aggregate(AFDW~Site+Status+Period+dom, data=df, mean)
+
+# imunology
+CAT.m<-aggregate(CAT~Site+Status+Period+dom,data=df, mean)
+POX.m<-aggregate(POX~Site+Status+Period+dom,data=df, mean)
+SOD.m<-aggregate(SOD~Site+Status+Period+dom,data=df, mean)
+PPO.m<-aggregate(PPO~Site+Status+Period+dom,data=df, mean)
+MEL.m<-aggregate(MEL~Site+Status+Period+dom,data=df, mean)
+
+###------#### SE
+# physiology
+zoox.SE<-aggregate(zoox~Site+Status+Period+dom,data=df, std.error)
+chla.SE<-aggregate(chla~Site+Status+Period+dom,data=df, std.error)
+chlacell.SE<-aggregate(chlacell~Site+Status+Period+dom, data=df, std.error)
+prot.SE<-aggregate(prot~Site+Status+Period+dom, data=df, std.error)
+AFDW.SE<-aggregate(AFDW~Site+Status+Period+dom, data=df, std.error)
+
+# imunology
+CAT.SE<-aggregate(CAT~Site+Status+Period+dom,data=df, std.error)
+POX.SE<-aggregate(POX~Site+Status+Period+dom,data=df, std.error)
+SOD.SE<-aggregate(SOD~Site+Status+Period+dom,data=df, std.error)
+PPO.SE<-aggregate(PPO~Site+Status+Period+dom,data=df, std.error)
+MEL.SE<-aggregate(MEL~Site+Status+Period+dom,data=df, std.error)
+
+###------#### n-value
+# physiology
+zoox.n<-aggregate(zoox~Site+Status+Period+dom,data=df, length)
+chla.n<-aggregate(chla~Site+Status+Period+dom,data=df, length)
+chlacell.n<-aggregate(chlacell~Site+Status+Period+dom, data=df, length)
+prot.n<-aggregate(prot~Site+Status+Period+dom, data=df, length)
+AFDW.n<-aggregate(AFDW~Site+Status+Period+dom, data=df, length)
+
+# imunology
+CAT.n<-aggregate(CAT~Site+Status+Period+dom,data=df, length)
+POX.n<-aggregate(POX~Site+Status+Period+dom,data=df, length)
+SOD.n<-aggregate(SOD~Site+Status+Period+dom,data=df, length)
+PPO.n<-aggregate(PPO~Site+Status+Period+dom,data=df, length)
+MEL.n<-aggregate(MEL~Site+Status+Period+dom,data=df, length)
+
+
+#### physio dataframe
+fig.df.phys<-cbind(zoox.m, zoox.SE[c(5,0)],chla.m[c(5,0)], chla.SE[c(5,0)], chlacell.m[c(5,0)], chlacell.SE[c(5,0)], prot.m[c(5,0)], prot.SE[c(5,0)], AFDW.m[c(5,0)], AFDW.SE[c(5,0)], chla.n[c(5,0)])
+
+colnames(fig.df.phys)<-c("Site","Status", "Period", "dom", "zoox", "zoox.SE", "chla", "chla.SE", "chlacell", "chlacell.SE", "prot", "prot.SE", "AFDW", "AFDW.SE", "N-chla")
+
+# make an interaction column
+fig.df.phys$int<-interaction(fig.df.phys$Site, fig.df.phys$dom)
+fig.df.phys$int<-factor(fig.df.phys$int)
+####
+
+
+#### immuno dataframe
+fig.df.immuno<-cbind(CAT.m, CAT.SE[c(5,0)], POX.m[c(5,0)], POX.SE[c(5,0)], SOD.m[c(5,0)], SOD.SE[c(5,0)], PPO.m[c(5,0)], PPO.SE[c(5,0)], MEL.m[c(5,0)], MEL.SE[c(5,0)])
+
+colnames(fig.df.immuno)<-c("Site","Status", "Period", "dom", "CAT", "CAT.SE", "POX", "POX.SE", "SOD", "SOD.SE", "PPO", "PPO.SE", "MEL", "MEL.SE")
+
+# make an interaction column
+fig.df.immuno$int<-interaction(fig.df.immuno$Site, fig.df.immuno$dom)
+fig.df.immuno$int<-factor(fig.df.immuno$int)
+
+# write.csv(xxx, "Figure.df.xxx.csv")
+```
+
+## Figures
+
+```{r}
+# side by side figures separated by Sites 
+### Physiological figures
+
+color.scheme<-c("gray80", "gray60", 'lightskyblue', 'dodgerblue', 
+                "gray50", "gray30", "thistle", "coral")
+break.points<-c("Lilipuna.Pre.C", "Lilipuna.Pre.D", "Lilipuna.C", "Lilipuna.D", 
+                "Reef 14.Pre.C", "Reef 14.Pre.D", "Reef 14.C", "Reef 14.D")
+legend.names<-c("Lil.Pre C", "Lil.Pre D", "Lil C", "Lil D", 
+                "R14.Pre C", "R14.Pre D", "R14 C", "R14 D")
+axis.labels<-c("Feb 2014 \nPre-Bleaching", "Oct 2014 \nBleaching","Feb 2015 \nRecovery","Oct 2015 \nBleaching", "Feb 2016 \nRecovery")
+
+
+Fig.formatting<-(theme_classic()) +
+  theme(text=element_text(size=10),
+  axis.line=element_blank(),
+  legend.text.align = 0,
+  legend.text=element_text(size=10),
+    #legend.title = element_blank(),
+      panel.border = element_rect(fill=NA, colour = "black", size=1),
+      aspect.ratio=1, 
+    axis.ticks.length=unit(0.25, "cm"),
+    axis.text.y=element_text(
+      margin=unit(c(0.5, 0.5, 0.5, 0.5), "cm"), colour="black", size=10), 
+    axis.text.x=element_text(
+      margin=unit(c(0.5, 0.5, 0.5, 0.5), "cm"), colour="black", size=8)) +
+  theme(legend.key.size = unit(0.4, "cm")) +
+  theme(aspect.ratio=1) +
+  theme(panel.spacing=unit(c(0, 0, 0, 0), "cm"))
+
+
+pd <- position_dodge(0.15) #offset for error bars
+
+
+########################
+#### graph as category of C/D
+######################## 
+
+fig.df.phys$int<-factor(fig.df.phys$int, levels=c("Lilipuna.Pre.C", "Lilipuna.Pre.D", "Lilipuna.C", "Lilipuna.D", "Reef 14.Pre.C", "Reef 14.Pre.D", "Reef 14.C", "Reef 14.D"))
+```
+
+**Symbiodinium cm-2**
+```{r}
+###################
+# zoox 
+zoox.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=zoox/10^6, group=int, color=int)) + geom_errorbar(aes(ymin=zoox/10^6-zoox.SE/10^6, ymax=zoox/10^6+zoox.SE/10^6), size=.8, width=0, position=pd) +
+  geom_line(position=pd, size=.8) +
+  geom_point(position=pd, size=3, pch=19) +
+  coord_cartesian(ylim=c(0, 3)) +
+  ylab(expression(paste(~italic("Symbiodinium") ~(10^6~cells~cm^-2), sep=""))) +
+  scale_color_manual(values=c(color.scheme),
+                     name= "Site:Clade",
+                     breaks=break.points,
+                     labels=legend.names) +
+  scale_x_discrete(name ="Year and Event", 
+      labels=axis.labels)+
+  Fig.formatting
+
+zoox.fig
+
+```
+
+**Chlorophyll *a* cm-2**
+```{r}
+########## chla cm2 ############
+chla.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=chla, group=int, color=int)) + geom_errorbar(aes(ymin=chla-chla.SE, ymax=chla+chla.SE), size=.8, width=0, position=pd) +
+  geom_line(position=pd, size=.8) +
+  geom_point(position=pd, size=3) +
+  coord_cartesian(ylim=c(0, 8)) +
+  ylab(expression(paste("Chlorophyll", ~italic("a"), ~(mu*g~cm^-2), sep=""))) +
+  scale_color_manual(values=c(color.scheme),
+                     name= "Site:Clade",
+                     breaks=break.points,
+                     labels=legend.names) +
+  scale_x_discrete(name ="Year and Event", 
+      labels=axis.labels)+
+  Fig.formatting
+chla.fig
+```
+
+**Chlorophyll *a* cell-1**
+```{r, message=FALSE}
+########## chla cell ############
+chlacell.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=chlacell, group=int, color=int)) + geom_errorbar(aes(ymin=chlacell-chlacell.SE, ymax=chlacell+chlacell.SE), size=.8, width=0, position=pd) +
+  geom_line(position=pd, size=.8) +
+  geom_point(position=pd, size=3) +
+  coord_cartesian(ylim=c(0, 8)) +
+  ylab(expression(paste("Chlorophyll", ~italic("a"), ~(pg~cell^-1), sep=""))) +
+  scale_color_manual(values=c(color.scheme),
+                     name= "Site:Clade",
+                     breaks=break.points,
+                     labels=legend.names) +
+  scale_x_discrete(name ="Year and Event", 
+      labels=axis.labels)+
+  Fig.formatting
+chlacell.fig
+```
+
+**Protein biomass cm-2**
+```{r}
+
+########## protein ############
+prot.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=prot, group=int, color=int)) + geom_errorbar(aes(ymin=prot-prot.SE, ymax=prot+prot.SE), size=.8, width=0, position=pd) +
+  geom_line(position=pd, size=.8) +
+  geom_point(position=pd, size=3) +
+  coord_cartesian(ylim=c(0, 1)) +
+  ylab(expression(paste("Protein", ~(mg~cm^-2), sep=""))) +
+  scale_color_manual(values=c(color.scheme),
+                     name= "Site:Clade",
+                     breaks=break.points,
+                     labels=legend.names) +
+  scale_x_discrete(name ="Year and Event", 
+      labels=axis.labels)+
+  Fig.formatting
+prot.fig
+```
+
+**Total biomass (AFDW) cm-2**
+```{r}
+
+########## AFDW ############
+AFDW.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=AFDW, group=int, color=int)) + geom_errorbar(aes(ymin=AFDW-AFDW.SE, ymax=AFDW+AFDW.SE), size=.8, width=0, position=pd) +
+  geom_line(position=pd, size=.8) +
+  geom_point(position=pd, size=3) +
+  coord_cartesian(ylim=c(0, 60)) +
+  ylab(expression(paste("Total biomass", ~(mg~cm^-2), sep=""))) +
+  scale_color_manual(values=c(color.scheme),
+                     name= "Site:Clade",
+                     breaks=break.points,
+                     labels=legend.names) +
+  scale_x_discrete(name ="Year and Event", 
+      labels=axis.labels)+
+  Fig.formatting
+AFDW.fig
+```
+
+### Imunological figures
+
+**Prophenoloxidase (PPO)**
+```{r}
+#names(fig.df.immuno)
+
+# site means
+CAT.m2<-aggregate(CAT~Site+Status+Period,data=df, mean)
+POX.m2<-aggregate(POX~Site+Status+Period,data=df, mean)
+SOD.m2<-aggregate(SOD~Site+Status+Period,data=df, mean)
+PPO.m2<-aggregate(PPO~Site+Status+Period,data=df, mean)
+MEL.m2<-aggregate(MEL~Site+Status+Period,data=df, mean)
+
+###------#### SE
+# imunology
+CAT.SE2<-aggregate(CAT~Site+Status+Period,data=df, std.error)
+POX.SE2<-aggregate(POX~Site+Status+Period,data=df, std.error)
+SOD.SE2<-aggregate(SOD~Site+Status+Period,data=df, std.error)
+PPO.SE2<-aggregate(PPO~Site+Status+Period,data=df, std.error)
+MEL.SE2<-aggregate(MEL~Site+Status+Period,data=df, std.error)
+
+immuno.site.df<-cbind(CAT.m2, CAT.SE2[c(4,0)], POX.m2[c(4,0)], POX.SE2[c(4,0)], SOD.m2[c(4,0)], SOD.SE2[c(4,0)], PPO.m2[c(4,0)], PPO.SE2[c(4,0)], MEL.m2[c(4,0)], MEL.SE2[c(4,0)])
+
+colnames(immuno.site.df)<-c("Site","Status", "Period", "CAT", "CAT.SE", "POX", "POX.SE", "SOD", "SOD.SE", "PPO", "PPO.SE", "MEL", "MEL.SE")
+
+Pre.immuno<-immuno.site.df[c(1:2),]
+Pre.immuno$dom<-"unident"
+Pre.immuno<-Pre.immuno[, c(1:3, 14, 4:13)]
+Pre.immuno$int<-interaction(Pre.immuno$Site, Pre.immuno$dom)
+
+## now this subset of site means can be overlayed with datafame from Oct 2014- Feb 2016
+fig.df.immuno.comp<-rbind(Pre.immuno, fig.df.immuno)
+
+
+color.scheme2<-c("gray70", 'lightskyblue', 'dodgerblue', 
+                "gray40", "thistle", "coral")
+break.points.immuno<-c("Lilipuna.Pre.unident", "Lilipuna.C", "Lilipuna.D", 
+                "Reef 14.Pre.unident", "Reef 14.C", "Reef 14.D")
+legend.names.immuno<-c("Lil.Pre unident.", "Lil C", "Lil D", 
+                "R14.Pre unident.", "R14 C", "R14 D")
+
+
+fig.df.immuno.comp$int<-factor(fig.df.immuno.comp$int, levels=c("Lilipuna.Pre.unident","Lilipuna.C", "Lilipuna.D", "Reef 14.Pre.unident", "Reef 14.C", "Reef 14.D"))
+
+
+########## Prophenoloxidase (PPO) ############
+PPO.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=PPO, group=int, color=int)) + geom_errorbar(aes(ymin=PPO-PPO.SE, ymax=PPO+PPO.SE), size=.8, width=0, position=pd) +
+  geom_line(position=pd, size=.8) +
+  geom_point(position=pd, size=3) +
+  coord_cartesian(ylim=c(0, 3)) +
+  ylab(expression(paste("PO Activity", ~(Delta~Abs~"490nm"~min^-1~mg~prot^-1), sep=""))) +
+  scale_color_manual(values=c(color.scheme2),
+                     name= "Site:Clade",
+                     breaks=break.points.immuno,
+                     labels=legend.names.immuno) +
+  scale_x_discrete(name ="Year and Event", 
+      labels=axis.labels)+
+  Fig.formatting
+PPO.fig
+```
+
+**Melanin (MEL)**
+```{r}
+MEL.lab<-aggregate(MEL~Site+Status+Period,data=data, mean)
+MEL.labSE<-aggregate(MEL~Site+Status+Period,data=data, std.error)
+MEL.df<-cbind(MEL.lab, MEL.labSE[c(4,0)]); colnames(MEL.df[,4:5])<-c("MEL", "MEL.labSE")
+MEL.df$Period<-factor(MEL.df$Period, levels=c("2014 Field.Feb", "2014 Lab", "2014 Oct", "2015 Feb", "2015 Oct", "2016 Feb"))
+
+plot(MEL~Period, data=MEL.df, cex.axis=0.8)
+#dev.copy(pdf,"Figures/MEL.all.time.pdf", height=5, width=7, encod="MacRoman")
+#dev.off
+
+######## Melanin (MEL) #############
+MEL.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=MEL, group=int, color=int)) + geom_errorbar(aes(ymin=MEL-MEL.SE, ymax=MEL+MEL.SE), size=.8, width=0, position=pd) +
+  geom_line(position=pd, size=.8) +
+  geom_point(position=pd, size=3) +
+  coord_cartesian(ylim=c(0, 0.02)) +
+  ylab(expression(paste("MEL", ~(Abs~"490nm"~mg~tissue^-1), sep="")))+
+  scale_color_manual(values=c(color.scheme2),
+                     name= "Site:Clade",
+                     breaks=break.points.immuno,
+                     labels=legend.names.immuno) +
+  scale_x_discrete(name ="Year and Event", 
+      labels=axis.labels)+
+  Fig.formatting
+MEL.fig
+
+```
+
+**Peroxidase (POX)**
+```{r}
+
+########## Peroxidase (POX) ##############
+POX.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=POX, group=int, color=int)) + geom_errorbar(aes(ymin=POX-POX.SE, ymax=POX+POX.SE), size=.8, width=0, position=pd) +
+  geom_line(position=pd, size=.8) +
+  geom_point(position=pd, size=3) +
+  coord_cartesian(ylim=c(0, 1.5)) +
+  ylab(expression(paste("POX activity", ~(Delta~Abs~"470nm"~min^-1~mg~prot^-1), sep=""))) +
+  scale_color_manual(values=c(color.scheme2),
+                     name= "Site:Clade",
+                     breaks=break.points.immuno,
+                     labels=legend.names.immuno) +
+  scale_x_discrete(name ="Year and Event", 
+      labels=axis.labels)+
+  Fig.formatting
+POX.fig
+
+```
+
+**Catalase (CAT)**
+```{r}
+
+###### Catalase (CAT) ########
+CAT.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=CAT, group=int, color=int)) + geom_errorbar(aes(ymin=CAT-CAT.SE, ymax=CAT+CAT.SE), size=.8, width=0, position=pd) +
+  geom_line(position=pd, size=.8) +
+  geom_point(position=pd, size=3) +
+  coord_cartesian(ylim=c(0, 800)) +
+  ylab(expression(paste("CAT activity", ~(Abs~"490nm"~mg~tissue^-1), sep="")))+
+  scale_color_manual(values=c(color.scheme2),
+                     name= "Site:Clade",
+                     breaks=break.points.immuno,
+                     labels=legend.names.immuno) +
+  scale_x_discrete(name ="Year and Event", 
+      labels=axis.labels)+
+  Fig.formatting
+CAT.fig
+
+```
+
+**Superoxide dismutase (SOD)**
+```{r}
+
+
+######### Superoxide dismutase (SOD) ########
+SOD.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=SOD/10^3, group=int, color=int)) + geom_errorbar(aes(ymin=SOD/10^3-SOD.SE/10^3, ymax=SOD/10^3+SOD.SE/10^3), size=.8, width=0, position=pd) +
+  geom_line(position=pd, size=.8) +
+  geom_point(position=pd, size=3) +
+  coord_cartesian(ylim=c(0, 50)) +
+  ylab(expression(paste("SOD activity", ~x10^3~mg~protein^-1, sep=""))) +
+  scale_color_manual(values=c(color.scheme2),
+                     name= "Site:Clade",
+                     breaks=break.points.immuno,
+                     labels=legend.names.immuno) +
+  scale_x_discrete(name ="Year and Event", 
+      labels=axis.labels)+
+  Fig.formatting
+SOD.fig
+```
+
+
+###Models  
+
+Running models of response variables. First check for assumptions of ANOVA and apply transformations where necessary.  
+  
+*lm(Y~Period x Site x dom, data=model.data, na.action=na.exclude)*  
+*Period* is the 4 events, *Site* is the two reefs, *dom* is the symbiont community (C- or D-dominated)
+
+```{r, include=FALSE}
+#df ## this is the data
+
+model.data<-df[ , !(names(df) %in% c("coral.red.adj","coral.green.adj", "coral.blue.adj", "PC1", "propC", "propD", "syms"))] # remove unwanted columns
+
+model.data<-model.data[!c(model.data$Period=="2014 Lab"),] 
+model.data<-model.data[!c(model.data$Period=="2014 Field.Feb"),] # drop data prior to Oct 2014 bleaching
+
+model.data$Period<-factor(model.data$Period) #re-call as factor to remove dropped levels
+model.data$Status<-factor(model.data$Status)
+
+
+for(i in c(7:9, 11:16)){
+  Y<-model.data[,i]
+  full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
+  R <- resid(full) #save glm residuals
+  
+  op<-par(mfrow = c(2,2), mar=c(5,4,1,2), pty="sq")
+  plot(full, add.smooth = FALSE, which=1)
+  QQ <- qqnorm(R, main = colnames(model.data)[i]) 
+  QQline <- qqline(R)
+  hist(R, xlab="Residuals", main = colnames(model.data)[i])
+}
+
+# need BoxCox transformation for most immuno data
+Yx<-(model.data$AFDW) 
+
+### test with transformations
+boxcox(Yx~Period*Site*dom, data=model.data, lambda=seq(-0.25, 1, length=10))
+### test residuals, histogram, QQ
+full<-lm(Yx~Period*Site*dom, data=model.data, na.action=na.exclude)
+  R <- resid(full) #save glm residuals
+  op<-par(mfrow = c(2,2), mar=c(5,4,1,2), pty="sq")
+  plot(full, add.smooth = FALSE, which=1)
+  QQ <- qqnorm(R) 
+  QQline <- qqline(R)
+  hist(R, xlab="Residuals")
+
+##### revised model.data (below are data needing transformations)
+model.data$CAT<-(model.data$CAT)^0.5
+model.data$POX<-(model.data$POX)^0.25
+model.data$PPO<-(model.data$PPO) ^0.25
+model.data$MEL<-(model.data$MEL)^0.25
+
+## dataframe 'model.data' now ready for full model analysis
+```
+
+Run linear models for response variables  
+
+**Symbiodinium cm-2**
+```{r symbiont model, warning=FALSE, message=FALSE}
+# symbionts ---- 
+Y<-model.data$zoox
+full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
+#summary(full)
+print(Anova(full, type=2), digits=4)
+
+posthoc<-lsmeans(full, ~Site*dom|Period)
+cld(posthoc, Letters=letters)
+plot(allEffects(full), ylab="zoox", par.strip.text=list(cex=0.7))
+```
+
+**Chlorophyll *a* cm^-2**
+```{r chla model, warning=FALSE, message=FALSE}
+# chla ---- 
+Y<-model.data$chla
+full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
+#summary(full)
+print(Anova(full, type=2), digits=4)
+
+posthoc<-lsmeans(full, ~dom*Period)
+cld(posthoc, Letters=letters)
+
+posthoc<-lsmeans(full, ~dom|Period)
+cld(posthoc, Letters=letters)
+plot(allEffects(full), ylab="chla", par.strip.text=list(cex=0.7))
+```
+
+**chlorophyll *a* cell-1**
+```{r chlcell model, warning=FALSE, message=FALSE}
+# chlacell ---- 
+Y<-model.data$chlacell
+full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
+##summary(full)
+print(Anova(full, type=2), digits=4)
+
+posthoc<-lsmeans(full, ~Site*dom)
+cld(posthoc, Letters=letters)
+
+posthoc<-lsmeans(full, ~Site|Period)
+cld(posthoc, Letters=letters)
+
+posthoc<-lsmeans(full, ~dom|Period)
+cld(posthoc, Letters=letters)
+plot(allEffects(full), ylab="AFDW", par.strip.text=list(cex=0.7))
+```
+
+**Protein cm-2**
+```{r protein model, warning=FALSE, message=FALSE}
+# prot ---- 
+Y<-model.data$prot
+full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
+#summary(full)
+print(Anova(full, type=2), digits=4)
+
+posthoc<-lsmeans(full, ~dom)
+cld(posthoc, Letters=letters)
+
+posthoc<-lsmeans(full, ~Site|Period)
+cld(posthoc, Letters=letters)
+plot(allEffects(full), ylab="prot", par.strip.text=list(cex=0.7))
+```
+
+**Catalase (CAT)**
+```{r CAT Model, warning=FALSE, message=FALSE}
+######################## 
+### immunology
+########################
+
+# CAT ---- 
+Y<-model.data$CAT
+full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
+#summary(full)
+print(Anova(full, type=2), digits=4)
+
+posthoc<-lsmeans(full, ~dom)
+cld(posthoc, Letters=letters)
+
+posthoc<-lsmeans(full, ~Period)
+cld(posthoc, Letters=letters)
+
+posthoc<-lsmeans(full, ~Site|Period)
+cld(posthoc, Letters=letters)
+plot(allEffects(full), ylab="CAT", par.strip.text=list(cex=0.7))
+```
+
+**Peroxidase (POX)**
+```{r POX model, warning=FALSE, message=FALSE}
+# POX ---- 
+Y<-model.data$POX
+full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
+#summary(full)
+print(Anova(full, type=2), digits=4)
+
+posthoc<-lsmeans(full, ~Period)
+cld(posthoc, Letters=letters)
+
+posthoc<-lsmeans(full, ~dom|Period)
+cld(posthoc, Letters=letters)
+
+posthoc<-lsmeans(full, ~Site|Period)
+cld(posthoc, Letters=letters)
+plot(allEffects(full), ylab="POX", par.strip.text=list(cex=0.7))
+```
+
+**Superoxide dismutase (SOD)**
+```{r SOD model, warning=FALSE, message=FALSE}
+# SOD ---- 
+Y<-model.data$SOD
+full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
+#summary(full)
+print(Anova(full, type=2), digits=4)
+
+posthoc<-lsmeans(full, ~Period)
+cld(posthoc, Letters=letters)
+
+posthoc<-lsmeans(full, ~Site)
+cld(posthoc, Letters=letters)
+
+posthoc<-lsmeans(full, ~Site|Period)
+cld(posthoc, Letters=letters)
+plot(allEffects(full), ylab="SOD", par.strip.text=list(cex=0.7))
+```
+
+**Prophenoloxidase (PPO)**
+```{r PPO model, warning=FALSE, message=FALSE}
+# PPO ---- 
+Y<-model.data$PPO
+full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
+#summary(full)
+print(Anova(full, type=2), digits=4)
+
+posthoc<-lsmeans(full, ~dom)
+cld(posthoc, Letters=letters)
+
+posthoc<-lsmeans(full, ~Period)
+cld(posthoc, Letters=letters)
+plot(allEffects(full), ylab="PPO", par.strip.text=list(cex=0.7))
+```
+
+**Melanin (MEL)**
+```{r MEL model, warning=FALSE, message=FALSE}
+# MEL ---- 
+Y<-model.data$MEL
+full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
+#summary(full)
+print(Anova(full, type=2), digits=4)
+
+posthoc<-lsmeans(full, ~Period)
+cld(posthoc, Letters=letters)
+
+posthoc<-lsmeans(full, ~Site|Period)
+cld(posthoc, Letters=letters)
+plot(allEffects(full), ylab="prot", par.strip.text=list(cex=0.7))
+```
+
+
+```{r, eval=FALSE}
+### symbiodinium data
+
+
+###############################
+## making figures, tables, analyses
+
+###############################
+# make a table by dominant symb
+
+df
+
+str(df)
+print(levels(df$Period))
+
+# 4 symbiont categories
+symbcomp=table(df$syms, df$Period:df$Site) 
+prop.table(symbcomp, margin = 2)
+
+# 2 symbiont categories
+domsymb=table(df$dom, df$Period:df$Site)
+prop.table(domsymb, margin = 2)
+
+
+# to specify order in figure, can use... ...(prop.table(symbcomp[,c(1,3,2,4)], 3,4,1,2,5,6
+barplot(prop.table(symbcomp, margin = 2), col = c("slategray4", "slategray2", "dodgerblue", "darkturquoise"), main= "2014 - 2016 qPCR", xlab = "Site and Status", cex.names=0.65, ylab = "Proportion of Symbiont Types")
+legend("topright", cex=0.8, bty="n", legend=c("C","CD", "D", "DC"), fill=c("slategray4", "slategray2", "dodgerblue", "darkturquoise")) #inset = c(-.25, 0), xpd = NA, x.intersp=0.1, y.intersp=0.7)
+
+dev.copy(pdf, "Figures/symb_4 levels.pdf", encod="MacRoman", height=6, width=14)
+dev.off()
+
+
+#####################
+## figures for 2014-2016 dominant symbiont composition figure (2 categories)
+
+# to sepcify order in figure, can use... ...(prop.table(symbcomp[,c(1,3,2,4)],
+barplot(prop.table(domsymb, margin = 2), col = c("slategray4", "darkturquoise"), main= "2014 - 2015 qPCR", xlab = "Site and Status", cex.names=0.65, ylab = "Proportion of Symbiont Types")
+legend("topright", legend=c("C", "D"), bty="n", fill=c("slategray4", "darkturquoise"), inset = c(-.23, 0), xpd = NA, x.intersp=0.1, y.intersp=0.7)
+
+dev.copy(pdf, "Figures/symb_2 levels.pdf", encod="MacRoman", height=6, width=14)
+dev.off()
+
+#Chi Squared test for independence
+chisq.test(symbcomp) # p<0.01, accept Ha that symcomb IS related to events
+chisq.test(domsymb) # p=0.1, accept Ho that domsymb is NOT related to events
+
+prop.table(symbcomp, margin = 2)
+par(mar=c(3, 4, 2, 6))
+
+
+# to specify order in figure, can use... ...(prop.table(symbcomp[,c(1,3,2,4)],
+barplot(prop.table(symbcomp, margin = 2), col = c("slategray4", "slategray2", "dodgerblue", "darkturquoise"), main= "2015 - 2016 qPCR", xlab = "Event and Site", cex.names=0.65, ylab = "Proportion of Symbiont Types")
+legend("topright", legend=c("C","CD", "D", "DC"), fill=c("slategray4", "slategray2", "dodgerblue", "darkturquoise"))
+#inset = c(-.15, 0), xpd = NA)
+
+##########
+prop.table(domsymb, margin = 2)
+par(mar=c(3, 4, 2, 6))
+
+barplot(prop.table(domsymb, margin = 2), col = c("slategray4", "darkturquoise"), main= "2015 - 2016 qPCR", xlab = "Site and Status", cex.names=0.65, ylab = "Proportion of Symbiont Types")
+legend("topright", legend=c("C", "D"), fill=c("slategray4", "darkturquoise"), inset = c(-.15, 0), xpd = NA)
+```
