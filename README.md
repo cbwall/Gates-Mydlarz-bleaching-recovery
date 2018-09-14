@@ -26,8 +26,6 @@ Within this folder is a directory of...
 #### scripts:
   - Mydlarz_bleach recover.Rmd
       R-markdown for figure generation and  analysis of all responses
-  - Mydlarz_bleach_recover.html
-      the html output generated from R-markdown
 
 
 
