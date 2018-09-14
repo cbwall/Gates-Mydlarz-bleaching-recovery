@@ -1,7 +1,7 @@
 ---
 title: 'Gates & Mydlarz et al: 2014 - 2016 bleaching and recovery of Montipora capitata'
 author: "Chris Wall"
-date: "7/7/2017"
+date: "9/13/2018"
 output:
   html_document:
     code_folding: hide
