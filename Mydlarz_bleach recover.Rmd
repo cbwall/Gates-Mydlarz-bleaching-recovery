@@ -611,7 +611,6 @@ MEL.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=MEL, group=int, color=i
   Fig.formatting
 MEL.fig
 
-ggsave("Figures/MEL.field.pdf", height=5, width=7, encod="MacRoman")
 ```
 
 **Peroxidase (POX)**
@@ -631,6 +630,7 @@ POX.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=POX, group=int, color=i
       labels=axis.labels)+
   Fig.formatting
 POX.fig
+
 ```
 
 **Catalase (CAT)**
@@ -650,6 +650,7 @@ CAT.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=CAT, group=int, color=i
       labels=axis.labels)+
   Fig.formatting
 CAT.fig
+
 ```
 
 **Superoxide dismutase (SOD)**
