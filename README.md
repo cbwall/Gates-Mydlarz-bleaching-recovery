@@ -10,22 +10,34 @@ Within this folder is a directory of...
 #### data: 
   - Gates_Mydlarz_20142016_ALL_DATA.csv
       - the master datasheet of physiology, immunity, color scores, and Symbiodinium genotypes
+  - Gates_Mydlarz_20142016_physimmun.csv
+      - this is just the physiology and immunity data
+  - Gates_Mydlarz_20142016_qPCR.csv
+      - this is qPCR data including the data from a previous experiment, subset to be included in th 2014-2016 dataset
+      
   - environmental
       - this folder has PAR and temperature data collected in situ at the two reefs (Lilipuna and Reef 14)
       - Lilipuna PAR all.csv
       - Lilipuna temp all.csv
       - Reef14 PAR all.csv
       - Reef14 temp all.csv
+      - (folder) HIMB station -- this has discrete periods of temperature at HIMB weather station where loggers failed
+      
    - qPCR
       - this folder has the 12 raw .txt files used in script to determine symbiont community
      
+   - Mydlarz_bleach recover.proj -- R project for R studio
+   - Mydlarz_bleach recover.Rmd -- an R studio Rmarkdown file
+      - R-markdown for figure generation and  analysis of all responses
       
 #### output: 
-  - figures generated in R
+  - figures and products from analyses
 
 #### scripts:
-  - Mydlarz_bleach recover.Rmd
-      R-markdown for figure generation and  analysis of all responses
+  - Environ_data_Mydlarz.R
+      - R script to make figures for environmental data
+  - qPCR_Mydlarz-2014-2016.R 
+      - R script to run qPCR plates, linked to R. Cunning github
 
 
 
