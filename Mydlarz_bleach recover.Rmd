@@ -1,7 +1,7 @@
 ---
 title: 'Gates & Mydlarz et al: 2014 - 2016 bleaching and recovery of Montipora capitata'
 author: "Chris Wall"
-date: "9/13/2018"
+date: "7/7/2017"
 output:
   html_document:
     code_folding: hide
@@ -60,7 +60,7 @@ Raw data from physiological assessments is imported and normalized according to 
 ###########################################################################
 
 # working directory
-main<-setwd(getwd())
+getwd()
 rm(list=ls())
 
 ### data file
@@ -611,6 +611,7 @@ MEL.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=MEL, group=int, color=i
   Fig.formatting
 MEL.fig
 
+ggsave("Figures/MEL.field.pdf", height=5, width=7, encod="MacRoman")
 ```
 
 **Peroxidase (POX)**
@@ -630,7 +631,6 @@ POX.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=POX, group=int, color=i
       labels=axis.labels)+
   Fig.formatting
 POX.fig
-
 ```
 
 **Catalase (CAT)**
@@ -650,7 +650,6 @@ CAT.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=CAT, group=int, color=i
       labels=axis.labels)+
   Fig.formatting
 CAT.fig
-
 ```
 
 **Superoxide dismutase (SOD)**
