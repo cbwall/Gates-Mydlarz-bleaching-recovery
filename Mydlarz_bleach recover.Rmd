@@ -737,8 +737,21 @@ full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
 #summary(full)
 print(Anova(full, type=2), digits=4)
 
+posthoc<-lsmeans(full, ~Period)
+cld(posthoc, Letters=letters)
+
+posthoc<-lsmeans(full, ~dom)
+cld(posthoc, Letters=letters)
+
+posthoc<-lsmeans(full, ~Site|Period)
+cld(posthoc, Letters=letters)
+
+posthoc<-lsmeans(full, ~dom|Period)
+cld(posthoc, Letters=letters)
+
 posthoc<-lsmeans(full, ~Site*dom|Period)
 cld(posthoc, Letters=letters)
+
 plot(allEffects(full), ylab="zoox", par.strip.text=list(cex=0.7))
 ```
 
@@ -750,7 +763,10 @@ full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
 #summary(full)
 print(Anova(full, type=2), digits=4)
 
-posthoc<-lsmeans(full, ~dom*Period)
+posthoc<-lsmeans(full, ~Period)
+cld(posthoc, Letters=letters)
+
+posthoc<-lsmeans(full, ~Site)
 cld(posthoc, Letters=letters)
 
 posthoc<-lsmeans(full, ~dom|Period)
@@ -766,10 +782,13 @@ full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
 ##summary(full)
 print(Anova(full, type=2), digits=4)
 
-posthoc<-lsmeans(full, ~Site*dom)
+posthoc<-lsmeans(full, ~Period)
 cld(posthoc, Letters=letters)
 
-posthoc<-lsmeans(full, ~Site|Period)
+posthoc<-lsmeans(full, ~Site)
+cld(posthoc, Letters=letters)
+
+posthoc<-lsmeans(full, ~dom)
 cld(posthoc, Letters=letters)
 
 posthoc<-lsmeans(full, ~dom|Period)
@@ -805,10 +824,13 @@ full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
 #summary(full)
 print(Anova(full, type=2), digits=4)
 
-posthoc<-lsmeans(full, ~dom)
+posthoc<-lsmeans(full, ~Period)
 cld(posthoc, Letters=letters)
 
-posthoc<-lsmeans(full, ~Period)
+posthoc<-lsmeans(full, ~Site)
+cld(posthoc, Letters=letters)
+
+posthoc<-lsmeans(full, ~dom)
 cld(posthoc, Letters=letters)
 
 posthoc<-lsmeans(full, ~Site|Period)
@@ -830,8 +852,6 @@ cld(posthoc, Letters=letters)
 posthoc<-lsmeans(full, ~dom|Period)
 cld(posthoc, Letters=letters)
 
-posthoc<-lsmeans(full, ~Site|Period)
-cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="POX", par.strip.text=list(cex=0.7))
 ```
 
@@ -849,8 +869,6 @@ cld(posthoc, Letters=letters)
 posthoc<-lsmeans(full, ~Site)
 cld(posthoc, Letters=letters)
 
-posthoc<-lsmeans(full, ~Site|Period)
-cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="SOD", par.strip.text=list(cex=0.7))
 ```
 
@@ -862,10 +880,13 @@ full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
 #summary(full)
 print(Anova(full, type=2), digits=4)
 
-posthoc<-lsmeans(full, ~dom)
+posthoc<-lsmeans(full, ~Period)
 cld(posthoc, Letters=letters)
 
-posthoc<-lsmeans(full, ~Period)
+posthoc<-lsmeans(full, ~Site)
+cld(posthoc, Letters=letters)
+
+posthoc<-lsmeans(full, ~dom)
 cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="PPO", par.strip.text=list(cex=0.7))
 ```
