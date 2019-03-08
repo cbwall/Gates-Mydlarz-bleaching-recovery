@@ -1,5 +1,6 @@
 # Gates-Mydlarz-bleaching-recovery
-<a href="https://doi.org/10.5281/zenodo.1175034"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.1175034.svg" alt="DOI"></a>
+<a href="https://doi.org/10.5281/zenodo.1175034"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.1175034.svg" alt="DOI"></a>  
+
 Wall CB, Ricci CA, Foulds GE, Mydlarz LD, Gates RD, Putnam HM. 2018. The effects of environmental history and thermal stress on coral physiology and immunity. Marine Biology 165:56-71
 
 This project examines the response of coral physiology and immunity to repeated bleaching and subsequent recovery during the 2014 - 2016 global bleaching events in Hawai'i. The coral Montipira capitata was collected from two reef locations within Kāne'ohe Bay, O'ahu, Hawai'i: Lilipuna Reef and Reef 14 in southern and central Kāne'ohe Bay, respectively. immunity.Marine Biology165:56-71
