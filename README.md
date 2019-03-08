@@ -1,4 +1,6 @@
 # Gates-Mydlarz-bleaching-recovery
+<a href="https://doi.org/10.5281/zenodo.1175034"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.1175034.svg" alt="DOI"></a>
+
 This project examines the response of coral physiology and immunity to repeated bleaching and subsequent recovery during the 2014 - 2016 global bleaching events in Hawai'i. The coral Montipira capitata was collected from two reef locations within Kāne'ohe Bay, O'ahu, Hawai'i: Lilipuna Reef and Reef 14 in southern and central Kāne'ohe Bay, respectively. Data here are representing in... (in-prep manuscript)
 
 ### Folder: gitR_analysis
