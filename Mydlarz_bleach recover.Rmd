@@ -907,6 +907,226 @@ cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="prot", par.strip.text=list(cex=0.7))
 ```
 
+```{r, MultiVariate}
+# multivariate test using adonis-- Manova, mutivariate analysis of variance
+library(devtools)
+install_github("vqv/ggbiplot")
+library(ggbiplot)
+require(graphics)
+library(tidyr)
+library(vegan)
+library(RVAideMemoire)
+
+df.MV<-df
+
+# remove columns unnecessary for final analysis, few factors retained
+df.MV<-df.MV[ , !names(df.MV) %in% c("Species", "Status_Site", "ID", "coral.red.adj", "coral.green.adj", "coral.blue.adj", "PC1", "propC", "propD", "syms")]
+
+# remove prior-to-bleaching timepoints and unused levels that arise from this action
+df.MV<-df.MV[(!df.MV$Period=="2014 Lab"),] 
+df.MV<-df.MV[(!df.MV$Period=="2014 Field.Feb"),]
+df.MV$Period<-droplevels(df.MV$Period) 
+df.MV$Status<-droplevels(df.MV$Status)
+
+#drop all NAs, removing rows where NA was observed
+df.MV.noNA<-df.MV %>% drop_na()
+
+# need to make 2 dataframes, one with only data (no factors) and another with factors+data
+
+######## Lilipuna only #######
+Manova.Lil.lev.dat<-df.MV.noNA %>% # "lev.dat" has levels and data
+  filter(Site=="Lilipuna") 
+
+Manova.Lil.dat<-Manova.Lil.lev.dat %>% # "dat" is just data
+  select(-c(Period, Status, Site, dom)) #  sans factors
+
+##  Run MANOVA Lilipuna
+MVA.Lilipuna<-adonis2(Manova.Lil.dat~Period*dom, data=Manova.Lil.lev.dat,permutations=1000, 
+                method="bray", sqrt.dist = TRUE)
+MVA.Lilipuna
+
+NMDS.Lil<-metaMDS(Manova.Lil.dat, distane='bray', k=2, trymax=100) 
+stressplot(NMDS.Lil)
+
+factor.df.Lil<-Manova.Lil.lev.dat %>% 
+  select(c(Period, Site, Status, dom)) # get just the factors
+
+NMDS.df.Lil<-data.frame(x=NMDS.Lil$point[,1], y=NMDS.Lil$point[,2], 
+                    Period=as.factor(factor.df.Lil[,1]),
+                    Site=as.factor(factor.df.Lil[,2]),
+                    Status=as.factor(factor.df.Lil[,3]),
+                    dom=as.factor(factor.df.Lil[,4]))
+
+colnames(NMDS.df.Lil)[1:2]<-c("MDS1", "MDS2")
+
+# vectors for variables
+vars<-envfit(NMDS.Lil, Manova.Lil.dat, permu=999)
+#scores(vars, "vectors")
+
+###### plot it
+# example of quick and dirty plot in ggplot
+ggplot(NMDS.df.Lil, aes(x=MDS1, y=MDS2, col=Period:dom)) +
+    geom_point() +
+    stat_ellipse() +
+    theme_bw() +
+    labs(title = "NMDS Plot")
+
+ggplot(NMDS.df.Lil, aes(x=MDS1, y=MDS2, col=Status)) +
+    geom_point() +
+    stat_ellipse() +
+    theme_bw() +
+    labs(title = "NMDS Plot")
+
+ggplot(NMDS.df.Lil, aes(x=MDS1, y=MDS2, col=dom)) +
+    geom_point() +
+    stat_ellipse() +
+    theme_bw() +
+    labs(title = "NMDS Plot")
+
+ggplot(NMDS.df.Lil, aes(x=MDS1, y=MDS2, col=Status:dom)) +
+    geom_point() +
+    stat_ellipse() +
+    theme_bw() +
+    labs(title = "NMDS Plot")
+
+par(mfcol=c(1,2), mar=c(4,4,1,1))
+
+
+###### plot it
+MDS.levels<-levels(NMDS.df.Lil$Period:NMDS.df.Lil$dom)
+MDS.lev.leg<-c("C-Bleach '14", "D-Bleach '14", "C-Recov '15", "D-Recov '15", "C-Bleach '15", "D-Bleach '15", "C-Recov '16", "D-Recov '16")
+MDS.colors<-c("lightpink", "firebrick2", "slategray1", "dodgerblue2","khaki", "darkorange", "mediumseagreen", "olivedrab")
+
+NMDS.plot<-ordiplot(NMDS.Lil, type="n", main=substitute(paste(italic("Lilipuna"))), cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.4, 0.4), xlim=c(-0.6, 0.5))
+axis(side = 1, labels = FALSE, tck = -0.03)
+abline(h = 0, lty = "dotted")
+abline(v = 0, lty = "dotted")
+points(NMDS.plot, "sites", cex=0.8, pch=16, col=MDS.colors)
+ordiellipse(NMDS.plot, groups=NMDS.df.Lil$Period:NMDS.df.Lil$dom, draw="polygon", col=MDS.colors, alpha=150, kind="sd", conf=0.8)
+legend("topright", legend=MDS.lev.leg, inset=c(0.16, -0.02), x.intersp=0.8, cex=0.6, pch=16, col=MDS.colors, pt.cex=0.7, bty="n")
+par.new=T
+plot(vars, p.max=0.05, cex=0.8, lwd=1)
+
+dev.copy(pdf, "figures/NMDS_Lil.pdf", height=4, width=5, useDingbats=FALSE)
+dev.off() 
+
+
+
+
+
+######## Reef 14 only #######
+Manova.R14.lev.dat<-df.MV.noNA %>% # "lev.dat" has levels and data
+  filter(Site=="Reef 14") 
+
+Manova.R14.dat<-Manova.R14.lev.dat %>% # "dat" is just data
+  select(-c(Period, Status, Site, dom)) #  sans factors
+
+##  Run MANOVA Reef 14
+MVA.Reef14<-adonis2(Manova.R14.dat~Period*dom, data=Manova.R14.lev.dat,permutations=1000, 
+                method="bray", sqrt.dist = TRUE)
+MVA.Reef14
+
+NMDS.R14<-metaMDS(Manova.R14.dat, distane='bray', k=2, trymax=100) 
+stressplot(NMDS.R14)
+
+factor.df.R14<-Manova.R14.lev.dat %>% 
+  select(c(Period, Site, Status, dom)) # get just the factors
+
+NMDS.df.R14<-data.frame(x=NMDS.R14$point[,1], y=NMDS.R14$point[,2], 
+                    Period=as.factor(factor.df.R14[,1]),
+                    Site=as.factor(factor.df.R14[,2]),
+                    Status=as.factor(factor.df.R14[,3]),
+                    dom=as.factor(factor.df.R14[,4]))
+
+colnames(NMDS.df.R14)[1:2]<-c("MDS1", "MDS2")
+
+# vectors for variables
+vars<-envfit(NMDS.R14, Manova.R14.dat, permu=999)
+#scores(vars, "vectors")
+
+###### plot it
+# example of quick and dirty plot in ggplot
+ggplot(NMDS.df.R14, aes(x=MDS1, y=MDS2, col=Period:dom)) +
+    geom_point() +
+    stat_ellipse() +
+    theme_bw() +
+    labs(title = "NMDS Plot")
+
+ggplot(NMDS.df.R14, aes(x=MDS1, y=MDS2, col=Status)) +
+    geom_point() +
+    stat_ellipse() +
+    theme_bw() +
+    labs(title = "NMDS Plot")
+
+ggplot(NMDS.df.R14, aes(x=MDS1, y=MDS2, col=dom)) +
+    geom_point() +
+    stat_ellipse() +
+    theme_bw() +
+    labs(title = "NMDS Plot")
+
+ggplot(NMDS.df.R14, aes(x=MDS1, y=MDS2, col=Status:dom)) +
+    geom_point() +
+    stat_ellipse() +
+    theme_bw() +
+    labs(title = "NMDS Plot")
+
+
+###### plot it
+MDS.levels<-levels(NMDS.df.R14$Period:NMDS.df.R14$dom)
+MDS.lev.leg<-c("C-Bleach '14", "D-Bleach '14", "C-Recov '15", "D-Recov '15", "C-Bleach '15", "D-Bleach '15", "C-Recov '16", "D-Recov '16")
+MDS.colors<-c("lightpink", "firebrick2", "slategray1", "dodgerblue2","khaki", "darkorange", "mediumseagreen", "olivedrab")
+
+NMDS.plot<-ordiplot(NMDS.R14, type="n", main=substitute(paste(italic("Reef 14"))), cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.4, 0.4), xlim=c(-0.6, 0.5))
+axis(side = 1, labels = FALSE, tck = -0.03)
+abline(h = 0, lty = "dotted")
+abline(v = 0, lty = "dotted")
+points(NMDS.plot, "sites", cex=0.8, pch=16, col=MDS.colors)
+ordiellipse(NMDS.plot, groups=NMDS.df.R14$Period:NMDS.df.R14$dom, draw="polygon", col=MDS.colors, alpha=150, kind="sd", conf=0.8)
+legend("topright", legend=MDS.lev.leg, inset=c(-0.05, -0.02), x.intersp=0.8, cex=0.6, pch=16, col=MDS.colors, pt.cex=0.7, bty="n")
+par.new=T
+plot(vars, p.max=0.05, cex=0.8, lwd=1)
+
+dev.copy(pdf, "figures/NMDS_R14.pdf", height=4, width=5, useDingbats=FALSE)
+dev.off() 
+
+```
+```{r}
+
+par(mfcol=c(2,1), mar=c(4,4,1,1))
+
+
+###### plot it
+MDS.levels<-levels(NMDS.df.Lil$Period:NMDS.df.Lil$dom)
+MDS.lev.leg<-c("C-Bleach '14", "D-Bleach '14", "C-Recov '15", "D-Recov '15", "C-Bleach '15", "D-Bleach '15", "C-Recov '16", "D-Recov '16")
+MDS.colors<-c("lightpink", "firebrick2", "slategray1", "dodgerblue2","khaki", "darkorange", "mediumseagreen", "olivedrab")
+
+NMDS.plot<-ordiplot(NMDS.Lil, type="n", main=substitute(paste(italic("Lilipuna"))), cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.4, 0.4), xlim=c(-0.6, 0.5))
+axis(side = 1, labels = FALSE, tck = -0.03)
+abline(h = 0, lty = "dotted")
+abline(v = 0, lty = "dotted")
+points(NMDS.plot, "sites", cex=0.8, pch=16, col=MDS.colors)
+ordiellipse(NMDS.plot, groups=NMDS.df.Lil$Period:NMDS.df.Lil$dom, draw="polygon", col=MDS.colors, alpha=150, kind="sd", conf=0.8)
+legend("topright", legend=MDS.lev.leg, inset=c(0.54, -0.02), x.intersp=0.8, y.intersp=0.4, cex=0.6, pch=16, col=MDS.colors, pt.cex=0.7, bty="n")
+par.new=T
+plot(vars, p.max=0.05, cex=0.8, lwd=1)
+
+###### plot it
+MDS.levels<-levels(NMDS.df.R14$Period:NMDS.df.R14$dom)
+
+NMDS.plot<-ordiplot(NMDS.R14, type="n", main=substitute(paste(italic("Reef 14"))), cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.4, 0.4), xlim=c(-0.6, 0.5))
+axis(side = 1, labels = FALSE, tck = -0.03)
+abline(h = 0, lty = "dotted")
+abline(v = 0, lty = "dotted")
+points(NMDS.plot, "sites", cex=0.8, pch=16, col=MDS.colors)
+ordiellipse(NMDS.plot, groups=NMDS.df.R14$Period:NMDS.df.R14$dom, draw="polygon", col=MDS.colors, alpha=150, kind="sd", conf=0.8)
+par.new=T
+plot(vars, p.max=0.05, cex=0.8, lwd=1)
+
+dev.copy(pdf, "figures/NMDS_LilR14.pdf", height=7, width=5, useDingbats=FALSE)
+dev.off() 
+
+```
+
 
 ```{r, eval=FALSE}
 ### symbiodinium data
