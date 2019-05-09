@@ -1118,7 +1118,252 @@ dev.copy(pdf, "figures/NMDS_LilR14.pdf", height=7, width=5, useDingbats=FALSE)
 dev.off() 
 
 ```
+```{r, eval=FALSE}
+# for 4 panel NMDS separated by site and B-R periods
+## build Manova dataframes 
 
+########## Lilipuna 2014-2015
+## Lilipuna only #######
+
+## all data with lilupuna only
+Manova.Lil.lev.dat<-df.MV.noNA %>% # "lev.dat" has levels and data
+  filter(Site=="Lilipuna") 
+
+# lilipuna bleaching-recovery1
+Manova.Lil.BR1.lev.dat<-Manova.Lil.lev.dat %>% # "BR1" is bleaching and recovery 2014-2015
+  filter(Period=="2014 Oct" | Period=="2015 Feb") 
+
+# lilipuna bleaching-recovery2
+Manova.Lil.BR2.lev.dat<-Manova.Lil.lev.dat %>% # "BR2" is bleachigng and recovery 2014-2015
+  filter(Period=="2015 Oct" | Period=="2016 Feb") 
+
+Manova.Lil.BR1.lev.dat$Period<-droplevels(Manova.Lil.BR1.lev.dat$Period)
+Manova.Lil.BR1.lev.dat$Site<-droplevels(Manova.Lil.BR1.lev.dat$Site)
+
+Manova.Lil.BR2.lev.dat$Period<-droplevels(Manova.Lil.BR2.lev.dat$Period)
+Manova.Lil.BR2.lev.dat$Site<-droplevels(Manova.Lil.BR2.lev.dat$Site)
+
+# BR1 just data (sans factors)
+Manova.Lil.BR1.dat<-Manova.Lil.BR1.lev.dat %>% 
+  select(-c(Period, Status, Site, dom)) #  sans factors
+
+# BR2 just data (sans factors)
+Manova.Lil.BR2.dat<-Manova.Lil.BR2.lev.dat %>% 
+  select(-c(Period, Status, Site, dom)) #  sans factors
+
+
+############################
+############### 
+##  Run BR1 2014-2015 MANOVA Lilipuna
+MVA.Lilipuna.BR1<-adonis2(Manova.Lil.BR1.dat~Period*dom, data=Manova.Lil.BR1.lev.dat,permutations=1000, 
+                method="bray", sqrt.dist = TRUE)
+
+NMDS.Lil.BR1<-metaMDS(Manova.Lil.BR1.dat, distane='bray', k=2, trymax=100) 
+stressplot(NMDS.Lil.BR1)
+
+factor.df.Lil.BR1<-Manova.Lil.BR1.lev.dat %>% 
+  select(c(Period, Site, Status, dom)) # get just the factors
+
+NMDS.df.Lil.BR1<-data.frame(x=NMDS.Lil.BR1$point[,1], y=NMDS.Lil.BR1$point[,2], 
+                    Period=as.factor(factor.df.Lil.BR1[,1]),
+                    Site=as.factor(factor.df.Lil.BR1[,2]),
+                    Status=as.factor(factor.df.Lil.BR1[,3]),
+                    dom=as.factor(factor.df.Lil.BR1[,4]))
+
+colnames(NMDS.df.Lil.BR1)[1:2]<-c("MDS1", "MDS2")
+
+# vectors for variables
+vars.Lil.BR1<-envfit(NMDS.Lil.BR1, Manova.Lil.BR1.dat, permu=999)
+#scores(vars, "vectors")
+
+
+
+#########################
+########  Run 2015-2016 MANOVA Lilipuna
+MVA.Lilipuna.BR2<-adonis2(Manova.Lil.BR2.dat~Period*dom, data=Manova.Lil.BR2.lev.dat,permutations=1000, 
+                method="bray", sqrt.dist = TRUE)
+
+NMDS.Lil.BR2<-metaMDS(Manova.Lil.BR2.dat, distane='bray', k=2, trymax=100) 
+stressplot(NMDS.Lil.BR2)
+
+factor.df.Lil.BR2<-Manova.Lil.BR2.lev.dat %>% 
+  select(c(Period, Site, Status, dom)) # get just the factors
+
+NMDS.df.Lil.BR2<-data.frame(x=NMDS.Lil.BR2$point[,1], y=NMDS.Lil.BR2$point[,2], 
+                    Period=as.factor(factor.df.Lil.BR2[,1]),
+                    Site=as.factor(factor.df.Lil.BR2[,2]),
+                    Status=as.factor(factor.df.Lil.BR2[,3]),
+                    dom=as.factor(factor.df.Lil.BR2[,4]))
+
+colnames(NMDS.df.Lil.BR2)[1:2]<-c("MDS1", "MDS2")
+
+# vectors for variables
+vars.Lil.BR2<-envfit(NMDS.Lil.BR2, Manova.Lil.BR2.dat, permu=999)
+#scores(vars, "vectors")
+
+
+########## ########## ########## ########## 
+########## Reef 14 2014-2015
+## Reef 14 only #######
+
+## all data with Reef14 only
+Manova.R14.lev.dat<-df.MV.noNA %>% # "lev.dat" has levels and data
+  filter(Site=="Reef 14") 
+
+# Reef 14 bleaching-recovery1
+Manova.R14.BR1.lev.dat<-Manova.R14.lev.dat %>% # "BR1" is bleachigng and recovery 2014-2015
+  filter(Period=="2014 Oct" | Period=="2015 Feb") 
+
+# Reef 14 bleaching-recovery2
+Manova.R14.BR2.lev.dat<-Manova.R14.lev.dat %>% # "BR2" is bleachigng and recovery 2014-2015
+  filter(Period=="2015 Oct" | Period=="2016 Feb") 
+
+Manova.R14.BR1.lev.dat$Period<-droplevels(Manova.R14.BR1.lev.dat$Period)
+Manova.R14.BR1.lev.dat$Site<-droplevels(Manova.R14.BR1.lev.dat$Site)
+
+Manova.R14.BR2.lev.dat$Period<-droplevels(Manova.R14.BR2.lev.dat$Period)
+Manova.R14.BR2.lev.dat$Site<-droplevels(Manova.R14.BR2.lev.dat$Site)
+
+# BR1 just data (sans factors)
+Manova.R14.BR1.dat<-Manova.R14.BR1.lev.dat %>% 
+  select(-c(Period, Status, Site, dom)) #  sans factors
+
+# BR2 just data (sans factors)
+Manova.R14.BR2.dat<-Manova.R14.BR2.lev.dat %>% 
+  select(-c(Period, Status, Site, dom)) #  sans factors
+
+
+############################# 
+############### 
+##  Run BR1 2014-2015 MANOVA Reef 14
+MVA.R14.BR1<-adonis2(Manova.R14.BR1.dat~Period*dom, data=Manova.R14.BR1.lev.dat,permutations=1000, 
+                method="bray", sqrt.dist = TRUE)
+
+NMDS.R14.BR1<-metaMDS(Manova.R14.BR1.dat, distane='bray', k=2, trymax=100) 
+stressplot(NMDS.R14.BR1)
+
+factor.df.R14.BR1<-Manova.R14.BR1.lev.dat %>% 
+  select(c(Period, Site, Status, dom)) # get just the factors
+
+NMDS.df.R14.BR1<-data.frame(x=NMDS.R14.BR1$point[,1], y=NMDS.R14.BR1$point[,2], 
+                    Period=as.factor(factor.df.R14.BR1[,1]),
+                    Site=as.factor(factor.df.R14.BR1[,2]),
+                    Status=as.factor(factor.df.R14.BR1[,3]),
+                    dom=as.factor(factor.df.R14.BR1[,4]))
+
+colnames(NMDS.df.R14.BR1)[1:2]<-c("MDS1", "MDS2")
+
+# vectors for variables
+vars.R14.BR1<-envfit(NMDS.R14.BR1, Manova.R14.BR1.dat, permu=999)
+#scores(vars, "vectors")
+
+
+
+############################# 
+########  Run 2015-2016 MANOVA R14
+MVA.R14.BR2<-adonis2(Manova.R14.BR2.dat~Period*dom, data=Manova.R14.BR2.lev.dat,permutations=1000, 
+                method="bray", sqrt.dist = TRUE)
+
+NMDS.R14.BR2<-metaMDS(Manova.R14.BR2.dat, distane='bray', k=2, trymax=100) 
+stressplot(NMDS.R14.BR2)
+
+factor.df.R14.BR2<-Manova.R14.BR2.lev.dat %>% 
+  select(c(Period, Site, Status, dom)) # get just the factors
+
+NMDS.df.R14.BR2<-data.frame(x=NMDS.R14.BR2$point[,1], y=NMDS.R14.BR2$point[,2], 
+                    Period=as.factor(factor.df.R14.BR2[,1]),
+                    Site=as.factor(factor.df.R14.BR2[,2]),
+                    Status=as.factor(factor.df.R14.BR2[,3]),
+                    dom=as.factor(factor.df.R14.BR2[,4]))
+
+colnames(NMDS.df.R14.BR2)[1:2]<-c("MDS1", "MDS2")
+
+# vectors for variables
+vars.R14.BR2<-envfit(NMDS.R14.BR2, Manova.R14.BR2.dat, permu=999)
+#scores(vars, "vectors")
+```
+
+```{r, 4 panel NMDS plots}
+# for exporting 4 panel plot
+par(mfcol=c(2,2), mar=c(4,4,1,1))
+
+
+###################################### plots
+###################################### start with Lilipuna 2014-2015, then 2015-2016... then Reef 14
+
+############### Lilipuna 2014-2015
+
+MDS.levels<-levels(NMDS.df.Lil.BR1$Period:NMDS.df.Lil.BR1$dom)
+MDS.lev.leg<-c("C-Bleach '14", "D-Bleach '14", "C-Recov '15", "D-Recov '15")
+MDS.colors<-c("lightpink", "slategray1", "firebrick2", "dodgerblue2")
+
+NMDS.plot<-ordiplot(NMDS.Lil.BR1, type="n", main=substitute(paste("Lilipuna-CRIMP-1")), cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.4, 0.4), xlim=c(-0.6, 0.5), xaxt="n", xlab="")
+axis(side = 1, labels = FALSE, tck = -0.05)
+abline(h = 0, lty = "dotted")
+abline(v = 0, lty = "dotted")
+points(NMDS.plot, "sites", cex=0.8, pch=16, col=MDS.colors)
+ordiellipse(NMDS.plot, groups=NMDS.df.Lil.BR1$Period:NMDS.df.Lil.BR1$dom, draw="polygon", col=MDS.colors, alpha=150, kind="sd", conf=0.8)
+legend("topright", legend=MDS.lev.leg, inset=c(0.58, -0.02), x.intersp=0.8, y.intersp=0.5, cex=0.7, pch=16, col=MDS.colors, pt.cex=0.9, bty="n")
+par.new=T
+plot(vars.Lil.BR1, col="black", p.max=0.05, cex=0.8, lwd=1)
+
+
+############### Lilipuna 2015-2016
+
+MDS.levels<-levels(NMDS.df.Lil.BR2$Period:NMDS.df.Lil.BR2$dom)
+MDS.lev.leg<-c("C-Bleach '15", "D-Bleach '15", "C-Recov '16", "D-Recov '16")
+MDS.colors<-c("lightpink", "slategray1", "firebrick2", "dodgerblue2")
+
+NMDS.plot<-ordiplot(NMDS.Lil.BR2, type="n", cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.4, 0.4), xlim=c(-0.6, 0.5))
+axis(side = 2, labels = FALSE, tck = -0.05)
+abline(h = 0, lty = "dotted")
+abline(v = 0, lty = "dotted")
+points(NMDS.plot, "sites", cex=0.8, pch=16, col=MDS.colors)
+ordiellipse(NMDS.plot, groups=NMDS.df.Lil.BR2$Period:NMDS.df.Lil.BR2$dom, draw="polygon", col=MDS.colors, alpha=150, kind="sd", conf=0.8)
+legend("topright", legend=MDS.lev.leg, inset=c(0.58, -0.02), x.intersp=0.8, y.intersp=0.5, cex=0.7, pch=16, col=MDS.colors, pt.cex=0.9, bty="n")
+par.new=T
+plot(vars.Lil.BR2, col="black", p.max=0.05, cex=0.8, lwd=1)
+
+
+############### ############### ############### ############### ############### 
+############### Reef 14 2014-2015
+
+MDS.levels<-levels(NMDS.df.R14.BR1$Period:NMDS.df.R14.BR1$dom)
+MDS.lev.leg<-c("C-Bleach '14", "D-Bleach '14", "C-Recov '15", "D-Recov '15")
+MDS.colors<-c("lightpink", "slategray1", "firebrick2", "dodgerblue2")
+
+NMDS.plot<-ordiplot(NMDS.R14.BR1, type="n", main=substitute(paste("Reef 14-CRIMP2")), cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.4, 0.4), xlim=c(-0.6, 0.5), yaxt="n", ylab="", xaxt="n", xlab="")
+axis(side = 1, labels = FALSE, tck = -0.05)
+axis(side = 2, labels = FALSE, tck = -0.05)
+abline(h = 0, lty = "dotted")
+abline(v = 0, lty = "dotted")
+points(NMDS.plot, "sites", cex=0.8, pch=16, col=MDS.colors)
+ordiellipse(NMDS.plot, groups=NMDS.df.R14.BR1$Period:NMDS.df.R14.BR1$dom, draw="polygon", col=MDS.colors, alpha=150, kind="sd", conf=0.8)
+par.new=T
+plot(vars.R14.BR1, col="black", p.max=0.05, cex=0.8, lwd=1)
+
+
+############### Reef 14 2015-2016
+
+MDS.levels<-levels(NMDS.df.R14.BR2$Period:NMDS.df.R14.BR2$dom)
+MDS.lev.leg<-c("C-Bleach '15", "D-Bleach '15", "C-Recov '16", "D-Recov '16")
+MDS.colors<-c("lightpink", "slategray1", "firebrick2", "dodgerblue2")
+
+NMDS.plot<-ordiplot(NMDS.R14.BR2, type="n", cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.4, 0.4), xlim=c(-0.6, 0.5), yaxt="n", ylab="")
+axis(side = 2, labels = FALSE, tck = -0.05)
+abline(h = 0, lty = "dotted")
+abline(v = 0, lty = "dotted")
+points(NMDS.plot, "sites", cex=0.8, pch=16, col=MDS.colors)
+ordiellipse(NMDS.plot, groups=NMDS.df.R14.BR2$Period:NMDS.df.R14.BR2$dom, draw="polygon", col=MDS.colors, alpha=150, kind="sd", conf=0.8)
+par.new=T
+plot(vars.R14.BR2, col="black", p.max=0.05, cex=0.8, lwd=1)
+
+
+
+dev.copy(pdf, "figures/4panel_NMDS.pdf", height=6, width=7, useDingbats=FALSE)
+dev.off() 
+
+```
 
 ```{r, eval=FALSE}
 ### symbiodinium data
