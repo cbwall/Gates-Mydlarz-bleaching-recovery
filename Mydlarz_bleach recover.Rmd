@@ -960,7 +960,7 @@ NMDS.df.Lil<-data.frame(x=NMDS.Lil$point[,1], y=NMDS.Lil$point[,2],
 colnames(NMDS.df.Lil)[1:2]<-c("MDS1", "MDS2")
 
 # vectors for variables
-vars<-envfit(NMDS.Lil, Manova.Lil.dat, permu=999)
+vars.Lil<-envfit(NMDS.Lil, Manova.Lil.dat, permu=999)
 #scores(vars, "vectors")
 
 ###### plot it
@@ -1005,13 +1005,7 @@ points(NMDS.plot, "sites", cex=0.8, pch=16, col=MDS.colors)
 ordiellipse(NMDS.plot, groups=NMDS.df.Lil$Period:NMDS.df.Lil$dom, draw="polygon", col=MDS.colors, alpha=150, kind="sd", conf=0.8)
 legend("topright", legend=MDS.lev.leg, inset=c(0.16, -0.02), x.intersp=0.8, cex=0.6, pch=16, col=MDS.colors, pt.cex=0.7, bty="n")
 par.new=T
-plot(vars, p.max=0.05, cex=0.8, lwd=1)
-
-dev.copy(pdf, "figures/NMDS_Lil.pdf", height=4, width=5, useDingbats=FALSE)
-dev.off() 
-
-
-
+plot(vars.Lil, p.max=0.05, cex=0.8, lwd=1)
 
 
 ######## Reef 14 only #######
@@ -1041,7 +1035,7 @@ NMDS.df.R14<-data.frame(x=NMDS.R14$point[,1], y=NMDS.R14$point[,2],
 colnames(NMDS.df.R14)[1:2]<-c("MDS1", "MDS2")
 
 # vectors for variables
-vars<-envfit(NMDS.R14, Manova.R14.dat, permu=999)
+vars.R14<-envfit(NMDS.R14, Manova.R14.dat, permu=999)
 #scores(vars, "vectors")
 
 ###### plot it
@@ -1084,14 +1078,12 @@ points(NMDS.plot, "sites", cex=0.8, pch=16, col=MDS.colors)
 ordiellipse(NMDS.plot, groups=NMDS.df.R14$Period:NMDS.df.R14$dom, draw="polygon", col=MDS.colors, alpha=150, kind="sd", conf=0.8)
 legend("topright", legend=MDS.lev.leg, inset=c(-0.05, -0.02), x.intersp=0.8, cex=0.6, pch=16, col=MDS.colors, pt.cex=0.7, bty="n")
 par.new=T
-plot(vars, p.max=0.05, cex=0.8, lwd=1)
-
-dev.copy(pdf, "figures/NMDS_R14.pdf", height=4, width=5, useDingbats=FALSE)
-dev.off() 
+plot(vars.R14, p.max=0.05, cex=0.8, lwd=1)
 
 ```
-```{r}
 
+```{r, eval=FALSE}
+# for exporting 2 panel plot
 par(mfcol=c(2,1), mar=c(4,4,1,1))
 
 
@@ -1108,7 +1100,7 @@ points(NMDS.plot, "sites", cex=0.8, pch=16, col=MDS.colors)
 ordiellipse(NMDS.plot, groups=NMDS.df.Lil$Period:NMDS.df.Lil$dom, draw="polygon", col=MDS.colors, alpha=150, kind="sd", conf=0.8)
 legend("topright", legend=MDS.lev.leg, inset=c(0.54, -0.02), x.intersp=0.8, y.intersp=0.4, cex=0.6, pch=16, col=MDS.colors, pt.cex=0.7, bty="n")
 par.new=T
-plot(vars, p.max=0.05, cex=0.8, lwd=1)
+plot(vars.Lil, p.max=0.05, cex=0.8, lwd=1)
 
 ###### plot it
 MDS.levels<-levels(NMDS.df.R14$Period:NMDS.df.R14$dom)
@@ -1120,7 +1112,7 @@ abline(v = 0, lty = "dotted")
 points(NMDS.plot, "sites", cex=0.8, pch=16, col=MDS.colors)
 ordiellipse(NMDS.plot, groups=NMDS.df.R14$Period:NMDS.df.R14$dom, draw="polygon", col=MDS.colors, alpha=150, kind="sd", conf=0.8)
 par.new=T
-plot(vars, p.max=0.05, cex=0.8, lwd=1)
+plot(vars.R14, p.max=0.05, cex=0.8, lwd=1)
 
 dev.copy(pdf, "figures/NMDS_LilR14.pdf", height=7, width=5, useDingbats=FALSE)
 dev.off() 
