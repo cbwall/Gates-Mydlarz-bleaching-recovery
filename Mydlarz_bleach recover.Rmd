@@ -402,18 +402,18 @@ axis.labels<-c("Feb 2014 \nPre-Bleaching", "Oct 2014 \nBleaching","Feb 2015 \nRe
 
 
 Fig.formatting<-(theme_classic()) +
-  theme(text=element_text(size=10),
+  theme(text=element_text(size=6),
   axis.line=element_blank(),
   legend.text.align = 0,
-  legend.text=element_text(size=10),
+  legend.text=element_text(size=5),
     #legend.title = element_blank(),
       panel.border = element_rect(fill=NA, colour = "black", size=1),
       aspect.ratio=1, 
-    axis.ticks.length=unit(0.25, "cm"),
+    axis.ticks.length=unit(0.2, "cm"),
     axis.text.y=element_text(
-      margin=unit(c(0.5, 0.5, 0.5, 0.5), "cm"), colour="black", size=10), 
+      margin=unit(c(0.5, 0.5, 0.5, 0.5), "cm"), colour="black", size=6), 
     axis.text.x=element_text(
-      margin=unit(c(0.5, 0.5, 0.5, 0.5), "cm"), colour="black", size=8)) +
+      margin=unit(c(0.5, 0.5, 0.5, 0.5), "cm"), colour="black", size=6)) +
   theme(legend.key.size = unit(0.4, "cm")) +
   theme(aspect.ratio=1) +
   theme(panel.spacing=unit(c(0, 0, 0, 0), "cm"))
@@ -433,9 +433,9 @@ fig.df.phys$int<-factor(fig.df.phys$int, levels=c("Lilipuna.Pre.C", "Lilipuna.Pr
 ```{r}
 ###################
 # zoox 
-zoox.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=zoox/10^6, group=int, color=int)) + geom_errorbar(aes(ymin=zoox/10^6-zoox.SE/10^6, ymax=zoox/10^6+zoox.SE/10^6), size=.8, width=0, position=pd) +
-  geom_line(position=pd, size=.8) +
-  geom_point(position=pd, size=3, pch=19) +
+zoox.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=zoox/10^6, group=int, color=int)) + geom_errorbar(aes(ymin=zoox/10^6-zoox.SE/10^6, ymax=zoox/10^6+zoox.SE/10^6), size=.6, width=0, position=pd) +
+  geom_line(position=pd, size=.6) +
+  geom_point(position=pd, size=1, pch=19) +
   coord_cartesian(ylim=c(0, 3)) +
   ylab(expression(paste(~italic("Symbiodinium") ~(10^6~cells~cm^-2), sep=""))) +
   scale_color_manual(values=c(color.scheme),
@@ -453,9 +453,9 @@ zoox.fig
 **Chlorophyll *a* cm-2**
 ```{r}
 ########## chla cm2 ############
-chla.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=chla, group=int, color=int)) + geom_errorbar(aes(ymin=chla-chla.SE, ymax=chla+chla.SE), size=.8, width=0, position=pd) +
-  geom_line(position=pd, size=.8) +
-  geom_point(position=pd, size=3) +
+chla.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=chla, group=int, color=int)) + geom_errorbar(aes(ymin=chla-chla.SE, ymax=chla+chla.SE), size=.6, width=0, position=pd) +
+  geom_line(position=pd, size=.6) +
+  geom_point(position=pd, size=1) +
   coord_cartesian(ylim=c(0, 8)) +
   ylab(expression(paste("Chlorophyll", ~italic("a"), ~(mu*g~cm^-2), sep=""))) +
   scale_color_manual(values=c(color.scheme),
@@ -471,9 +471,9 @@ chla.fig
 **Chlorophyll *a* cell-1**
 ```{r, message=FALSE}
 ########## chla cell ############
-chlacell.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=chlacell, group=int, color=int)) + geom_errorbar(aes(ymin=chlacell-chlacell.SE, ymax=chlacell+chlacell.SE), size=.8, width=0, position=pd) +
-  geom_line(position=pd, size=.8) +
-  geom_point(position=pd, size=3) +
+chlacell.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=chlacell, group=int, color=int)) + geom_errorbar(aes(ymin=chlacell-chlacell.SE, ymax=chlacell+chlacell.SE), size=.6, width=0, position=pd) +
+  geom_line(position=pd, size=.6) +
+  geom_point(position=pd, size=1) +
   coord_cartesian(ylim=c(0, 8)) +
   ylab(expression(paste("Chlorophyll", ~italic("a"), ~(pg~cell^-1), sep=""))) +
   scale_color_manual(values=c(color.scheme),
@@ -490,9 +490,9 @@ chlacell.fig
 ```{r}
 
 ########## protein ############
-prot.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=prot, group=int, color=int)) + geom_errorbar(aes(ymin=prot-prot.SE, ymax=prot+prot.SE), size=.8, width=0, position=pd) +
-  geom_line(position=pd, size=.8) +
-  geom_point(position=pd, size=3) +
+prot.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=prot, group=int, color=int)) + geom_errorbar(aes(ymin=prot-prot.SE, ymax=prot+prot.SE), size=.6, width=0, position=pd) +
+  geom_line(position=pd, size=.6) +
+  geom_point(position=pd, size=1) +
   coord_cartesian(ylim=c(0, 1)) +
   ylab(expression(paste("Protein", ~(mg~cm^-2), sep=""))) +
   scale_color_manual(values=c(color.scheme),
@@ -509,9 +509,9 @@ prot.fig
 ```{r}
 
 ########## AFDW ############
-AFDW.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=AFDW, group=int, color=int)) + geom_errorbar(aes(ymin=AFDW-AFDW.SE, ymax=AFDW+AFDW.SE), size=.8, width=0, position=pd) +
-  geom_line(position=pd, size=.8) +
-  geom_point(position=pd, size=3) +
+AFDW.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=AFDW, group=int, color=int)) + geom_errorbar(aes(ymin=AFDW-AFDW.SE, ymax=AFDW+AFDW.SE), size=.6, width=0, position=pd) +
+  geom_line(position=pd, size=.6) +
+  geom_point(position=pd, size=1) +
   coord_cartesian(ylim=c(0, 60)) +
   ylab(expression(paste("Total biomass", ~(mg~cm^-2), sep=""))) +
   scale_color_manual(values=c(color.scheme),
@@ -570,9 +570,9 @@ fig.df.immuno.comp$int<-factor(fig.df.immuno.comp$int, levels=c("Lilipuna.Pre.un
 
 
 ########## Prophenoloxidase (PPO) ############
-PPO.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=PPO, group=int, color=int)) + geom_errorbar(aes(ymin=PPO-PPO.SE, ymax=PPO+PPO.SE), size=.8, width=0, position=pd) +
-  geom_line(position=pd, size=.8) +
-  geom_point(position=pd, size=3) +
+PPO.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=PPO, group=int, color=int)) + geom_errorbar(aes(ymin=PPO-PPO.SE, ymax=PPO+PPO.SE), size=.6, width=0, position=pd) +
+  geom_line(position=pd, size=.6) +
+  geom_point(position=pd, size=1) +
   coord_cartesian(ylim=c(0, 3)) +
   ylab(expression(paste("PO Activity", ~(Delta~Abs~"490nm"~min^-1~mg~prot^-1), sep=""))) +
   scale_color_manual(values=c(color.scheme2),
@@ -592,14 +592,14 @@ MEL.labSE<-aggregate(MEL~Site+Status+Period,data=data, std.error)
 MEL.df<-cbind(MEL.lab, MEL.labSE[c(4,0)]); colnames(MEL.df[,4:5])<-c("MEL", "MEL.labSE")
 MEL.df$Period<-factor(MEL.df$Period, levels=c("2014 Field.Feb", "2014 Lab", "2014 Oct", "2015 Feb", "2015 Oct", "2016 Feb"))
 
-plot(MEL~Period, data=MEL.df, cex.axis=0.8)
+#plot(MEL~Period, data=MEL.df, cex.axis=0.8)
 #dev.copy(pdf,"Figures/MEL.all.time.pdf", height=5, width=7, encod="MacRoman")
 #dev.off
 
 ######## Melanin (MEL) #############
-MEL.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=MEL, group=int, color=int)) + geom_errorbar(aes(ymin=MEL-MEL.SE, ymax=MEL+MEL.SE), size=.8, width=0, position=pd) +
-  geom_line(position=pd, size=.8) +
-  geom_point(position=pd, size=3) +
+MEL.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=MEL, group=int, color=int)) + geom_errorbar(aes(ymin=MEL-MEL.SE, ymax=MEL+MEL.SE), size=.6, width=0, position=pd) +
+  geom_line(position=pd, size=.6) +
+  geom_point(position=pd, size=1) +
   coord_cartesian(ylim=c(0, 0.02)) +
   ylab(expression(paste("MEL", ~(Abs~"490nm"~mg~tissue^-1), sep="")))+
   scale_color_manual(values=c(color.scheme2),
@@ -611,16 +611,16 @@ MEL.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=MEL, group=int, color=i
   Fig.formatting
 MEL.fig
 
-ggsave("Figures/MEL.field.pdf", height=5, width=7, encod="MacRoman")
+#ggsave("Figures/MEL.field.pdf", height=5, width=7, encod="MacRoman")
 ```
 
 **Peroxidase (POX)**
 ```{r}
 
 ########## Peroxidase (POX) ##############
-POX.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=POX, group=int, color=int)) + geom_errorbar(aes(ymin=POX-POX.SE, ymax=POX+POX.SE), size=.8, width=0, position=pd) +
-  geom_line(position=pd, size=.8) +
-  geom_point(position=pd, size=3) +
+POX.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=POX, group=int, color=int)) + geom_errorbar(aes(ymin=POX-POX.SE, ymax=POX+POX.SE), size=.6, width=0, position=pd) +
+  geom_line(position=pd, size=.6) +
+  geom_point(position=pd, size=1) +
   coord_cartesian(ylim=c(0, 1.5)) +
   ylab(expression(paste("POX activity", ~(Delta~Abs~"470nm"~min^-1~mg~prot^-1), sep=""))) +
   scale_color_manual(values=c(color.scheme2),
@@ -637,9 +637,9 @@ POX.fig
 ```{r}
 
 ###### Catalase (CAT) ########
-CAT.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=CAT, group=int, color=int)) + geom_errorbar(aes(ymin=CAT-CAT.SE, ymax=CAT+CAT.SE), size=.8, width=0, position=pd) +
-  geom_line(position=pd, size=.8) +
-  geom_point(position=pd, size=3) +
+CAT.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=CAT, group=int, color=int)) + geom_errorbar(aes(ymin=CAT-CAT.SE, ymax=CAT+CAT.SE), size=.6, width=0, position=pd) +
+  geom_line(position=pd, size=.6) +
+  geom_point(position=pd, size=1) +
   coord_cartesian(ylim=c(0, 800)) +
   ylab(expression(paste("CAT activity", ~(Abs~"490nm"~mg~tissue^-1), sep="")))+
   scale_color_manual(values=c(color.scheme2),
@@ -657,9 +657,9 @@ CAT.fig
 
 
 ######### Superoxide dismutase (SOD) ########
-SOD.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=SOD/10^3, group=int, color=int)) + geom_errorbar(aes(ymin=SOD/10^3-SOD.SE/10^3, ymax=SOD/10^3+SOD.SE/10^3), size=.8, width=0, position=pd) +
-  geom_line(position=pd, size=.8) +
-  geom_point(position=pd, size=3) +
+SOD.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=SOD/10^3, group=int, color=int)) + geom_errorbar(aes(ymin=SOD/10^3-SOD.SE/10^3, ymax=SOD/10^3+SOD.SE/10^3), size=.6, width=0, position=pd) +
+  geom_line(position=pd, size=.6) +
+  geom_point(position=pd, size=1) +
   coord_cartesian(ylim=c(0, 50)) +
   ylab(expression(paste("SOD activity", ~x10^3~mg~protein^-1, sep=""))) +
   scale_color_manual(values=c(color.scheme2),
@@ -671,6 +671,43 @@ SOD.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=SOD/10^3, group=int, co
   Fig.formatting
 SOD.fig
 ```
+```{r, univariate figures}
+
+# legend plot
+fig.legend<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=SOD, group=int, color=int)) +
+  geom_point(position=pd, size=3) +
+  coord_cartesian(ylim=c(0, 1)) +
+  scale_color_manual(values=c(color.scheme2),
+                     name= "Site:Clade",
+                     breaks=break.points.immuno,
+                     labels=legend.names.immuno) +
+  theme_void()
+fig.legend
+
+Phys.figs<-plot_grid( (zoox.fig + theme(legend.position = "none")), 
+           (chla.fig + theme(legend.position = "none")),
+           (chlacell.fig + theme(legend.position = "none")), 
+           (prot.fig+ theme(legend.position = "none")),
+           (AFDW.fig+ theme(legend.position = "none")),
+           fig.legend,
+          labels = c("a", "b", "c", "d", "e",""), ncol = 3)
+Phys.figs
+dev.copy(pdf, "figures/Phys.figs.pdf", encod="MacRoman", height=5, width=8)
+dev.off()
+
+Immuno.figs<-plot_grid( (MEL.fig + theme(legend.position = "none")),
+           (PPO.fig + theme(legend.position = "none")), 
+           (POX.fig+ theme(legend.position = "none")),
+           (CAT.fig+ theme(legend.position = "none")),
+           SOD.fig + theme(legend.position = "none"),
+           fig.legend,
+          labels = c("a", "b", "c", "d", "e",""), ncol = 3)
+Immuno.figs
+dev.copy(pdf, "figures/Immuno.figs.pdf", encod="MacRoman", height=5, width=8)
+dev.off()
+
+```
+
 
 
 ###Models  
