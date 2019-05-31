@@ -539,9 +539,12 @@ dev.off()
 
 
 ## Ecological data
+  
+### 2014-2015 B/R
 ```{r, ecology}
 setwd("data/ecology")
 
+#### Bleachign and recovery for year 1
 data<-read.csv("Reef survey 2014-2015.csv") #import your data file here
 
 ##### make a dataframe for data means by transect (= unit of replication)
@@ -662,6 +665,133 @@ Fig_2014_2015_surveys
 
 ##### save the figure and export to directory? ####
 dev.copy(pdf, "figures/year1.surveys.pdf", width=11, height=8)
+dev.off()
+```
+### year2 bleaching-recovery
+```{r, ecology}
+setwd("data/ecology")
+
+#### Bleachign and recovery for year 1
+data<-read.csv("Reef survey 2015-2016.csv") #import your data file here
+
+##### make a dataframe for data means by transect (= unit of replication)
+
+coral<-aggregate(coral.cover~Transect+Habitat+Site+Status, data=data, sum)
+healthy<-aggregate(coral.pigmented~Transect+Habitat+Site+Status, data=data, sum)
+pale<-aggregate(coral.pale~Transect+Habitat+Site+Status, data=data, sum)
+white<-aggregate(coral.white~Transect+Habitat+Site+Status, data=data, sum)
+MC<-aggregate(MC~Transect+Habitat+Site+Status, data=data, sum)
+MC.healthy<-aggregate(MC.pigmented~Transect+Habitat+Site+Status, data=data, sum)
+MC.pale<-aggregate(MC.pale~Transect+Habitat+Site+Status, data=data, sum)
+MC.white<-aggregate(MC.white~Transect+Habitat+Site+Status, data=data, sum)
+
+df<-cbind(coral, healthy[c(5,0)], pale[c(5,0)], white[c(5,0)], MC[c(5,0)], MC.healthy[c(5,0)], MC.pale[c(5,0)], MC.white[c(5,0)])
+df<-df[!(df$Habitat=="Slope"),] # remove "Slope" habitat
+df<- df %>% mutate(
+  totalcoral.bleach= coral.pale + coral.white,
+  totalMC.bleach= MC.pale + MC.white)
+
+survey.yr1<-subset(df, select = c(-coral.pale, -coral.white, -MC.pale, -MC.white))
+  
+# use "survey.yr1" to test mean and SD for YEAR 1 (2014-2015)
+# df.m + dfSE to make figures
+coral<-aggregate(coral.cover~Habitat+Site+Status, data=survey.yr1, mean)
+healthy<-aggregate(coral.pigmented~Habitat+Site+Status, data=survey.yr1, mean)
+bleached<-aggregate(totalcoral.bleach~Habitat+Site+Status, data=survey.yr1, mean)
+
+MC<-aggregate(MC~Habitat+Site+Status, data=survey.yr1, mean)
+MC.healthy<-aggregate(MC.pigmented~Habitat+Site+Status, data=survey.yr1, mean)
+MC.bleach<-aggregate(totalMC.bleach~Habitat+Site+Status, data=survey.yr1, mean)
+
+df.m<-cbind(coral, healthy[c(4,0)], bleached[c(4,0)], MC[c(4,0)], MC.healthy[c(4,0)], MC.bleach[c(4,0)])
+df.m
+
+# SD
+coralSD<-aggregate(coral.cover~+Habitat+Site+Status, data=survey.yr1, sd)
+healthySD<-aggregate(coral.pigmented~Habitat+Site+Status, data=survey.yr1, sd)
+bleachedSD<-aggregate(totalcoral.bleach~Habitat+Site+Status, data=survey.yr1, sd)
+
+MCSD<-aggregate(MC~Habitat+Site+Status, data=survey.yr1, sd)
+MC.healthySD<-aggregate(MC.pigmented~Habitat+Site+Status, data=survey.yr1, sd)
+MC.bleachSD<-aggregate(totalMC.bleach~Habitat+Site+Status, data=df, sd)
+
+dfSD<-cbind(coralSD, healthySD[c(4,0)], bleachedSD[c(4,0)], MCSD[c(4,0)], MC.healthySD[c(4,0)], MC.bleachSD[c(4,0)])
+dfSD
+
+################## start back here
+
+df.fig<-cbind(df.m, dfSD[c(4:9,0)]); colnames(df.fig) <-c("Habitat", "Site", "Status", "coral.cover", "coral.pigmented", "totalcoral.bleach", "MC", "MC.pigmented", "totalMC.bleach", "coral.SD", "coral.pigSD", "coral.blSD", "MCSD", "MC.pigSD", "MC.blSD"); df.fig
+
+#capture.output(df.fig, file="ecology summary 2014-15.csv")
+
+########################
+## color palettes ######
+########################
+
+colors<-c("gray80", "gray63")
+
+# order the factor
+df.fig$Habitat <- factor(df.fig$Habitat, c("Flat","Crest"))
+
+# all coral cover
+Fig1 <- ggplot(df.fig, aes(x=Site, y=coral.cover, fill=Habitat)) + 
+  geom_bar(stat="identity", position=position_dodge(), colour="black") +
+  geom_errorbar(aes(ymin=coral.cover-coral.SD, ymax= coral.cover+coral.SD), width=0.1,
+  position=position_dodge(.9)) +
+  xlab(expression(bold("Reef Site"))) +
+  scale_fill_manual(values=colors, breaks=c("Flat","Crest")) +
+  ylab(expression(bold(paste("coral cover")))) +
+  scale_y_continuous(limits=c(0,1),oob = rescale_none) +
+  facet_grid(.~Status)
+Fig1
+
+# bleached coral
+Fig2 <- ggplot(df.fig, aes(x=Site, y=totalcoral.bleach, fill=Habitat)) + 
+  geom_bar(stat="identity", position=position_dodge(), colour="black") +
+  geom_errorbar(aes(ymin=totalcoral.bleach-coral.blSD, ymax= totalcoral.bleach+coral.blSD), width=0.1, position=position_dodge(.9)) +
+  xlab(expression(bold("Reef Site"))) +
+  scale_fill_manual(values=colors, breaks=c("Flat","Crest")) +
+  ylab(expression(bold(paste("bleached corals")))) +
+  scale_y_continuous(limits=c(0,1),oob = rescale_none)+
+  facet_grid(.~Status)
+Fig2
+
+##############
+# MC corals
+Fig3 <- ggplot(df.fig, aes(x=Site, y=MC, fill=Habitat)) + 
+  geom_bar(stat="identity", position=position_dodge(), colour="black") +
+  geom_errorbar(aes(ymin=MC-MCSD, ymax= MC+MCSD), width=0.1,position=position_dodge(.9)) +
+  xlab(expression(bold("Reef Site"))) +
+  scale_fill_manual(values=colors, breaks=c("Flat","Crest")) +
+  ylab(expression(bold(paste(~bolditalic("M. capitata")~cover, sep="")))) +
+  scale_y_continuous(limits=c(0,1.05),oob = rescale_none)+
+  facet_grid(.~Status)
+Fig3
+
+# bleached MC coral
+Fig4 <- ggplot(df.fig, aes(x=Site, y=totalMC.bleach, fill=Habitat)) + 
+  geom_bar(stat="identity", position=position_dodge(), colour="black") +
+  geom_errorbar(aes(ymin=totalMC.bleach-MC.blSD, ymax= totalMC.bleach+MC.blSD), width=0.1, position=position_dodge(.9)) +
+  xlab(expression(bold("Reef Site"))) +
+  scale_fill_manual(values=colors, breaks=c("Flat","Crest")) +
+  ylab(expression(bold(paste(~bolditalic("M. capitata")~bleached, sep="")))) +
+  scale_y_continuous(limits=c(0,1),oob = rescale_none)+
+  facet_grid(.~Status)
+Fig4
+
+############
+############
+#export figures
+library("cowplot")
+
+#############
+# color figures all corals
+Fig_2015_2016_surveys<-plot_grid(Fig1, Fig2, Fig3, Fig4,
+     labels=c('A', 'B', 'C', 'D'), label_size=15, hjust=-6, vjust= 3, ncol=2, nrow=2);
+Fig_2015_2016_surveys
+
+##### save the figure and export to directory? ####
+dev.copy(pdf, "figures/year2.surveys.pdf", width=11, height=8)
 dev.off()
 ```
 
