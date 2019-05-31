@@ -542,10 +542,8 @@ dev.off()
   
 ### 2014-2015 B/R
 ```{r, ecology}
-setwd("data/ecology")
-
 #### Bleachign and recovery for year 1
-data<-read.csv("Reef survey 2014-2015.csv") #import your data file here
+data<-read.csv("data/ecology/Reef survey 2014-2015.csv") #import your data file here
 
 ##### make a dataframe for data means by transect (= unit of replication)
 
@@ -668,11 +666,10 @@ dev.copy(pdf, "figures/year1.surveys.pdf", width=11, height=8)
 dev.off()
 ```
 ### year2 bleaching-recovery
-```{r, ecology}
-setwd("data/ecology")
+```{r, ecology 2}
 
-#### Bleachign and recovery for year 1
-data<-read.csv("Reef survey 2015-2016.csv") #import your data file here
+#### Bleaching and recovery for year 1
+data<-read.csv("data/ecology/Reef survey 2015-2016.csv") #import your data file here
 
 ##### make a dataframe for data means by transect (= unit of replication)
 
