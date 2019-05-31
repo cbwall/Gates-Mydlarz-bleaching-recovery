@@ -12,7 +12,7 @@ output:
     toc: yes
     toc_depth: '4'
 ---
-```{r setup, message=FALSE, warning=FALSE, ECHO=FALSE}
+```{r setup, message=FALSE, warning=FALSE, echo=FALSE}
 ## load packages
 library(lmerTest)
 library(lmtest)
@@ -349,23 +349,9 @@ max.temp<-aggregate(temp~reef, data=test.temp, max)
 temps<-cbind(Lil.tempmean.all, Rf14.tempmean.all[c(0,2)]); colnames(temps)<-c("Date", "Lil.temp", "Rf14.temp")
 temps$temp.diff<-temps$Lil.temp-temps$Rf14.temp
 
-plot(temps$temp.diff~temps$Date, pch=21, cex=1, xaxt="n", xlab="Date", ylab="Temperature (°C)", main="Differences in daily mean temperature at Lilipuna relative to Reef 14")
+plot(temps$temp.diff~temps$Date, pch=21, cex=1, ylim=c(-2,2), xaxt="n", xlab="Date", ylab="Temperature (°C)", main="Differences in daily mean temperature at Lilipuna relative to Reef 14", cex.main=0.7)
 axis.Date(1, at=seq(min(temps$Date), max(temps$Date), by="1 mon"), format="%b '%y")
 abline(0,0, lty=2, lwd=2, col="red")
-
-
-## are the ranges that different?
-# combined dataframes
-Rf.14.ranges<-rbind(Rf14_range1[,c(1,4)], Rf14_range2[,c(1,4)],Rf14_range3[,c(1,4)],Rf14_range4[,c(1,4)], Rf14_range5[,c(1,4)])
-
-Lil.ranges<-rbind(Lil_range1[,c(1,4)], Lil_range2[,c(1,4)],Lil_range4[,c(1,4)], Lil_range5[,c(1,4)]); head(Lil.ranges)
-
-
-plot(Rf.14.ranges$range~Rf.14.ranges$Date, pch=21, cex=1, xaxt="n", xlab="Date", ylab="Temperature (°C)", main="Daily temperature variance at Lilipuna and Reef 14")
-axis.Date(1, at=seq(min(temps$Date), max(temps$Date), by="1 mon"), format="%b '%y")
-with(points(Lil.ranges$range~Lil.ranges$Date, pch=19, cex=0.5, xaxt="n", col="red"))
-legend("topright", legend=c("Reef 14", "Lilipuna"), col=c("black", "red"), lwd=1,inset=c(-0.1, -0.1), pch=19, cex=1, bty="n", x.intersp=0.4, y.intersp=0.7)
-
 ```
   
 *Temp plot*
@@ -374,6 +360,8 @@ legend("topright", legend=c("Reef 14", "Lilipuna"), col=c("black", "red"), lwd=1
 # plot daily temp range for each site
 #######################
 #######################
+par(mfrow=c(1,1), mar=c(2,3,1,1), mgp=c(2,0.5,0))
+
 k=1; lwd=1 # k-day moving averages
 plot(mean ~ Date, TIMESPAN_mean, type="n", ylab="Temp. (°C) range", ylim=c(0, 3), xaxt="n", xlab="")
 mtext(expression(bold("A")), 2, adj=4.5, las=1, padj=-8)
@@ -577,9 +565,6 @@ with(na.omit(data.frame(date=Rf14.L3$Date, dli=rollmean(Rf14.L3$dli, k, fill=NA)
 with(na.omit(data.frame(date=Rf14.L4$Date, dli=rollmean(Rf14.L4$dli, k, fill=NA))), lines(date, dli, col=reefcols[1], lwd=lwd))
 with(na.omit(data.frame(date=Rf14.L5$Date, dli=rollmean(Rf14.L5$dli, k, fill=NA))), lines(date, dli, col=reefcols[1], lwd=lwd))
 
-```
-
-
 ## DAILY INTEGRATED LIGHT
 # Light data dli
 # Lil.PAR1-2,4-5  and Rf14.PAR1-5
@@ -592,8 +577,8 @@ test.light<- rbind(
 lmod1<-lmer(dli~reef + (1|date), data=test.light)
 Anova(lmod1, type=2)
 lsmeans(lmod1, "reef", contr="pairwise")
-
 ```
+
 
 ## Ecological data
 ```{r, ecology}
@@ -610,10 +595,6 @@ Raw data from physiological assessments is imported and normalized according to 
 ###########################################################################
 ## data period: October 2014, February 2015, October 2015, February 2016 ##
 ###########################################################################
-
-# working directory
-getwd()
-rm(list=ls())
 
 ### data file
 # all lab data from all time points (physio and immuno, PLUS color analysis)
@@ -680,14 +661,16 @@ df<-df[!(df$Status=="Lab-Ramp"),]
 #write.csv(df, "df.normalized.csv")
 ```
 
+```{r, fig.width= 2, fig.height= 2, eval=FALSE}
+
 ## Color scores
 
-Overall, color is a poor measure of bleaching in these fragments, and there is not a strong relationship between color (R/G/B) and physiological bleaching quantification. Issues may be in the approach to get color scores (in shooting images, or downstream in photoshop), as well as in the fact the same color score can represent significant changes in cell density or chla content thereby making the relationship noisy (although significant).  
-- red and green are best explantory variable for chla (~25 % R2)  
-- blue and green slightly better to explain zoox density (~33 % R2)  
+#Overall, color is a poor measure of bleaching in these fragments, and there is not a strong relationship between color (R/G/B) and physiological bleaching quantification. Issues may be in the approach to get color scores (in shooting images, or downstream in photoshop), as well as in the fact the same color score can represent significant changes in cell density or chla content thereby making the relationship noisy (although significant).  
 
-```{r, fig.width= 2, fig.height= 2, eval=FALSE}
-par(mfrow=c(1,3), mar=c(5,4,1,2), pty="sq")
+#red and green are best explantory variable for chla (~25 % R2)  
+#blue and green slightly better to explain zoox density (~33 % R2)  
+
+# par(mfrow=c(1,3), mar=c(5,4,1,2), pty="sq")
 
 ##########################################
 # testing color scores and chla relationship
@@ -863,7 +846,7 @@ df<-rbind(Field.2014, Lab.2014, Oct.2014, Feb.2015, Oct.2015, Feb.2016)
 ### Summary dataframes
 These dataframes show mean, SE and n for each group. This can be subset to make figures or exported as a summary file. The header of the dataframe is shown below...
 
-```{r, ECHO=FALSE}
+```{r, echo=FALSE}
 # make summary dataframes
 
 # dataframes of means can later be divided into categories by "C or D" dominated
@@ -1205,8 +1188,7 @@ CAT.fig
 ```
 
 **Superoxide dismutase (SOD)**
-```{r}
-
+```{r, message=FALSE, warning=FALSE}
 
 ######### Superoxide dismutase (SOD) ########
 SOD.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=SOD/10^3, group=int, color=int)) + geom_errorbar(aes(ymin=SOD/10^3-SOD.SE/10^3, ymax=SOD/10^3+SOD.SE/10^3), size=.6, width=0, position=pd) +
