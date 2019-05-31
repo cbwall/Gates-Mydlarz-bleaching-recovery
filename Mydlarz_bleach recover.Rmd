@@ -279,46 +279,6 @@ Rf14_range4 <- data.frame(Rf14_max4, Rf14_min4$min); colnames(Rf14_range4) <- c(
 Rf14_range5 <- data.frame(Rf14_max5, Rf14_min5$min); colnames(Rf14_range5) <- c("Date","max", "min"); Rf14_range5$range<-(Rf14_range5$max-Rf14_range5$min)
 
 #######################
-#######################
-# Plot temp. daily mean temperatures for each reef
-#######################
-#######################
-
-par(mfrow=c(2,1), mar=c(2,3,1,1), mgp=c(2,0.5,0))
-k=1; lwd=1 # k-day moving averages
-plot(mean ~ Date, TIMESPAN_mean, type="n", ylab="Mean day temp. (°C)", ylim=c(21, 31), xaxt="n", xlab="")
-mtext(expression(bold("A")), 2, adj=4.5, las=1, padj=-8)
-axis.Date(1, at=seq(min(TIMESPAN_mean$Date), max(TIMESPAN_mean$Date), by="1 mon"), format="%b '%y")
-legend("topright", lty=1, col=c(reefcols[1:2], "darkgray"), legend=c("Reef 14","Lilipuna"), lwd=2, bty="n")
-with(na.omit(data.frame(date=Rf14_mean1$Date, mean=rollmean(Rf14_mean1$mean, k, fill=NA))), { 
-  lines(date, mean, col=reefcols[1], lwd=1.5) 
-})
-with(na.omit(data.frame(date=Rf14_mean2$Date, mean=rollmean(Rf14_mean2$mean, k, fill=NA))), { 
-  lines(date, mean, col=reefcols[1], lwd=1.5) 
-})
-with(na.omit(data.frame(date=Rf14_mean3$Date, mean=rollmean(Rf14_mean3$mean, k, fill=NA))), { 
-  lines(date, mean, col=reefcols[1], lwd=1.5)
-})
-with(na.omit(data.frame(date=Rf14_mean4$Date, mean=rollmean(Rf14_mean4$mean, k, fill=NA))), { 
-  lines(date, mean, col=reefcols[1], lwd=1.5)
-})
-with(na.omit(data.frame(date=Rf14_mean5$Date, mean=rollmean(Rf14_mean5$mean, k, fill=NA))), { 
-  lines(date, mean, col=reefcols[1], lwd=1.5) 
-})
-with(na.omit(data.frame(date=Lil_mean1$Date, mean=rollmean(Lil_mean1$mean, k, fill=NA))), {
-  lines(date, mean, col=reefcols[2], lwd=1.5)
-})
-with(na.omit(data.frame(date=Lil_mean2$Date, mean=rollmean(Lil_mean2$mean, k, fill=NA))), {
-  lines(date, mean, col=reefcols[2], lwd=1.5)
-})
-with(na.omit(data.frame(date=Lil_mean4$Date, mean=rollmean(Lil_mean4$mean, k, fill=NA))), { 
-  lines(date, mean, col=reefcols[2], lwd=1.5) 
-})
-with(na.omit(data.frame(date=Lil_mean5$Date, mean=rollmean(Lil_mean5$mean, k, fill=NA))), { 
-  lines(date, mean, col=reefcols[2], lwd=1.5) 
-})
-
-#######################
 
 # test for temperature
 # compiled files = Lil.Temp and Rf14.Temp
@@ -349,52 +309,9 @@ max.temp<-aggregate(temp~reef, data=test.temp, max)
 temps<-cbind(Lil.tempmean.all, Rf14.tempmean.all[c(0,2)]); colnames(temps)<-c("Date", "Lil.temp", "Rf14.temp")
 temps$temp.diff<-temps$Lil.temp-temps$Rf14.temp
 
-plot(temps$temp.diff~temps$Date, pch=21, cex=1, ylim=c(-2,2), xaxt="n", xlab="Date", ylab="Temperature (°C)", main="Differences in daily mean temperature at Lilipuna relative to Reef 14", cex.main=0.7)
-axis.Date(1, at=seq(min(temps$Date), max(temps$Date), by="1 mon"), format="%b '%y")
-abline(0,0, lty=2, lwd=2, col="red")
-```
-  
-*Temp plot*
-```{r, temp plot}
-#######################
-# plot daily temp range for each site
-#######################
-#######################
-par(mfrow=c(1,1), mar=c(2,3,1,1), mgp=c(2,0.5,0))
-
-k=1; lwd=1 # k-day moving averages
-plot(mean ~ Date, TIMESPAN_mean, type="n", ylab="Temp. (°C) range", ylim=c(0, 3), xaxt="n", xlab="")
-mtext(expression(bold("A")), 2, adj=4.5, las=1, padj=-8)
-axis.Date(1, at=seq(min(TIMESPAN_mean$Date), max(TIMESPAN_mean$Date), by="1 mon"), format="%b '%y")
-legend("topright", lty=1, col=c(reefcols[1:2], "darkgray"), legend=c("Reef 14","Lilipuna"), lwd=2, bty="n")
-with(na.omit(data.frame(date=Rf14_range1$Date, range=rollmean(Rf14_range1$range, k, fill=NA))), { 
-  lines(date, range, col=reefcols[1], lwd=1.5) 
-})
-with(na.omit(data.frame(date=Rf14_range2$Date, range=rollmean(Rf14_range2$range, k, fill=NA))), { 
-  lines(date, range, col=reefcols[1], lwd=1.5)
-})
-with(na.omit(data.frame(date=Rf14_range3$Date, range=rollmean(Rf14_range3$range, k, fill=NA))), { 
-  lines(date, range, col=reefcols[1], lwd=1.5)
-})
-with(na.omit(data.frame(date=Rf14_range4$Date, range=rollmean(Rf14_range4$range, k, fill=NA))), { 
-  lines(date, range, col=reefcols[1], lwd=1.5)
-})
-with(na.omit(data.frame(date=Rf14_range5$Date, range=rollmean(Rf14_range5$range, k, fill=NA))), { 
-  lines(date, range, col=reefcols[1], lwd=1.5)
-})
-with(na.omit(data.frame(date=Lil_range1$Date, range=rollmean(Lil_range1$range, k, fill=NA))), {
-  lines(date, range, col=reefcols[2], lwd=1.5)
-})
-with(na.omit(data.frame(date=Lil_range2$Date, range=rollmean(Lil_range2$range, k, fill=NA))), {
-  lines(date, range, col=reefcols[2], lwd=1.5)
-})
-with(na.omit(data.frame(date=Lil_range4$Date, range=rollmean(Lil_range4$range, k, fill=NA))), { 
-  lines(date, range, col=reefcols[2], lwd=1.5) 
-})
-with(na.omit(data.frame(date=Lil_range5$Date, range=rollmean(Lil_range5$range, k, fill=NA))), {
-  lines(date, range, col=reefcols[2], lwd=1.5)
-})
-
+#plot(temps$temp.diff~temps$Date, pch=21, cex=1, ylim=c(-2,2), xaxt="n", xlab="Date", ylab="Temperature (°C)", main="Differences in daily mean temperature at Lilipuna relative to Reef 14", cex.main=0.7)
+#axis.Date(1, at=seq(min(temps$Date), max(temps$Date), by="1 mon"), format="%b '%y")
+#abline(0,0, lty=2, lwd=2, col="red")
 ```
 
 ### Light
@@ -539,31 +456,6 @@ Rf14.L4 <- aggregate(data.frame(mean=Rf14.PAR4$LiCor_Calibrated), by=list(Date=R
 Rf14.L5 <- aggregate(data.frame(mean=Rf14.PAR5$LiCor_Calibrated), by=list(Date=Rf14.PAR5$Date), FUN=mean); Rf14.L5$dli <- Rf14.L5$mean * 0.0864
 
 # testing for differences among reefs
-```
-  
-*Light plot*
-```{r, DLI plot}
-
-###########################
-###########################
-
-# Plot daily light integrals
-
-par(mfrow=c(2,1), mar=c(2,4,2,1), mgp=c(2,0.5,0))
-k=1; lwd=1 # k-day moving averages
-plot(mean ~ Date, TIMESPAN_mean, type="n", ylab=(expression(paste("DLI mol photons", ~m^-2, ~d^-1, sep=""))), xaxt="n", xlab="", ylim=c(0,40))
-mtext(expression(bold("A")), 2, adj=4.5, las=1, padj=-8)
-axis.Date(1, at=seq(min(TIMESPAN_mean$Date), max(TIMESPAN_mean$Date), by="1 mon"), format="%b '%y")
-legend("topleft", lty=1, col=c(reefcols[1:2], "darkgray"), legend=c("Reef 14","Lilipuna"), lwd=2, bty="n")
-with(na.omit(data.frame(date=Lil.L1$Date, dli=rollmean(Lil.L1$dli, k, fill=NA))), lines(date, dli, col=reefcols[2], lwd=lwd))
-with(na.omit(data.frame(date=Lil.L2$Date, dli=rollmean(Lil.L2$dli, k, fill=NA))), lines(date, dli, col=reefcols[2], lwd=lwd))
-with(na.omit(data.frame(date=Lil.L4$Date, dli=rollmean(Lil.L4$dli, k, fill=NA))), lines(date, dli, col=reefcols[2], lwd=lwd))
-with(na.omit(data.frame(date=Lil.L5$Date, dli=rollmean(Lil.L5$dli, k, fill=NA))), lines(date, dli, col=reefcols[2], lwd=lwd))
-with(na.omit(data.frame(date=Rf14.L1$Date, dli=rollmean(Rf14.L1$dli, k, fill=NA))), lines(date, dli, col=reefcols[1], lwd=lwd))
-with(na.omit(data.frame(date=Rf14.L2$Date, dli=rollmean(Rf14.L2$dli, k, fill=NA))), lines(date, dli, col=reefcols[1], lwd=lwd))
-with(na.omit(data.frame(date=Rf14.L3$Date, dli=rollmean(Rf14.L3$dli, k, fill=NA))), lines(date, dli, col=reefcols[1], lwd=lwd))
-with(na.omit(data.frame(date=Rf14.L4$Date, dli=rollmean(Rf14.L4$dli, k, fill=NA))), lines(date, dli, col=reefcols[1], lwd=lwd))
-with(na.omit(data.frame(date=Rf14.L5$Date, dli=rollmean(Rf14.L5$dli, k, fill=NA))), lines(date, dli, col=reefcols[1], lwd=lwd))
 
 ## DAILY INTEGRATED LIGHT
 # Light data dli
@@ -577,6 +469,72 @@ test.light<- rbind(
 lmod1<-lmer(dli~reef + (1|date), data=test.light)
 Anova(lmod1, type=2)
 lsmeans(lmod1, "reef", contr="pairwise")
+```
+  
+*Temp and Light plot*
+```{r, temp and light plot}
+
+#######################
+# Plot temp. daily mean temperatures for each reef
+#######################
+
+par(mfrow=c(2,1), mar=c(2,4,2,1), mgp=c(2,0.5,0))
+k=1; lwd=1 # k-day moving averages
+plot(mean ~ Date, TIMESPAN_mean, type="n", ylab="Mean day temp. (°C)", ylim=c(21, 31), xaxt="n", xlab="")
+mtext(expression(bold("A")), 2, adj=4.5, las=1, padj=-8)
+axis.Date(1, at=seq(min(TIMESPAN_mean$Date), max(TIMESPAN_mean$Date), by="1 mon"), format="%b '%y")
+legend("topright", lty=1, col=c(reefcols[1:2], "darkgray"), legend=c("Reef 14","Lilipuna"), lwd=2, bty="n")
+with(na.omit(data.frame(date=Rf14_mean1$Date, mean=rollmean(Rf14_mean1$mean, k, fill=NA))), { 
+  lines(date, mean, col=reefcols[1], lwd=1.5) 
+})
+with(na.omit(data.frame(date=Rf14_mean2$Date, mean=rollmean(Rf14_mean2$mean, k, fill=NA))), { 
+  lines(date, mean, col=reefcols[1], lwd=1.5) 
+})
+with(na.omit(data.frame(date=Rf14_mean3$Date, mean=rollmean(Rf14_mean3$mean, k, fill=NA))), { 
+  lines(date, mean, col=reefcols[1], lwd=1.5)
+})
+with(na.omit(data.frame(date=Rf14_mean4$Date, mean=rollmean(Rf14_mean4$mean, k, fill=NA))), { 
+  lines(date, mean, col=reefcols[1], lwd=1.5)
+})
+with(na.omit(data.frame(date=Rf14_mean5$Date, mean=rollmean(Rf14_mean5$mean, k, fill=NA))), { 
+  lines(date, mean, col=reefcols[1], lwd=1.5) 
+})
+with(na.omit(data.frame(date=Lil_mean1$Date, mean=rollmean(Lil_mean1$mean, k, fill=NA))), {
+  lines(date, mean, col=reefcols[2], lwd=1.5)
+})
+with(na.omit(data.frame(date=Lil_mean2$Date, mean=rollmean(Lil_mean2$mean, k, fill=NA))), {
+  lines(date, mean, col=reefcols[2], lwd=1.5)
+})
+with(na.omit(data.frame(date=Lil_mean4$Date, mean=rollmean(Lil_mean4$mean, k, fill=NA))), { 
+  lines(date, mean, col=reefcols[2], lwd=1.5) 
+})
+with(na.omit(data.frame(date=Lil_mean5$Date, mean=rollmean(Lil_mean5$mean, k, fill=NA))), { 
+  lines(date, mean, col=reefcols[2], lwd=1.5) 
+})
+
+###########################
+# Plot daily light integrals
+###########################
+
+k=1; lwd=1 # k-day moving averages
+plot(mean ~ Date, TIMESPAN_mean, type="n", ylab=(expression(paste("DLI mol photons", ~m^-2, ~d^-1, sep=""))), xaxt="n", xlab="", ylim=c(0,40))
+mtext(expression(bold("B")), 2, adj=4.5, las=1, padj=-8)
+axis.Date(1, at=seq(min(TIMESPAN_mean$Date), max(TIMESPAN_mean$Date), by="1 mon"), format="%b '%y")
+#legend("topleft", lty=1, col=c(reefcols[1:2], "darkgray"), legend=c("Reef 14","Lilipuna"), lwd=2, bty="n")
+with(na.omit(data.frame(date=Lil.L1$Date, dli=rollmean(Lil.L1$dli, k, fill=NA))), lines(date, dli, col=reefcols[2], lwd=lwd))
+with(na.omit(data.frame(date=Lil.L2$Date, dli=rollmean(Lil.L2$dli, k, fill=NA))), lines(date, dli, col=reefcols[2], lwd=lwd))
+with(na.omit(data.frame(date=Lil.L4$Date, dli=rollmean(Lil.L4$dli, k, fill=NA))), lines(date, dli, col=reefcols[2], lwd=lwd))
+with(na.omit(data.frame(date=Lil.L5$Date, dli=rollmean(Lil.L5$dli, k, fill=NA))), lines(date, dli, col=reefcols[2], lwd=lwd))
+with(na.omit(data.frame(date=Rf14.L1$Date, dli=rollmean(Rf14.L1$dli, k, fill=NA))), lines(date, dli, col=reefcols[1], lwd=lwd))
+with(na.omit(data.frame(date=Rf14.L2$Date, dli=rollmean(Rf14.L2$dli, k, fill=NA))), lines(date, dli, col=reefcols[1], lwd=lwd))
+with(na.omit(data.frame(date=Rf14.L3$Date, dli=rollmean(Rf14.L3$dli, k, fill=NA))), lines(date, dli, col=reefcols[1], lwd=lwd))
+with(na.omit(data.frame(date=Rf14.L4$Date, dli=rollmean(Rf14.L4$dli, k, fill=NA))), lines(date, dli, col=reefcols[1], lwd=lwd))
+with(na.omit(data.frame(date=Rf14.L5$Date, dli=rollmean(Rf14.L5$dli, k, fill=NA))), lines(date, dli, col=reefcols[1], lwd=lwd))
+
+dev.copy(pdf, "figures/Temp.PAR.pdf", width=8, height=5)
+dev.off()
+
+
 ```
 
 
@@ -618,6 +576,7 @@ MC.bleach<-aggregate(totalMC.bleach~Habitat+Site+Status, data=survey.yr1, mean)
 df.m<-cbind(coral, healthy[c(4,0)], bleached[c(4,0)], MC[c(4,0)], MC.healthy[c(4,0)], MC.bleach[c(4,0)])
 df.m
 
+# SD
 coralSD<-aggregate(coral.cover~+Habitat+Site+Status, data=survey.yr1, sd)
 healthySD<-aggregate(coral.pigmented~Habitat+Site+Status, data=survey.yr1, sd)
 bleachedSD<-aggregate(totalcoral.bleach~Habitat+Site+Status, data=survey.yr1, sd)
@@ -631,7 +590,7 @@ dfSD
 
 ################## start back here
 
-df.fig<-cbind(df.m, dfSD[c(4:11,0)]); colnames(df.fig) <-c("Habitat", "Site", "Status", "coral.cover", "coral.pigmented", "coral.pale", "coral.white", "MC", "MC.pigmented", "MC.pale", "MC.white", "coral.SD", "coral.pigSD", "coral.blSD", "coral.whiteSD", "MCSD", "MC.pigSD", "MC.blSD", "MC.whiteSD"); df.fig
+df.fig<-cbind(df.m, dfSD[c(4:9,0)]); colnames(df.fig) <-c("Habitat", "Site", "Status", "coral.cover", "coral.pigmented", "totalcoral.bleach", "MC", "MC.pigmented", "totalMC.bleach", "coral.SD", "coral.pigSD", "coral.blSD", "MCSD", "MC.pigSD", "MC.blSD"); df.fig
 
 #capture.output(df.fig, file="ecology summary 2014-15.csv")
 
@@ -639,22 +598,10 @@ df.fig<-cbind(df.m, dfSD[c(4:11,0)]); colnames(df.fig) <-c("Habitat", "Site", "S
 ## color palettes ######
 ########################
 
-# color-blind palette for "all coral" bleaching
-cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", 
-               "#D55E00","#CC79A7")
+colors<-c("gray80", "gray63")
 
-#stacked pallette
-stack.palette<- c("#66FFFF", "#3399FF", "#CCFFFF") #bl pig white
-MCstack.palette<-c("#FFFF33", "#FFCC66", "#FFFFCC") #bl pig white
-
-# MC palette for "M. capitata" only bleaching
-mcPalette<- c("#CCCCCC", "#FFCC00", "#99CCFF")
-
-gray<-c("#FFFFFF", "#333333", "#CCCCCC")
-
-              
 # order the factor
-df.fig$Habitat <- factor(df.fig$Habitat, c("Flat","Crest","Slope"))
+df.fig$Habitat <- factor(df.fig$Habitat, c("Flat","Crest"))
 
 # all coral cover
 Fig1 <- ggplot(df.fig, aes(x=Site, y=coral.cover, fill=Habitat)) + 
@@ -662,131 +609,45 @@ Fig1 <- ggplot(df.fig, aes(x=Site, y=coral.cover, fill=Habitat)) +
   geom_errorbar(aes(ymin=coral.cover-coral.SD, ymax= coral.cover+coral.SD), width=0.1,
   position=position_dodge(.9)) +
   xlab(expression(bold("Reef Site"))) +
-  scale_fill_manual(values=cbPalette, breaks=c("Flat","Crest","Slope")) +
+  scale_fill_manual(values=colors, breaks=c("Flat","Crest")) +
   ylab(expression(bold(paste("coral cover")))) +
   scale_y_continuous(limits=c(0,1),oob = rescale_none) +
   facet_grid(.~Status)
 Fig1
 
-# normal pigmented coral
-Fig2 <- ggplot(df.fig, aes(x=Site, y=coral.pigmented, fill=Habitat)) + 
+# bleached coral
+Fig2 <- ggplot(df.fig, aes(x=Site, y=totalcoral.bleach, fill=Habitat)) + 
   geom_bar(stat="identity", position=position_dodge(), colour="black") +
-  geom_errorbar(aes(ymin=coral.pigmented-coral.pigSD, ymax= coral.pigmented+coral.pigSD), width=0.1, position=position_dodge(.9)) +
+  geom_errorbar(aes(ymin=totalcoral.bleach-coral.blSD, ymax= totalcoral.bleach+coral.blSD), width=0.1, position=position_dodge(.9)) +
   xlab(expression(bold("Reef Site"))) +
-  scale_fill_manual(values=cbPalette) +
-  ylab(expression(bold(paste("nonbleached corals")))) +
+  scale_fill_manual(values=colors, breaks=c("Flat","Crest")) +
+  ylab(expression(bold(paste("bleached corals")))) +
   scale_y_continuous(limits=c(0,1),oob = rescale_none)+
   facet_grid(.~Status)
 Fig2
 
-# bleached coral
-Fig3 <- ggplot(df.fig, aes(x=Site, y=coral.bleached, fill=Habitat)) + 
-  geom_bar(stat="identity", position=position_dodge(), colour="black") +
-  geom_errorbar(aes(ymin=coral.bleached-coral.blSD, ymax= coral.bleached+coral.blSD), width=0.1, position=position_dodge(.9)) +
-  xlab(expression(bold("Reef Site"))) +
-  scale_fill_manual(values=cbPalette, breaks=c("Flat","Crest","Slope")) +
-  ylab(expression(bold(paste("bleached corals")))) +
-  scale_y_continuous(limits=c(0,1),oob = rescale_none)+
-  facet_grid(.~Status)
-Fig3
-
-# bleached coral
-Fig4 <- ggplot(df.fig, aes(x=Site, y=coral.white, fill=Habitat)) + 
-  geom_bar(stat="identity", position=position_dodge(), colour="black") +
-  geom_errorbar(aes(ymin=coral.white-coral.whiteSD, ymax= coral.white+coral.whiteSD), width=0.1, position=position_dodge(.9)) +
-  xlab(expression(bold("Reef Site"))) +
-  scale_fill_manual(values=cbPalette, breaks=c("Flat","Crest","Slope")) +
-  ylab(expression(bold(paste("bleached white corals")))) +
-  scale_y_continuous(limits=c(0,1),oob = rescale_none)+
-  facet_grid(.~Status)
-Fig4
-
-
 ##############
 # MC corals
-Fig5 <- ggplot(df.fig, aes(x=Site, y=MC, fill=Habitat)) + 
+Fig3 <- ggplot(df.fig, aes(x=Site, y=MC, fill=Habitat)) + 
   geom_bar(stat="identity", position=position_dodge(), colour="black") +
   geom_errorbar(aes(ymin=MC-MCSD, ymax= MC+MCSD), width=0.1,position=position_dodge(.9)) +
   xlab(expression(bold("Reef Site"))) +
-  scale_fill_manual(values=mcPalette, breaks=c("Flat","Crest","Slope")) +
+  scale_fill_manual(values=colors, breaks=c("Flat","Crest")) +
   ylab(expression(bold(paste(~bolditalic("M. capitata")~cover, sep="")))) +
   scale_y_continuous(limits=c(0,1.05),oob = rescale_none)+
   facet_grid(.~Status)
-Fig5
+Fig3
 
-# normal pigmented coral
-Fig6 <- ggplot(df.fig, aes(x=Site, y=MC.pigmented, fill=Habitat)) + 
+# bleached MC coral
+Fig4 <- ggplot(df.fig, aes(x=Site, y=totalMC.bleach, fill=Habitat)) + 
   geom_bar(stat="identity", position=position_dodge(), colour="black") +
-  geom_errorbar(aes(ymin=MC.pigmented-MC.pigSD, ymax= MC.pigmented+MC.pigSD), width=0.1, position=position_dodge(.9)) +
+  geom_errorbar(aes(ymin=totalMC.bleach-MC.blSD, ymax= totalMC.bleach+MC.blSD), width=0.1, position=position_dodge(.9)) +
   xlab(expression(bold("Reef Site"))) +
-  scale_fill_manual(values=mcPalette, breaks=c("Flat","Crest","Slope")) +
-  ylab(expression(bold(paste(~bolditalic("M. capitata")~nonbleached, sep="")))) +
-  scale_y_continuous(limits=c(0,1.06),oob = rescale_none)+
-  facet_grid(.~Status)
-Fig6
-
-# bleached coral
-Fig7 <- ggplot(df.fig, aes(x=Site, y=MC.bleached, fill=Habitat)) + 
-  geom_bar(stat="identity", position=position_dodge(), colour="black") +
-  geom_errorbar(aes(ymin=MC.bleached-MC.blSD, ymax= MC.bleached+MC.blSD), width=0.1, position=position_dodge(.9)) +
-  xlab(expression(bold("Reef Site"))) +
-  scale_fill_manual(values=mcPalette, breaks=c("Flat","Crest","Slope")) +
+  scale_fill_manual(values=colors, breaks=c("Flat","Crest")) +
   ylab(expression(bold(paste(~bolditalic("M. capitata")~bleached, sep="")))) +
   scale_y_continuous(limits=c(0,1),oob = rescale_none)+
   facet_grid(.~Status)
-Fig7
-
-# bleached coral
-Fig8 <- ggplot(df.fig, aes(x=Site, y=MC.white, fill=Habitat)) + 
-  geom_bar(stat="identity", position=position_dodge(), colour="black") +
-  geom_errorbar(aes(ymin=MC.white-MC.whiteSD, ymax= MC.white+MC.whiteSD), width=0.1, position=position_dodge(.9)) +
-  scale_fill_manual(values=mcPalette, breaks=c("Flat","Crest","Slope")) +
-  xlab(expression(bold("Reef Site"))) +
-  ylab(expression(bold(paste(~bolditalic("M. capitata")~bleached~white, sep="")))) +
-  scale_y_continuous(limits=c(0,1),oob = rescale_none) +
-  facet_grid(.~Status)
-Fig8
-
-######
-#grayscale figures
-Fig1.BW<-Fig1+scale_fill_manual(values=gray, breaks=c("Flat","Crest","Slope")); Fig1.BW
-Fig2.BW<-Fig2+scale_fill_manual(values=gray, breaks=c("Flat","Crest","Slope")); Fig2.BW
-Fig3.BW<-Fig3+scale_fill_manual(values=gray, breaks=c("Flat","Crest","Slope")); Fig3.BW
-Fig4.BW<-Fig4+scale_fill_manual(values=gray, breaks=c("Flat","Crest","Slope")); Fig4.BW
-Fig5.BW<-Fig5+scale_fill_manual(values=gray, breaks=c("Flat","Crest","Slope")); Fig5.BW
-Fig6.BW<-Fig6+scale_fill_manual(values=gray, breaks=c("Flat","Crest","Slope")); Fig6.BW
-Fig7.BW<-Fig7+scale_fill_manual(values=gray, breaks=c("Flat","Crest","Slope")); Fig7.BW
-Fig8.BW<-Fig8+scale_fill_manual(values=gray, breaks=c("Flat","Crest","Slope")); Fig8.BW
-
-#######################
-# stacked bar plots####
-#######################
-
-### data for stacked figure
-stack<-read.csv("/Users/chriswall/Desktop/Research and Teaching/UH MANOA/Research/Mydlarz_Gates project/Bleaching KBay project/R-stats/Data/ecology 2014-15_stack.csv")
-head(stack)
-
-#### Fig4b # all coral bleached/recovery by Site:Habitat 2015-2016
-Fig4.stack<-ggplot(stack,aes(x = Site:Habitat, y = bl.pig.prop, fill = Bl.pig)) + 
-  geom_bar(position = "fill",stat = "identity", colour="black") + 
-  scale_y_continuous(labels = percent_format()) +
-  scale_fill_manual(values=stack.palette, breaks= c("White", "Bleached", "Pigmented"),  guide = guide_legend(title = "Pigmentation")) +
-  scale_x_discrete(limits=c("Lilipuna:Flat","Lilipuna:Crest","Lilipuna:Slope", "Reef14:Flat", "Reef14:Crest", "Reef14:Slope")) +
-  ggtitle("2014-2015 bleaching and recovery") +
-  xlab(expression(bold("Reef Site and Habitat"))) +
-  ylab(expression(bold(paste("% coral")))) +
-  facet_grid(.~Status);  Fig4.stack
-  
-#### Fig4c # MC bleached/recovery by Site:Habitat 2015-2016
-Fig4MC.stack<-ggplot(stack,aes(x = Site:Habitat, y = MCbl.pig.prop, fill = Bl.pig)) + 
-    geom_bar(position = "fill",stat = "identity", colour="black") + 
-    scale_y_continuous(labels = percent_format()) +
-    scale_fill_manual(values=MCstack.palette, breaks= c("White", "Bleached", "Pigmented"),  guide = guide_legend(title = "Pigmentation")) +
-    scale_x_discrete(limits=c("Lilipuna:Flat","Lilipuna:Crest","Lilipuna:Slope", "Reef14:Flat", "Reef14:Crest", "Reef14:Slope")) +
-  xlab(expression(bold("Reef Site and Habitat"))) +
-  ggtitle("2014-2015 bleaching and recovery") +
-  ylab(expression(bold(paste(~bolditalic("% M. capitata")~nonbleached, sep="")))) +
-    facet_grid(.~Status);  Fig4MC.stack
+Fig4
 
 ############
 ############
@@ -796,32 +657,15 @@ library("cowplot")
 #############
 # color figures all corals
 Fig_2014_2015_surveys<-plot_grid(Fig1, Fig2, Fig3, Fig4,
-     labels=c('A', 'B', 'C', 'D'), label_size=15, hjust=-6, vjust= 2, ncol=2, nrow=2);
+     labels=c('A', 'B', 'C', 'D'), label_size=15, hjust=-6, vjust= 3, ncol=2, nrow=2);
 Fig_2014_2015_surveys
 
-#############
-#BW figures all corals
-FigBW_2014_2015_surveys<-plot_grid(Fig1.BW, Fig2.BW, Fig3.BW, Fig4.BW,
-    labels=c('A', 'B', 'C', 'D'), label_size=15, hjust=-6, vjust= 2, ncol=2, nrow=2);
-FigBW_2014_2015_surveys
+##### save the figure and export to directory? ####
+dev.copy(pdf, "figures/year1.surveys.pdf", width=11, height=8)
+dev.off()
+```
 
-#############
-# color figures M. capitata only
-Fig_2014_2015_MC_surveys<-plot_grid(Fig5, Fig6, Fig7, Fig8,
-    labels=c('A', 'B', 'C', 'D'), label_size=15, hjust=-6, vjust= 2, ncol=2, nrow=2);
-Fig_2014_2015_MC_surveys
-
-#############
-# BW figures M. capitata only
-FigBW_2014_2015_MC_surveys<-plot_grid(Fig5.BW, Fig6.BW, Fig7.BW, Fig8.BW,
-    labels=c('A', 'B', 'C', 'D'), label_size=15, hjust=-6, vjust= 2, ncol=2, nrow=2);
-FigBW_2014_2015_MC_surveys
-
-#stacked
-Figstack_2014_2015_surveys<-plot_grid(Fig4.stack, Fig4MC.stack,
-                                 labels=c('A', 'B'), label_size=15, hjust=-6, vjust= 2, ncol=2, nrow=1);
-Figstack_2014_2015_surveys
-
+```{r, year1 B and R stats, eval=FALSE}
 ##################
 ###############
 ##########
