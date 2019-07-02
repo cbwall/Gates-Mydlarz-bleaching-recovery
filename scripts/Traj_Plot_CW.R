@@ -11,6 +11,7 @@ library(smacof)
 library(MASS)
 library(vegan)
 library(ggplot2)
+library(dplyr)
 
 #rm(list=ls())
 
@@ -36,6 +37,10 @@ Data<- as.data.frame(Data)
 # matrix of responses
 mat <- Data[,c(4:13)]
 
+######### Should group (grp) be used as "site" and survey (per)? >> works with all test scripts
+######### Or should it be the replicates (sampu), and (per)? >> has problems with "not sampled enough"
+######### Alternative to select XXX number of C and D corals at random to maximize # and balanced?
+
 # groups combining Site and Symbiont #### this is for legend and shows order
 grp <- paste0(Data$Site,Data$dom)
 unique(grp)
@@ -50,14 +55,38 @@ unique(per)
 # scale and center data, and apply Euclidian distance matrix
 mat <- scale(mat, center = TRUE, scale = TRUE)
 dist <- dist(mat, method = "euclidean")
+labs<-paste0("R",per)
 
 # figure of trajectories
-pdf("output/trajectory_plotCW.pdf",width=6, height=6)
-trajectoryPCoA(dist, sampu, per, traj.colors= c("black","gray", "red", "pink"), lwd = 2)
+#pdf("output/trajectory_plotCW.pdf",width=6, height=6)
+trajectoryPCoA(dist, grp, per, traj.colors= c("black","gray", "red", "pink"), lwd = 1)
       legend("topleft", col=c("black","gray", "red", "pink"), 
              legend=c("LilipunaD", "LilipunaC", "Reef 14D",  "Reef 14C"), bty="n", lty=1, lwd = 2)
-dev.off()
+#dev.off()
 
+### trajectory lengths, angles, and directionality
 # Lengths of trajectories
-trajectoryLengths(dist, per, sampu)
+trajectoryLengths(dist, grp, per) 
+# Total trajectory length runs from 213-250, Lilipuna C < D, Reef 14 C > D
 
+# Angles and lengths accounted for in trajectories
+trajectoryDirectionality(dist, grp, per) # all about equally straight
+
+# trajectory Convergence
+# trend analysis of sequences of distance between points
+# Mann-Whitney trend test, tau statistic >0 diverging, <0 converging. 
+# Assymmetric with "FALSE", sequence of distnaces between every point trajectory compared to others
+trajectoryConvergence(dist, grp, per, symmetric = FALSE)
+
+Ds<-segmentDistances(dist, grp, per)$Dseg; Ds
+mMDS<-mds(Ds)
+
+xret = mMDS$conf
+par(mar=c(4,4,1,1))
+plot(xret, xlab="axis 1", ylab = "axis 2", asp=1, pch=16,
+     col=c(rep("black",3), rep("gray",3), rep("red",3), rep("pink")), 
+     xlim=c(-1.5,1), ylim=c(-1,1.5))
+#text(xret, labels=rep(paste0("s",1:3),3), pos=1)
+legend("topleft", col=c("black","gray","red", "pink"), pch=16, bty="n", legend=c("LilipunaD", "LilipunaC", "Reef 14D",  "Reef 14C"))
+
+trajectoryDistances(dist, grp, per, distance.type = "Hausdorff")
