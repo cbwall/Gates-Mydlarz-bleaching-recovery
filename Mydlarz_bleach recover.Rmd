@@ -32,6 +32,17 @@ library(pbkrtest)
 library(cowplot)
 library(devtools)
 library(dplyr)
+library(vegclust)
+library(smacof)
+library(devtools)
+
+install_github("vqv/ggbiplot")
+library(ggbiplot)
+require(graphics)
+library(tidyr)
+library(vegan)
+library(RVAideMemoire)
+
 #install_github("vqv/ggbiplot")
 #library(ggbiplot)
 
@@ -856,7 +867,6 @@ data<-read.csv("data/Gates_Mydlarz_20142016_ALL_DATA.csv", header=T, na.string=N
 data$cells..ml<-as.numeric(data$cells..ml)
 data$ID<-as.factor(data$ID)
 
-
 # helpful shorthand
 SA<-data$surface.area.cm2 # surface area in cm2
 blastate<-data$total.blastate.ml # tissue slurry blastate in ml
@@ -900,11 +910,10 @@ df$PPO[df$PPO <= 0]<- NA
 df$chlacell[df$chlacell >= 10]<- NA # removing 2 outliers
 df$CAT[df$CAT >= 900]<- NA # 2 outliers removed
 
-
 # don't need "Ramp" lab data, this was lab thermally stressed. Remove this.
 df<-df[!(df$Status=="Lab-Ramp"),]
 
-#write.csv(df, "df.normalized.csv")
+write.csv(df, "output/df.normalized.csv")
 ```
 
 ```{r, fig.width= 2, fig.height= 2, eval=FALSE}
@@ -1694,14 +1703,6 @@ plot(allEffects(full), ylab="prot", par.strip.text=list(cex=0.7))
 ## NMDS plots
 ```{r, MultiVariate, fig.show='hide', results='hide', message=FALSE}
 # multivariate test using adonis-- Manova, mutivariate analysis of variance
-library(devtools)
-install_github("vqv/ggbiplot")
-library(ggbiplot)
-require(graphics)
-library(tidyr)
-library(vegan)
-library(RVAideMemoire)
-
 df.MV<-df
 
 # remove columns unnecessary for final analysis, few factors retained
