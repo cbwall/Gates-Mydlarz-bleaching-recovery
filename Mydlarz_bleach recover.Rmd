@@ -1708,11 +1708,14 @@ df.MV<-df
 # remove columns unnecessary for final analysis, few factors retained
 df.MV<-df.MV[ , !names(df.MV) %in% c("Species", "Status_Site", "ID", "coral.red.adj", "coral.green.adj", "coral.blue.adj", "PC1", "propC", "propD", "syms")]
 
+df.MV$Period.dom<-interaction(df.MV$Period, df.MV$dom)
+
 # remove prior-to-bleaching timepoints and unused levels that arise from this action
 df.MV<-df.MV[(!df.MV$Period=="2014 Lab"),] 
 df.MV<-df.MV[(!df.MV$Period=="2014 Field.Feb"),]
 df.MV$Period<-droplevels(df.MV$Period) 
 df.MV$Status<-droplevels(df.MV$Status)
+df.MV$Period.dom<-droplevels(df.MV$Period.dom)
 
 #drop all NAs, removing rows where NA was observed
 df.MV.noNA<-df.MV %>% drop_na()
@@ -1742,17 +1745,19 @@ Manova.Lil.BR2.lev.dat<-Manova.Lil.lev.dat %>% # "BR2" is bleachigng and recover
 
 Manova.Lil.BR1.lev.dat$Period<-droplevels(Manova.Lil.BR1.lev.dat$Period)
 Manova.Lil.BR1.lev.dat$Site<-droplevels(Manova.Lil.BR1.lev.dat$Site)
+Manova.Lil.BR1.lev.dat$Period.dom<-droplevels(Manova.Lil.BR1.lev.dat$Period.dom)
 
 Manova.Lil.BR2.lev.dat$Period<-droplevels(Manova.Lil.BR2.lev.dat$Period)
 Manova.Lil.BR2.lev.dat$Site<-droplevels(Manova.Lil.BR2.lev.dat$Site)
+Manova.Lil.BR2.lev.dat$Period.dom<-droplevels(Manova.Lil.BR2.lev.dat$Period.dom)
 
 # BR1 just data (sans factors)
 Manova.Lil.BR1.dat<-Manova.Lil.BR1.lev.dat %>% 
-  select(-c(Period, Status, Site, dom)) #  sans factors
+  select(-c(Period, Status, Site, dom, Period.dom)) #  sans factors
 
 # BR2 just data (sans factors)
 Manova.Lil.BR2.dat<-Manova.Lil.BR2.lev.dat %>% 
-  select(-c(Period, Status, Site, dom)) #  sans factors
+  select(-c(Period, Status, Site, dom, Period.dom)) #  sans factors
 
 
 ############################
@@ -1765,13 +1770,14 @@ NMDS.Lil.BR1<-metaMDS(Manova.Lil.BR1.dat, distane='bray', k=2, trymax=100)
 stressplot(NMDS.Lil.BR1)
 
 factor.df.Lil.BR1<-Manova.Lil.BR1.lev.dat %>% 
-  select(c(Period, Site, Status, dom)) # get just the factors
+  select(c(Period, Site, Status, dom, Period.dom)) # get just the factors
 
 NMDS.df.Lil.BR1<-data.frame(x=NMDS.Lil.BR1$point[,1], y=NMDS.Lil.BR1$point[,2], 
                     Period=as.factor(factor.df.Lil.BR1[,1]),
                     Site=as.factor(factor.df.Lil.BR1[,2]),
                     Status=as.factor(factor.df.Lil.BR1[,3]),
-                    dom=as.factor(factor.df.Lil.BR1[,4]))
+                    dom=as.factor(factor.df.Lil.BR1[,4]),
+                    Period.dom=as.factor(factor.df.Lil.BR1[,5]))
 
 colnames(NMDS.df.Lil.BR1)[1:2]<-c("MDS1", "MDS2")
 
@@ -1790,13 +1796,14 @@ NMDS.Lil.BR2<-metaMDS(Manova.Lil.BR2.dat, distane='bray', k=2, trymax=100)
 stressplot(NMDS.Lil.BR2)
 
 factor.df.Lil.BR2<-Manova.Lil.BR2.lev.dat %>% 
-  select(c(Period, Site, Status, dom)) # get just the factors
+  select(c(Period, Site, Status, dom, Period.dom)) # get just the factors
 
 NMDS.df.Lil.BR2<-data.frame(x=NMDS.Lil.BR2$point[,1], y=NMDS.Lil.BR2$point[,2], 
                     Period=as.factor(factor.df.Lil.BR2[,1]),
                     Site=as.factor(factor.df.Lil.BR2[,2]),
                     Status=as.factor(factor.df.Lil.BR2[,3]),
-                    dom=as.factor(factor.df.Lil.BR2[,4]))
+                    dom=as.factor(factor.df.Lil.BR2[,4]),
+                    Period.dom=as.factor(factor.df.Lil.BR2[,5]))
 
 colnames(NMDS.df.Lil.BR2)[1:2]<-c("MDS1", "MDS2")
 
@@ -1823,17 +1830,19 @@ Manova.R14.BR2.lev.dat<-Manova.R14.lev.dat %>% # "BR2" is bleachigng and recover
 
 Manova.R14.BR1.lev.dat$Period<-droplevels(Manova.R14.BR1.lev.dat$Period)
 Manova.R14.BR1.lev.dat$Site<-droplevels(Manova.R14.BR1.lev.dat$Site)
+Manova.R14.BR1.lev.dat$Period.dom<-droplevels(Manova.R14.BR1.lev.dat$Period.dom)
 
 Manova.R14.BR2.lev.dat$Period<-droplevels(Manova.R14.BR2.lev.dat$Period)
 Manova.R14.BR2.lev.dat$Site<-droplevels(Manova.R14.BR2.lev.dat$Site)
+Manova.R14.BR2.lev.dat$Period.dom<-droplevels(Manova.R14.BR2.lev.dat$Period.dom)
 
 # BR1 just data (sans factors)
 Manova.R14.BR1.dat<-Manova.R14.BR1.lev.dat %>% 
-  select(-c(Period, Status, Site, dom)) #  sans factors
+  select(-c(Period, Status, Site, dom, Period.dom)) #  sans factors
 
 # BR2 just data (sans factors)
 Manova.R14.BR2.dat<-Manova.R14.BR2.lev.dat %>% 
-  select(-c(Period, Status, Site, dom)) #  sans factors
+  select(-c(Period, Status, Site, dom, Period.dom)) #  sans factors
 
 
 ############################# 
@@ -1846,13 +1855,14 @@ NMDS.R14.BR1<-metaMDS(Manova.R14.BR1.dat, distane='bray', k=2, trymax=100)
 stressplot(NMDS.R14.BR1)
 
 factor.df.R14.BR1<-Manova.R14.BR1.lev.dat %>% 
-  select(c(Period, Site, Status, dom)) # get just the factors
+  select(c(Period, Site, Status, dom, Period.dom)) # get just the factors
 
 NMDS.df.R14.BR1<-data.frame(x=NMDS.R14.BR1$point[,1], y=NMDS.R14.BR1$point[,2], 
                     Period=as.factor(factor.df.R14.BR1[,1]),
                     Site=as.factor(factor.df.R14.BR1[,2]),
                     Status=as.factor(factor.df.R14.BR1[,3]),
-                    dom=as.factor(factor.df.R14.BR1[,4]))
+                    dom=as.factor(factor.df.R14.BR1[,4]),
+                    Period.dom=as.factor(factor.df.R14.BR1[,5]))
 
 colnames(NMDS.df.R14.BR1)[1:2]<-c("MDS1", "MDS2")
 
@@ -1871,13 +1881,14 @@ NMDS.R14.BR2<-metaMDS(Manova.R14.BR2.dat, distane='bray', k=2, trymax=100)
 stressplot(NMDS.R14.BR2)
 
 factor.df.R14.BR2<-Manova.R14.BR2.lev.dat %>% 
-  select(c(Period, Site, Status, dom)) # get just the factors
+  select(c(Period, Site, Status, dom, Period.dom)) # get just the factors
 
 NMDS.df.R14.BR2<-data.frame(x=NMDS.R14.BR2$point[,1], y=NMDS.R14.BR2$point[,2], 
                     Period=as.factor(factor.df.R14.BR2[,1]),
                     Site=as.factor(factor.df.R14.BR2[,2]),
                     Status=as.factor(factor.df.R14.BR2[,3]),
-                    dom=as.factor(factor.df.R14.BR2[,4]))
+                    dom=as.factor(factor.df.R14.BR2[,4]),
+                    Period.dom=as.factor(factor.df.R14.BR2[,5]))
 
 colnames(NMDS.df.R14.BR2)[1:2]<-c("MDS1", "MDS2")
 
@@ -1895,16 +1906,20 @@ par(mfcol=c(2,2), mar=c(4,4,1,1))
 
 ############### Lilipuna 2014-2015
 
-MDS.levels<-levels(NMDS.df.Lil.BR1$Period:NMDS.df.Lil.BR1$dom)
-MDS.lev.leg<-c("C-Bleach '14", "D-Bleach '14", "C-Recov '15", "D-Recov '15")
-MDS.colors<-c("lightpink", "slategray1", "firebrick2", "dodgerblue2")
+NMDS.df.Lil.BR1$Period.dom<-factor(NMDS.df.Lil.BR1$Period.dom, levels =
+                                     c("2014 Oct.C", "2014 Oct.D", "2015 Feb.C", "2015 Feb.D"))
+groups<-NMDS.df.Lil.BR1$Period.dom
 
+MDS.lev.leg<-c("C-Bleach '14", "D-Bleach '14", "C-Recov '15", "D-Recov '15")
+MDS.colors<-c("lightpink", "slategray1", "firebrick3", "dodgerblue3")
+
+### 
 NMDS.plot<-ordiplot(NMDS.Lil.BR1, type="n", main=substitute(paste("Lilipuna-CRIMP-1")), cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.4, 0.4), xlim=c(-0.6, 0.5), xaxt="n", xlab="")
 axis(side = 1, labels = FALSE, tck = -0.05)
 abline(h = 0, lty = "dotted")
 abline(v = 0, lty = "dotted")
-points(NMDS.plot, "sites", cex=0.8, pch=16, col=MDS.colors)
-ordiellipse(NMDS.plot, groups=NMDS.df.Lil.BR1$Period:NMDS.df.Lil.BR1$dom, draw="polygon", col=MDS.colors, alpha=150, kind="sd", conf=0.8)
+points(NMDS.plot, "sites", cex=0.8, pch=16, col=MDS.colors[groups])
+ordihull(NMDS.plot, groups=NMDS.df.Lil.BR1$Period.dom, draw="polygon", alpha=100, col=MDS.colors, border=MDS.colors)
 legend("topright", legend=MDS.lev.leg, inset=c(0.59, -0.06), x.intersp=0.8, y.intersp=0.8, cex=0.7, pch=16, col=MDS.colors, pt.cex=1, bty="n")
 par.new=T
 plot(vars.Lil.BR1, col="black", p.max=0.05, cex=0.8, lwd=1)
@@ -1912,16 +1927,19 @@ plot(vars.Lil.BR1, col="black", p.max=0.05, cex=0.8, lwd=1)
 
 ############### Lilipuna 2015-2016
 
-MDS.levels<-levels(NMDS.df.Lil.BR2$Period:NMDS.df.Lil.BR2$dom)
+NMDS.df.Lil.BR2$Period.dom<-factor(NMDS.df.Lil.BR2$Period.dom, levels =
+                                     c("2015 Oct.C", "2015 Oct.D", "2016 Feb.C", "2016 Feb.D"))
+groups<-NMDS.df.Lil.BR2$Period.dom
+
 MDS.lev.leg<-c("C-Bleach '15", "D-Bleach '15", "C-Recov '16", "D-Recov '16")
-MDS.colors<-c("lightpink", "slategray1", "firebrick2", "dodgerblue2")
+MDS.colors<-c("lightpink", "slategray1", "firebrick3", "dodgerblue3")
 
 NMDS.plot<-ordiplot(NMDS.Lil.BR2, type="n", cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.4, 0.4), xlim=c(-0.6, 0.5))
 axis(side = 2, labels = FALSE, tck = -0.05)
 abline(h = 0, lty = "dotted")
 abline(v = 0, lty = "dotted")
-points(NMDS.plot, "sites", cex=0.8, pch=16, col=MDS.colors)
-ordiellipse(NMDS.plot, groups=NMDS.df.Lil.BR2$Period:NMDS.df.Lil.BR2$dom, draw="polygon", col=MDS.colors, alpha=150, kind="sd", conf=0.8)
+points(NMDS.plot, "sites", cex=0.8, pch=16,  col=MDS.colors[groups])
+ordihull(NMDS.plot, groups=NMDS.df.Lil.BR2$Period.dom, draw="polygon", alpha=100, col=MDS.colors, border=MDS.colors)
 legend("topright", legend=MDS.lev.leg, inset=c(0.59, -0.06), x.intersp=0.8, y.intersp=0.8, cex=0.7, pch=16, col=MDS.colors, pt.cex=1, bty="n")
 par.new=T
 plot(vars.Lil.BR2, col="black", p.max=0.05, cex=0.8, lwd=1)
@@ -1930,7 +1948,10 @@ plot(vars.Lil.BR2, col="black", p.max=0.05, cex=0.8, lwd=1)
 ############### ############### ############### ############### ############### 
 ############### Reef 14 2014-2015
 
-MDS.levels<-levels(NMDS.df.R14.BR1$Period:NMDS.df.R14.BR1$dom)
+NMDS.df.R14.BR1$Period.dom<-factor(NMDS.df.R14.BR1$Period.dom, levels =
+                                     c("2014 Oct.C", "2014 Oct.D", "2015 Feb.C", "2015 Feb.D"))
+groups<-NMDS.df.R14.BR1$Period.dom
+
 MDS.lev.leg<-c("C-Bleach '14", "D-Bleach '14", "C-Recov '15", "D-Recov '15")
 MDS.colors<-c("lightpink", "slategray1", "firebrick2", "dodgerblue2")
 
@@ -1939,15 +1960,18 @@ axis(side = 1, labels = FALSE, tck = -0.05)
 axis(side = 2, labels = FALSE, tck = -0.05)
 abline(h = 0, lty = "dotted")
 abline(v = 0, lty = "dotted")
-points(NMDS.plot, "sites", cex=0.8, pch=16, col=MDS.colors)
-ordiellipse(NMDS.plot, groups=NMDS.df.R14.BR1$Period:NMDS.df.R14.BR1$dom, draw="polygon", col=MDS.colors, alpha=150, kind="sd", conf=0.8)
+points(NMDS.plot, "sites", cex=0.8, pch=16,  col=MDS.colors[groups])
+ordihull(NMDS.plot, groups=NMDS.df.R14.BR1$Period.dom, draw="polygon", alpha=100, col=MDS.colors, border=MDS.colors)
 par.new=T
 plot(vars.R14.BR1, col="black", p.max=0.05, cex=0.8, lwd=1)
 
 
 ############### Reef 14 2015-2016
 
-MDS.levels<-levels(NMDS.df.R14.BR2$Period:NMDS.df.R14.BR2$dom)
+NMDS.df.R14.BR2$Period.dom<-factor(NMDS.df.R14.BR2$Period.dom, levels =
+                                     c("2015 Oct.C", "2015 Oct.D", "2016 Feb.C", "2016 Feb.D"))
+groups<-NMDS.df.R14.BR2$Period.dom
+
 MDS.lev.leg<-c("C-Bleach '15", "D-Bleach '15", "C-Recov '16", "D-Recov '16")
 MDS.colors<-c("lightpink", "slategray1", "firebrick2", "dodgerblue2")
 
@@ -1955,8 +1979,8 @@ NMDS.plot<-ordiplot(NMDS.R14.BR2, type="n", cex.main=1, display="sites", cex.lab
 axis(side = 2, labels = FALSE, tck = -0.05)
 abline(h = 0, lty = "dotted")
 abline(v = 0, lty = "dotted")
-points(NMDS.plot, "sites", cex=0.8, pch=16, col=MDS.colors)
-ordiellipse(NMDS.plot, groups=NMDS.df.R14.BR2$Period:NMDS.df.R14.BR2$dom, draw="polygon", col=MDS.colors, alpha=150, kind="sd", conf=0.8)
+points(NMDS.plot, "sites", cex=0.8, pch=16,  col=MDS.colors[groups])
+ordihull(NMDS.plot, groups=NMDS.df.R14.BR2$Period.dom, draw="polygon", alpha=100, col=MDS.colors, border=MDS.colors)
 par.new=T
 plot(vars.R14.BR2, col="black", p.max=0.05, cex=0.8, lwd=1)
 
