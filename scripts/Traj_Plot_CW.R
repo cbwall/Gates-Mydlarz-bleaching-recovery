@@ -27,22 +27,31 @@ Data <- Data[ , -which(names(Data) %in% c("X", "Species", "Status","coral.red.ad
 Data<- Data[c(!Data$Period=="2014 Lab" & !Data$Period=="2014 Field.Feb"),]
 Data$Period<-factor(Data$Period, levels= c("2014 Oct", "2015 Feb", "2015 Oct", "2016 Feb"))
 Data$Site<-factor(Data$Site, levels= c("Lilipuna", "Reef 14"))
+
 Data <-na.omit(Data)
 
 
 # make an arbitrary number column that runs sequential by Status_Site
-Data<-Data %>% group_by(Period) %>% dplyr::mutate(Arb.ID = row_number())
+Data<-Data %>% 
+  group_by(Period) %>% 
+  dplyr::mutate(Arb.ID = row_number())
+
+# make new factor of B (Bleaching) and R (Recovery) for each period 1 ('14-15) and 2 ('15-16)
+Data<-Data %>%
+  mutate(Period.short = if_else(Period=="2014 Oct", "B1", 
+                                if_else(Period=="2015 Feb", "R1",
+                                        if_else(Period=="2015 Oct", "B2", "R2"))))
+
+# return to dataframe
 Data<- as.data.frame(Data)
 
-# matrix of responses
+# matrix of responses to use in ordination
 mat <- Data[,c(4:13)]
 
 ######### Should group (grp) be used as "site" and survey (per)? >> works with all test scripts
-######### Or should it be the replicates (sampu), and (per)? >> has problems with "not sampled enough"
-######### Alternative to select XXX number of C and D corals at random to maximize # and balanced?
 
 # groups combining Site and Symbiont #### this is for legend and shows order
-grp <- paste0(Data$Site,Data$dom)
+grp <- paste0(Data$Site, Data$dom)
 unique(grp)
 
 # sampling units
@@ -58,8 +67,9 @@ dist <- dist(mat, method = "euclidean")
 labs<-paste0("R",per)
 
 # figure of trajectories
+######### Something wrong here--if you plot without colors you see MANY more lines. WHY??? #####
 #pdf("output/trajectory_plotCW.pdf",width=6, height=6)
-trajectoryPCoA(dist, grp, per, traj.colors= c("black","gray", "red", "pink"), lwd = 1)
+trajectoryPCoA(dist, sampu, per, traj.colors= c("black","gray", "red", "pink"), lwd = 1)
       legend("topleft", col=c("black","gray", "red", "pink"), 
              legend=c("LilipunaD", "LilipunaC", "Reef 14D",  "Reef 14C"), bty="n", lty=1, lwd = 2)
 #dev.off()
