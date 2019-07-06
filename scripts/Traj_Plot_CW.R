@@ -64,12 +64,11 @@ unique(per)
 # scale and center data, and apply Euclidian distance matrix
 mat <- scale(mat, center = TRUE, scale = TRUE)
 dist <- dist(mat, method = "euclidean")
-labs<-paste0("R",per)
 
 # figure of trajectories
 ######### Something wrong here--if you plot without colors you see MANY more lines. WHY??? #####
 #pdf("output/trajectory_plotCW.pdf",width=6, height=6)
-trajectoryPCoA(dist, sampu, per, traj.colors= c("black","gray", "red", "pink"), lwd = 1)
+trajectoryPCoA(dist, sampu, per, traj.colors= c("black","gray", "red", "pink"), lwd = 1, survey.labels=TRUE)
       legend("topleft", col=c("black","gray", "red", "pink"), 
              legend=c("LilipunaD", "LilipunaC", "Reef 14D",  "Reef 14C"), bty="n", lty=1, lwd = 2)
 #dev.off()
