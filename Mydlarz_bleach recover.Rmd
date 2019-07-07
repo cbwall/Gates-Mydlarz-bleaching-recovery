@@ -1754,16 +1754,16 @@ NMDS.mean=aggregate(allNMDS.df[,1:2],list(group=allNMDS.df$Period.Site.dom), mea
 ############### All groups NMDS
 fullNMDS$Period.Site.dom<-droplevels(fullNMDS$Period.Site.dom)
 groups<-fullNMDS$Period.Site.dom
-groups2<-c("Lilipuna-C", "Reef 14-C", "Lilipuna-D", "Reef 14-D")
+groups2<-c("C-Lilipuna", "C-Reef 14", "D-Lilipuna", "D-Reef 14")
 colors=c(
-  "steelblue2", #C Lilipuna
-  "mediumpurple1", #C Reef 14
-  "tan", # D Lilipuna
-  "coral") # D Reef 14
+  "firebrick1", #C Lilipuna
+  "firebrick3", #C Reef 14
+  "steelblue1", # D Lilipuna
+  "steelblue3") # D Reef 14
 
 ### 
 
-plot<-ordiplot(allNMDS, type="n", main=substitute(paste("full NMDS")), cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.3, 0.3))
+plot<-ordiplot(allNMDS, type="n", cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.3, 0.3))
 axis(side = 1, labels = FALSE, tck = -0.05)
 abline(h = 0, lty = "dotted")
 abline(v = 0, lty = "dotted")
@@ -1791,21 +1791,18 @@ with(plot, points(NMDS.mean[14,2], NMDS.mean[14,3], col=colors[4], pch=16, cex=0
 with(plot, points(NMDS.mean[15,2], NMDS.mean[15,3], col=colors[4], pch=16, cex=0.7, lwd=1)) # R14 D
 
 # lines for start and end
-with(plot, lines(NMDS.mean[c(1:4),2], NMDS.mean[c(1:4),3], lwd=1.5, col =colors[1])) # Lil C
-with(plot, lines(NMDS.mean[c(5:8),2], NMDS.mean[c(5:8),3], lwd=1.5, col =colors[2])) # R14 C
-with(plot, lines(NMDS.mean[c(9:12),2], NMDS.mean[c(9:12),3], lwd=1.5, col =colors[3])) # Lil D
-with(plot, lines(NMDS.mean[c(13:16),2], NMDS.mean[c(13:16),3], lwd=1.5, col =colors[4])) # R14 D
+with(plot, lines(NMDS.mean[c(1:4),2], NMDS.mean[c(1:4),3], lwd=1.5, col =colors[1], lty=2))# Lil C
+with(plot, lines(NMDS.mean[c(5:8),2], NMDS.mean[c(5:8),3], lwd=1.5, col =colors[2], lty=1))# R14 C
+with(plot, lines(NMDS.mean[c(9:12),2], NMDS.mean[c(9:12),3], lwd=1.5, col =colors[3], lty=2))# Lil D
+with(plot, lines(NMDS.mean[c(13:16),2], NMDS.mean[c(13:16),3], lwd=1.5, col =colors[4], lty=1))# R14 D
 
 # add labels
 text(-0.38, 0.28, "Bleaching \n 2015", cex=0.7, col="gray50")
 text(-0.28, -0.2, "Bleaching \n 2014", cex=0.7, col="gray50")
 text(0.27, -0.1, "Recovery \n 2014", cex=0.7, col="gray50")
 text(0.07, 0.21, "Recovery \n 2015", cex=0.7, col="gray50")
-legend("topright", legend=groups2, inset=c(0.045, -0.02), x.intersp=0.8, y.intersp=0.5, cex=0.7, pch=16, col=colors, pt.cex=1, bty="n")
+legend("topright", legend=groups2, inset=c(0.045, -0.02), x.intersp=0.3, y.intersp=0.5, cex=0.7, pch=16, col=colors, lty=c(1,2,1,2), seg.len=1, pt.cex=1, bty="n")
 
-
-dev.copy(pdf, "figures/1panel_allNMDS.pdf", height=5, width=5, useDingbats=FALSE)
-dev.off() 
 
 ```
 
