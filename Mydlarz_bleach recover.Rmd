@@ -1796,7 +1796,13 @@ with(plot, lines(NMDS.mean[c(5:8),2], NMDS.mean[c(5:8),3], lwd=1.5, col =colors[
 with(plot, lines(NMDS.mean[c(9:12),2], NMDS.mean[c(9:12),3], lwd=1.5, col =colors[3])) # Lil D
 with(plot, lines(NMDS.mean[c(13:16),2], NMDS.mean[c(13:16),3], lwd=1.5, col =colors[4])) # R14 D
 
-legend("topright", legend=groups2, inset=c(0.05, 0.01), x.intersp=0.8, y.intersp=0.5, cex=0.7, pch=16, col=colors, pt.cex=1, bty="n")
+# add labels
+text(-0.38, 0.28, "Bleaching \n 2015", cex=0.7, col="gray50")
+text(-0.28, -0.2, "Bleaching \n 2014", cex=0.7, col="gray50")
+text(0.27, -0.1, "Recovery \n 2014", cex=0.7, col="gray50")
+text(0.07, 0.21, "Recovery \n 2015", cex=0.7, col="gray50")
+legend("topright", legend=groups2, inset=c(0.045, -0.02), x.intersp=0.8, y.intersp=0.5, cex=0.7, pch=16, col=colors, pt.cex=1, bty="n")
+
 
 dev.copy(pdf, "figures/1panel_allNMDS.pdf", height=5, width=5, useDingbats=FALSE)
 dev.off() 
