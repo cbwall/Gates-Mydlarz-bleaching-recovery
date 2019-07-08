@@ -1779,7 +1779,6 @@ with(plot, points(NMDS.mean[12,2], NMDS.mean[12,3], col=colors[3], pch=17, cex=1
 with(plot, points(NMDS.mean[13,2], NMDS.mean[13,3], col=colors[4], pch=16, cex=0.7, lwd=1)) # R14 D
 with(plot, points(NMDS.mean[16,2], NMDS.mean[16,3], col=colors[4], pch=17, cex=1, lwd=1)) # R14 D
 
-
 # points for others (if want)
 with(plot, points(NMDS.mean[2,2], NMDS.mean[2,3], col=colors[1], pch=16, cex=0.7, lwd=1)) # Lil C
 with(plot, points(NMDS.mean[3,2], NMDS.mean[3,3], col=colors[1], pch=16, cex=0.7, lwd=1)) # Lil C
@@ -1803,6 +1802,8 @@ text(0.27, -0.1, "Recovery \n 2014", cex=0.7, col="gray50")
 text(0.07, 0.21, "Recovery \n 2015", cex=0.7, col="gray50")
 legend("topright", legend=groups2, inset=c(0.045, -0.02), x.intersp=0.3, y.intersp=0.5, cex=0.7, pch=16, col=colors, lty=c(1,2,1,2), seg.len=1, pt.cex=1, bty="n")
 
+dev.copy(pdf, "figures/1panel_allNMDS.pdf", height=5, width=5, useDingbats=FALSE)
+dev.off() 
 
 ```
 
