@@ -35,6 +35,7 @@ library(dplyr)
 library(vegclust)
 library(smacof)
 library(devtools)
+library(zoo)
 
 install_github("vqv/ggbiplot")
 library(ggbiplot)
@@ -69,8 +70,7 @@ Physiological and immunological parameters were collected from from *Montipora c
 setwd("data/environmental/Temp data")
 
 # Temperature and light data analysis ------
-library(scales); library(zoo); library(lme4); library(lsmeans); library(car)
-reefcols <- c("#8dd3c7", "#bebada", "#d9d9d9")
+reefcols <- c("gray40", "gray70")
 
 # Import temperature data
 
@@ -409,7 +409,7 @@ Rf14.PAR1$LiCor_Calibrated<-(Rf14.PAR1$Raw*74.242/(15*60))
          Rf14.PAR5$LiCor_Calibrated<-(Rf14.PAR5$Raw*74.242/(15*60))
          
 
-# Lilipuna -- Odyssey logger 2485 .....calibration approximated, other values are nonsense
+# Lilipuna -- Odyssey logger 2485 .....calibration
 Lil.PAR1<-Lil.PAR1[,-5]; head(Lil.PAR1) 
 Lil.PAR1$LiCor_Calibrated<-(Lil.PAR1$Raw*82.0/(15*60)); head(Lil.PAR1)
   Lil.PAR2<-Lil.PAR2[,-5]; head(Lil.PAR2)
@@ -491,36 +491,36 @@ lsmeans(lmod1, "reef", contr="pairwise")
 
 par(mfrow=c(2,1), mar=c(2,4,2,1), mgp=c(2,0.5,0))
 k=1; lwd=1 # k-day moving averages
-plot(mean ~ Date, TIMESPAN_mean, type="n", ylab="Mean day temp. (°C)", ylim=c(21, 31), xaxt="n", xlab="")
-mtext(expression(bold("A")), 2, adj=4.5, las=1, padj=-8)
+plot(mean ~ Date, TIMESPAN_mean, type="n", ylab="Mean daily temp. (°C)", cex.lab=0.7, cex.axis=0.7, ylim=c(21, 31), xaxt="n", xlab="")
+mtext(expression(bold("a")), 2, adj=4.5, las=1, padj=-8)
 axis.Date(1, at=seq(min(TIMESPAN_mean$Date), max(TIMESPAN_mean$Date), by="1 mon"), format="%b '%y")
-legend("topright", lty=1, col=c(reefcols[1:2], "darkgray"), legend=c("Reef 14","Lilipuna"), lwd=2, bty="n")
+legend("topright", lty=1, col=c(reefcols[1:2]), legend=c("Reef 14","Lilipuna"), seg.len= 0.9, cex=0.7, lwd=2, bty="n")
 with(na.omit(data.frame(date=Rf14_mean1$Date, mean=rollmean(Rf14_mean1$mean, k, fill=NA))), { 
-  lines(date, mean, col=reefcols[1], lwd=1.5) 
+  lines(date, mean, col=reefcols[1], lwd=1.2) 
 })
 with(na.omit(data.frame(date=Rf14_mean2$Date, mean=rollmean(Rf14_mean2$mean, k, fill=NA))), { 
-  lines(date, mean, col=reefcols[1], lwd=1.5) 
+  lines(date, mean, col=reefcols[1], lwd=1.2) 
 })
 with(na.omit(data.frame(date=Rf14_mean3$Date, mean=rollmean(Rf14_mean3$mean, k, fill=NA))), { 
-  lines(date, mean, col=reefcols[1], lwd=1.5)
+  lines(date, mean, col=reefcols[1], lwd=1.2)
 })
 with(na.omit(data.frame(date=Rf14_mean4$Date, mean=rollmean(Rf14_mean4$mean, k, fill=NA))), { 
-  lines(date, mean, col=reefcols[1], lwd=1.5)
+  lines(date, mean, col=reefcols[1], lwd=1.2)
 })
 with(na.omit(data.frame(date=Rf14_mean5$Date, mean=rollmean(Rf14_mean5$mean, k, fill=NA))), { 
-  lines(date, mean, col=reefcols[1], lwd=1.5) 
+  lines(date, mean, col=reefcols[1], lwd=1.2) 
 })
 with(na.omit(data.frame(date=Lil_mean1$Date, mean=rollmean(Lil_mean1$mean, k, fill=NA))), {
-  lines(date, mean, col=reefcols[2], lwd=1.5)
+  lines(date, mean, col=reefcols[2], lwd=1.2)
 })
 with(na.omit(data.frame(date=Lil_mean2$Date, mean=rollmean(Lil_mean2$mean, k, fill=NA))), {
-  lines(date, mean, col=reefcols[2], lwd=1.5)
+  lines(date, mean, col=reefcols[2], lwd=1.2)
 })
 with(na.omit(data.frame(date=Lil_mean4$Date, mean=rollmean(Lil_mean4$mean, k, fill=NA))), { 
-  lines(date, mean, col=reefcols[2], lwd=1.5) 
+  lines(date, mean, col=reefcols[2], lwd=1.2) 
 })
 with(na.omit(data.frame(date=Lil_mean5$Date, mean=rollmean(Lil_mean5$mean, k, fill=NA))), { 
-  lines(date, mean, col=reefcols[2], lwd=1.5) 
+  lines(date, mean, col=reefcols[2], lwd=1.2) 
 })
 
 ###########################
@@ -528,10 +528,9 @@ with(na.omit(data.frame(date=Lil_mean5$Date, mean=rollmean(Lil_mean5$mean, k, fi
 ###########################
 
 k=1; lwd=1 # k-day moving averages
-plot(mean ~ Date, TIMESPAN_mean, type="n", ylab=(expression(paste("DLI mol photons", ~m^-2, ~d^-1, sep=""))), xaxt="n", xlab="", ylim=c(0,40))
-mtext(expression(bold("B")), 2, adj=4.5, las=1, padj=-8)
-axis.Date(1, at=seq(min(TIMESPAN_mean$Date), max(TIMESPAN_mean$Date), by="1 mon"), format="%b '%y")
-#legend("topleft", lty=1, col=c(reefcols[1:2], "darkgray"), legend=c("Reef 14","Lilipuna"), lwd=2, bty="n")
+plot(mean ~ Date, TIMESPAN_mean, type="n", ylab=(expression(paste("DLI (mol photons", ~m^-2, ~d^-1, ")", sep=""))), xaxt="n", xlab="", cex.lab=0.7, ylim=c(0,40), cex.axis=0.7)
+mtext(expression(bold("b")), 2, adj=4.5, las=1, padj=-8)
+axis.Date(1, at=seq(min(TIMESPAN_mean$Date), max(TIMESPAN_mean$Date), by="1 mon"), format="%b '%y", cex.axis=0.7, cex.lab=0.7)
 with(na.omit(data.frame(date=Lil.L1$Date, dli=rollmean(Lil.L1$dli, k, fill=NA))), lines(date, dli, col=reefcols[2], lwd=lwd))
 with(na.omit(data.frame(date=Lil.L2$Date, dli=rollmean(Lil.L2$dli, k, fill=NA))), lines(date, dli, col=reefcols[2], lwd=lwd))
 with(na.omit(data.frame(date=Lil.L4$Date, dli=rollmean(Lil.L4$dli, k, fill=NA))), lines(date, dli, col=reefcols[2], lwd=lwd))
@@ -542,7 +541,7 @@ with(na.omit(data.frame(date=Rf14.L3$Date, dli=rollmean(Rf14.L3$dli, k, fill=NA)
 with(na.omit(data.frame(date=Rf14.L4$Date, dli=rollmean(Rf14.L4$dli, k, fill=NA))), lines(date, dli, col=reefcols[1], lwd=lwd))
 with(na.omit(data.frame(date=Rf14.L5$Date, dli=rollmean(Rf14.L5$dli, k, fill=NA))), lines(date, dli, col=reefcols[1], lwd=lwd))
 
-dev.copy(pdf, "figures/Temp.PAR.pdf", width=8, height=5)
+dev.copy(pdf, "figures/Temp.PAR.pdf", width=4, height=5)
 dev.off()
 
 
@@ -1767,7 +1766,7 @@ plot<-ordiplot(allNMDS, type="n", cex.main=1, display="sites", cex.lab=0.8, cex.
 axis(side = 1, labels = FALSE, tck = -0.05)
 abline(h = 0, lty = "dotted")
 abline(v = 0, lty = "dotted")
-ordihull(plot, groups=fullNMDS$Period, draw="polygon", alpha=30, col="gray50", border=FALSE)
+ordihull(plot, groups=fullNMDS$Period, draw="polygon", alpha=30, col=c("gray20", "gray40", "gray30", "gray50"), border=FALSE)
 
 # points for start and end
 with(plot, points(NMDS.mean[1,2], NMDS.mean[1,3], col=colors[1], pch=16, cex=0.7, lwd=1)) # Lil C
