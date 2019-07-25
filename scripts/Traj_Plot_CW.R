@@ -53,6 +53,7 @@ mat <- Data[,c(4:13)]
 # groups combining Site and Symbiont #### this is for legend and shows order
 grp <- paste0(Data$Site, Data$dom)
 unique(grp)
+grp2<-unique(Data$Period.short)
 
 # sampling units
 sampu <- Data$Arb.ID
@@ -68,7 +69,7 @@ dist <- dist(mat, method = "euclidean")
 # figure of trajectories
 ######### Something wrong here--if you plot without colors you see MANY more lines. WHY??? #####
 #pdf("output/trajectory_plotCW.pdf",width=6, height=6)
-trajectoryPCoA(dist, sampu, per, traj.colors= c("black","gray", "red", "pink"), lwd = 1, survey.labels=TRUE)
+trajectoryPCoA(dist, grp, per, traj.colors= c("black","gray", "red", "pink"), lwd = 2, survey.labels=TRUE)
       legend("topleft", col=c("black","gray", "red", "pink"), 
              legend=c("LilipunaD", "LilipunaC", "Reef 14D",  "Reef 14C"), bty="n", lty=1, lwd = 2)
 #dev.off()

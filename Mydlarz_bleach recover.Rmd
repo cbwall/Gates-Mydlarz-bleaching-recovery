@@ -456,8 +456,8 @@ lsmeans(lmod1, "reef", contr="pairwise")
 # Plot temp. daily mean temperatures for each reef
 #######################
 # Temperature and light data analysis ------
-reefcols <- c("gray60", "gray35")
-
+reefcolsBW <- c("gray60", "gray35")
+reefcols2 <- c("mediumseagreen", "lightskyblue")
 
 par(mfrow=c(1,1), mar=c(2,4,2,1), mgp=c(2,0.5,0))
 
@@ -467,38 +467,38 @@ k=1; lwd=0.7 # k-day moving averages
 plot(mean ~ Date, annual.day.temps, type="l", ylab="Mean daily temp. (°C)", cex.lab=0.6, cex.axis=0.6, ylim=c(21, 31), xlab="", xaxt="n", col="gray85")
 axis.Date(1, at=seq(min(annual.day.temps$Date), max(annual.day.temps$Date), by="2 mon"), 
           format="%b '%y", cex.axis=0.6, cex.lab=0.6)
-legend("topright", lty=1, col=c("gray 85", reefcols[c(1,2)]), legend=c("NOAA-HIMB", "Lilipuna", "Reef 14"), seg.len= 1.5, cex=0.6, lwd=1, bty="n", inset=c(0.1, 0), y.intersp = 1.3)
+legend("topright", lty=1, col=c("gray 80", reefcols2[c(1,2)]), legend=c("NOAA-HIMB", "Lilipuna", "Reef 14"), seg.len= 1.5, cex=0.6, lwd=1, bty="n", inset=c(0.1, 0), y.intersp = 1.3)
 
 ### Lilipuna
 with(na.omit(data.frame(date=Lil_mean1$Date, mean=rollmean(Lil_mean1$mean, k, fill=NA))), {
-  lines(date, mean, col=reefcols[1], lwd=lwd)
+  lines(date, mean, col=reefcols2[1], lwd=lwd)
 })
 with(na.omit(data.frame(date=Lil_mean2$Date, mean=rollmean(Lil_mean2$mean, k, fill=NA))), {
-  lines(date, mean, col=reefcols[1], lwd=lwd)
+  lines(date, mean, col=reefcols2[1], lwd=lwd)
 })
 with(na.omit(data.frame(date=Lil_mean4$Date, mean=rollmean(Lil_mean4$mean, k, fill=NA))), { 
-  lines(date, mean, col=reefcols[1], lwd=lwd) 
+  lines(date, mean, col=reefcols2[1], lwd=lwd) 
 })
 # with(na.omit(data.frame(date=Lil_mean5$Date, mean=rollmean(Lil_mean5$mean, k, fill=NA))), { 
-# lines(date, mean, col=reefcols[1], lwd=1.2) })
+# lines(date, mean, col=reefcols2[1], lwd=1.2) })
 
 ### Reef 14
 with(na.omit(data.frame(date=Rf14_mean1$Date, mean=rollmean(Rf14_mean1$mean, k, fill=NA))), { 
-  lines(date, mean, col=reefcols[2], lwd=lwd) 
+  lines(date, mean, col=reefcols2[2], lwd=lwd) 
 })
 with(na.omit(data.frame(date=Rf14_mean2$Date, mean=rollmean(Rf14_mean2$mean, k, fill=NA))), { 
-  lines(date, mean, col=reefcols[2], lwd=lwd) 
+  lines(date, mean, col=reefcols2[2], lwd=lwd) 
 })
 with(na.omit(data.frame(date=Rf14_mean3$Date, mean=rollmean(Rf14_mean3$mean, k, fill=NA))), { 
-  lines(date, mean, col=reefcols[2], lwd=lwd)
+  lines(date, mean, col=reefcols2[2], lwd=lwd)
 })
 with(na.omit(data.frame(date=Rf14_mean4$Date, mean=rollmean(Rf14_mean4$mean, k, fill=NA))), { 
-  lines(date, mean, col=reefcols[2], lwd=lwd)
+  lines(date, mean, col=reefcols2[2], lwd=lwd)
 })
 # with(na.omit(data.frame(date=Rf14_mean5$Date, mean=rollmean(Rf14_mean5$mean, k, fill=NA))), { 
-# lines(date, mean, col=reefcols[2], lwd=1.2) })
+# lines(date, mean, col=reefcols2[2], lwd=1.2) })
 
-dev.copy(pdf, "figures/Temp.2014_2016.pdf", width=4, height=3)
+dev.copy(pdf, "figures/Temp.2014_2016_col.pdf", width=7, height=3)
 dev.off()
 
 temp.plot <- recordPlot() # records the plot for later
@@ -511,16 +511,16 @@ par(mfrow=c(1,1), mar=c(2,4,2,1), mgp=c(2,0.5,0))
 k=1; lwd=0.8 # k-day moving averages
 plot(mean ~ Date, TIMESPAN_mean, type="n", ylab=(expression(paste("DLI (mol photons", ~m^-2, ~d^-1, ")", sep=""))), xaxt="n", xlab="", cex.lab=0.7, ylim=c(0,50), cex.axis=0.7)
 axis.Date(1, at=seq(min(TIMESPAN_mean$Date), max(TIMESPAN_mean$Date), by="1 mon"), format="%b '%y", cex.axis=0.7, cex.lab=0.7)
-with(na.omit(data.frame(date=Lil.L1$Date, dli=rollmean(Lil.L1$dli, k, fill=NA))), lines(date, dli, col=reefcols[1], lwd=lwd))
-with(na.omit(data.frame(date=Lil.L2$Date, dli=rollmean(Lil.L2$dli, k, fill=NA))), lines(date, dli, col=reefcols[1], lwd=lwd))
-with(na.omit(data.frame(date=Lil.L4$Date, dli=rollmean(Lil.L4$dli, k, fill=NA))), lines(date, dli, col=reefcols[1], lwd=lwd))
-with(na.omit(data.frame(date=Lil.L5$Date, dli=rollmean(Lil.L5$dli, k, fill=NA))), lines(date, dli, col=reefcols[1], lwd=lwd))
-with(na.omit(data.frame(date=Rf14.L1$Date, dli=rollmean(Rf14.L1$dli, k, fill=NA))), lines(date, dli, col=reefcols[2], lwd=lwd))
-with(na.omit(data.frame(date=Rf14.L2$Date, dli=rollmean(Rf14.L2$dli, k, fill=NA))), lines(date, dli, col=reefcols[2], lwd=lwd))
-with(na.omit(data.frame(date=Rf14.L3$Date, dli=rollmean(Rf14.L3$dli, k, fill=NA))), lines(date, dli, col=reefcols[2], lwd=lwd))
-with(na.omit(data.frame(date=Rf14.L4$Date, dli=rollmean(Rf14.L4$dli, k, fill=NA))), lines(date, dli, col=reefcols[2], lwd=lwd))
-with(na.omit(data.frame(date=Rf14.L5$Date, dli=rollmean(Rf14.L5$dli, k, fill=NA))), lines(date, dli, col=reefcols[2], lwd=lwd))
-legend("topright", lty=1, col=c(reefcols[c(1,2)]), legend=c("Lilipuna", "Reef 14"), seg.len= 1.2, cex=0.8, y.intersp=1.2, x.intersp = 0.8, lwd=2, bty="n")
+with(na.omit(data.frame(date=Lil.L1$Date, dli=rollmean(Lil.L1$dli, k, fill=NA))), lines(date, dli, col=reefcols2[1], lwd=lwd))
+with(na.omit(data.frame(date=Lil.L2$Date, dli=rollmean(Lil.L2$dli, k, fill=NA))), lines(date, dli, col=reefcols2[1], lwd=lwd))
+with(na.omit(data.frame(date=Lil.L4$Date, dli=rollmean(Lil.L4$dli, k, fill=NA))), lines(date, dli, col=reefcols2[1], lwd=lwd))
+with(na.omit(data.frame(date=Lil.L5$Date, dli=rollmean(Lil.L5$dli, k, fill=NA))), lines(date, dli, col=reefcols2[1], lwd=lwd))
+with(na.omit(data.frame(date=Rf14.L1$Date, dli=rollmean(Rf14.L1$dli, k, fill=NA))), lines(date, dli, col=reefcols2[2], lwd=lwd))
+with(na.omit(data.frame(date=Rf14.L2$Date, dli=rollmean(Rf14.L2$dli, k, fill=NA))), lines(date, dli, col=reefcols2[2], lwd=lwd))
+with(na.omit(data.frame(date=Rf14.L3$Date, dli=rollmean(Rf14.L3$dli, k, fill=NA))), lines(date, dli, col=reefcols2[2], lwd=lwd))
+with(na.omit(data.frame(date=Rf14.L4$Date, dli=rollmean(Rf14.L4$dli, k, fill=NA))), lines(date, dli, col=reefcols2[2], lwd=lwd))
+with(na.omit(data.frame(date=Rf14.L5$Date, dli=rollmean(Rf14.L5$dli, k, fill=NA))), lines(date, dli, col=reefcols2[2], lwd=lwd))
+legend("topright", lty=1, col=c(reefcols2[c(1,2)]), legend=c("Lilipuna", "Reef 14"), seg.len= 1.2, cex=0.8, y.intersp=1.2, x.intersp = 0.8, lwd=2, bty="n")
 
 dev.copy(pdf, "figures/supplement/PAR.pdf", width=7, height=3)
 dev.off()
@@ -608,7 +608,7 @@ FigMC <- ggplot(df.fig, aes(x=Period, y=MC, group=Site, color=Site)) +
   geom_line(position=pd, size=.6) +
   geom_point(position=pd, size=1) +
   ylab("") +
-  scale_color_manual(values=reefcols) +
+  scale_color_manual(values=reefcols2) +
   ylab(expression(bold(paste(~bolditalic("M. capitata")~cover, sep="")))) +
   scale_y_continuous(limits=c(0,1.05),oob = rescale_none)+ 
   scale_x_discrete(name ="Year and Event", 
@@ -622,7 +622,7 @@ FigBlMC <- ggplot(df.fig, aes(x=Period, y=totalMC.bleach, group=Site, color=Site
   geom_point(position=pd, size=1) +
   ylab("") +
   xlab(ecol.labs) +
-  scale_color_manual(values=reefcols) +
+  scale_color_manual(values=reefcols2) +
   ylab(expression(bold(paste(~Bleached, bolditalic(" M. capitata")~cover, sep="")))) +
   scale_y_continuous(limits=c(0,1.05),oob = rescale_none)+ 
   scale_x_discrete(name ="Year and Event", 
@@ -639,7 +639,7 @@ Ecol.Fig<-plot_grid(FigMC, FigBlMC,
 Ecol.Fig
 
 ##### save the figure and export to directory? ####
-dev.copy(pdf, "figures/Ecol.Fig.pdf", width=4, height=7)
+dev.copy(pdf, "figures/Ecol.Fig_col.pdf", width=4, height=7)
 dev.off()
 ```
 
@@ -899,7 +899,6 @@ df$CAT[df$CAT >= 900]<- NA # 2 outliers removed
 # don't need "Ramp" lab data, this was lab thermally stressed. Remove this.
 df<-df[!(df$Status=="Lab-Ramp"),]
 
-write.csv(df, "output/df.normalized.csv")
 ```
 
 ```{r, fig.width= 2, fig.height= 2, eval=FALSE}
@@ -1145,7 +1144,7 @@ fig.df.phys<-cbind(zoox.m, zoox.SE[c(5,0)],chla.m[c(5,0)], chla.SE[c(5,0)], chla
 colnames(fig.df.phys)<-c("Site","Status", "Period", "dom", "zoox", "zoox.SE", "chla", "chla.SE", "chlacell", "chlacell.SE", "prot", "prot.SE", "AFDW", "AFDW.SE", "N-chla")
 
 # make an interaction column
-fig.df.phys$int<-interaction(fig.df.phys$Site, fig.df.phys$dom)
+fig.df.phys$int<-interaction(fig.df.phys$dom, fig.df.phys$Site)
 fig.df.phys$int<-factor(fig.df.phys$int)
 ####
 
@@ -1155,11 +1154,6 @@ fig.df.immuno<-cbind(CAT.m, CAT.SE[c(5,0)], POX.m[c(5,0)], POX.SE[c(5,0)], SOD.m
 
 colnames(fig.df.immuno)<-c("Site","Status", "Period", "dom", "CAT", "CAT.SE", "POX", "POX.SE", "SOD", "SOD.SE", "PPO", "PPO.SE", "MEL", "MEL.SE")
 
-# make an interaction column
-fig.df.immuno$int<-interaction(fig.df.immuno$Site, fig.df.immuno$dom)
-fig.df.immuno$int<-factor(fig.df.immuno$int)
-
-# write.csv(xxx, "Figure.df.xxx.csv")
 ```
 
 ## Figures
@@ -1168,12 +1162,16 @@ fig.df.immuno$int<-factor(fig.df.immuno$int)
 # side by side figures separated by Sites 
 ### Physiological figures
 
-color.scheme<-c("gray80", "gray60", 'lightskyblue', 'dodgerblue', 
-                "gray50", "gray30", "thistle", "coral")
-break.points<-c("Lilipuna.Pre.C", "Lilipuna.Pre.D", "Lilipuna.C", "Lilipuna.D", 
-                "Reef 14.Pre.C", "Reef 14.Pre.D", "Reef 14.C", "Reef 14.D")
-legend.names<-c("Lil.Pre C", "Lil.Pre D", "Lil C", "Lil D", 
-                "R14.Pre C", "R14.Pre D", "R14 C", "R14 D")
+color.scheme<-c("gray85", "gray65", "gray50", "gray20", 
+                "firebrick1", #C Lilipuna
+                "firebrick3", #C Reef 14
+                "steelblue1", # D Lilipuna
+                "steelblue3") # D Reef 14
+
+break.points<-c("C.Lilipuna.Pre", "C.Reef 14.Pre", "D.Lilipuna.Pre", 
+                "D.Reef 14.Pre", "C.Lilipuna", "C.Reef 14", "D.Lilipuna", "D.Reef 14")
+legend.names<-c("C-Lilipuna Pre", "C-Reef 14 Pre", "D-Lilipuna Pre", "D-Reef 14 Pre",
+                "C-Lilipuna", "C-Reef 14", "D-Lilipuna", "D-Reef 14")
 axis.labels<-c("Prev", "Oct'14 \nBl","Feb'15 \nRc","Oct'15 \nBl", "Feb'16 \nRc")
 
 
@@ -1202,7 +1200,7 @@ pd <- position_dodge(0.15) #offset for error bars
 #### graph as category of C/D
 ######################## 
 
-fig.df.phys$int<-factor(fig.df.phys$int, levels=c("Lilipuna.Pre.C", "Lilipuna.Pre.D", "Lilipuna.C", "Lilipuna.D", "Reef 14.Pre.C", "Reef 14.Pre.D", "Reef 14.C", "Reef 14.D"))
+fig.df.phys$int<-factor(fig.df.phys$int, levels=c("C.Lilipuna.Pre", "C.Reef 14.Pre", "D.Lilipuna.Pre", "D.Reef 14.Pre", "C.Lilipuna", "C.Reef 14", "D.Lilipuna", "D.Reef 14"))
 ```
 
 Code for generating individual figures
@@ -1283,8 +1281,9 @@ AFDW.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=AFDW, group=int, color=int)) 
   scale_x_discrete(name ="Year and Event", 
       labels=axis.labels)+
   Fig.formatting
+```
 
-
+```{r immunity figures}
 ### ### ### ### ### Immunity figures ### ### ### ### ### 
 
 
@@ -1310,21 +1309,29 @@ colnames(immuno.site.df)<-c("Site","Status", "Period", "CAT", "CAT.SE", "POX", "
 Pre.immuno<-immuno.site.df[c(1:2),]
 Pre.immuno$dom<-"unident"
 Pre.immuno<-Pre.immuno[, c(1:3, 14, 4:13)]
-Pre.immuno$int<-interaction(Pre.immuno$Site, Pre.immuno$dom)
 
 ## now this subset of site means can be overlayed with datafame from Oct 2014- Feb 2016
 fig.df.immuno.comp<-rbind(Pre.immuno, fig.df.immuno)
 
+# make an interaction column
+fig.df.immuno.comp$int<-interaction(fig.df.immuno.comp$dom, fig.df.immuno.comp$Site)
+fig.df.immuno.comp$int<-factor(fig.df.immuno.comp$int)
 
-color.scheme2<-c("gray70", 'lightskyblue', 'dodgerblue', 
-                "gray40", "thistle", "coral")
-break.points.immuno<-c("Lilipuna.Pre.unident", "Lilipuna.C", "Lilipuna.D", 
-                "Reef 14.Pre.unident", "Reef 14.C", "Reef 14.D")
-legend.names.immuno<-c("Lil.Pre unident.", "Lil C", "Lil D", 
-                "R14.Pre unident.", "R14 C", "R14 D")
+fig.df.immuno.comp$int<-factor(fig.df.immuno.comp$int, levels=c("unident.Lilipuna.Pre", "unident.Reef 14.Pre", "C.Lilipuna", "C.Reef 14", "D.Lilipuna", "D.Reef 14"))
+####################
+
+color.scheme.immuno<-c("gray70", "gray50", 
+                "firebrick1", #C Lilipuna
+                "firebrick3", #C Reef 14
+                "steelblue1", # D Lilipuna
+                "steelblue3") # D Reef 14
 
 
-fig.df.immuno.comp$int<-factor(fig.df.immuno.comp$int, levels=c("Lilipuna.Pre.unident","Lilipuna.C", "Lilipuna.D", "Reef 14.Pre.unident", "Reef 14.C", "Reef 14.D"))
+break.points.immuno<-c("unident.Lilipuna.Pre", "unident.Reef 14.Pre", 
+                       "C.Lilipuna", "C.Reef 14", "D.Lilipuna", "D.Reef 14")
+legend.names.immuno<-c("unk-Lilipuna Pre", "unk-Reef 14 Pre",
+                       "C-Lilipuna", "C-Reef 14", "D-Lilipuna", "D-Reef 14")
+axis.labels.immuno<-c("Prev", "Oct'14 \nBl","Feb'15 \nRc","Oct'15 \nBl", "Feb'16 \nRc")
 
 
 ########## Prophenoloxidase (PPO) ############
@@ -1333,7 +1340,7 @@ PPO.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=PPO, group=int, color=i
   geom_point(position=pd, size=1) +
   coord_cartesian(ylim=c(0, 3)) +
   ylab(expression(paste("PO Activity", ~(Delta~Abs~"490nm"~min^-1~mg~prot^-1), sep=""))) +
-  scale_color_manual(values=c(color.scheme2),
+  scale_color_manual(values=c(color.scheme.immuno),
                      name= "Site:Clade",
                      breaks=break.points.immuno,
                      labels=legend.names.immuno) +
@@ -1348,9 +1355,6 @@ MEL.labSE<-aggregate(MEL~Site+Status+Period,data=data, std.error)
 MEL.df<-cbind(MEL.lab, MEL.labSE[c(4,0)]); colnames(MEL.df[,4:5])<-c("MEL", "MEL.labSE")
 MEL.df$Period<-factor(MEL.df$Period, levels=c("2014 Field.Feb", "2014 Lab", "2014 Oct", "2015 Feb", "2015 Oct", "2016 Feb"))
 
-#plot(MEL~Period, data=MEL.df, cex.axis=0.8)
-#dev.copy(pdf,"Figures/MEL.all.time.pdf", height=5, width=7, encod="MacRoman")
-#dev.off
 
 ######## Melanin (MEL) #############
 MEL.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=MEL, group=int, color=int)) + geom_errorbar(aes(ymin=MEL-MEL.SE, ymax=MEL+MEL.SE), size=.6, width=0, position=pd) +
@@ -1358,7 +1362,7 @@ MEL.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=MEL, group=int, color=i
   geom_point(position=pd, size=1) +
   coord_cartesian(ylim=c(0, 0.02)) +
   ylab(expression(paste("MEL", ~(Abs~"490nm"~mg~tissue^-1), sep="")))+
-  scale_color_manual(values=c(color.scheme2),
+  scale_color_manual(values=c(color.scheme.immuno),
                      name= "Site:Clade",
                      breaks=break.points.immuno,
                      labels=legend.names.immuno) +
@@ -1374,7 +1378,7 @@ POX.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=POX, group=int, color=i
   geom_point(position=pd, size=1) +
   coord_cartesian(ylim=c(0, 1.5)) +
   ylab(expression(paste("POX activity", ~(Delta~Abs~"470nm"~min^-1~mg~prot^-1), sep=""))) +
-  scale_color_manual(values=c(color.scheme2),
+  scale_color_manual(values=c(color.scheme.immuno),
                      name= "Site:Clade",
                      breaks=break.points.immuno,
                      labels=legend.names.immuno) +
@@ -1389,7 +1393,7 @@ CAT.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=CAT, group=int, color=i
   geom_point(position=pd, size=1) +
   coord_cartesian(ylim=c(0, 800)) +
   ylab(expression(paste("CAT activity", ~(Abs~"490nm"~mg~tissue^-1), sep="")))+
-  scale_color_manual(values=c(color.scheme2),
+  scale_color_manual(values=c(color.scheme.immuno),
                      name= "Site:Clade",
                      breaks=break.points.immuno,
                      labels=legend.names.immuno) +
@@ -1404,7 +1408,7 @@ SOD.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=SOD/10^3, group=int, co
   geom_point(position=pd, size=1) +
   coord_cartesian(ylim=c(0, 50)) +
   ylab(expression(paste("SOD activity", ~x10^3~mg~protein^-1, sep=""))) +
-  scale_color_manual(values=c(color.scheme2),
+  scale_color_manual(values=c(color.scheme.immuno),
                      name= "Site:Clade",
                      breaks=break.points.immuno,
                      labels=legend.names.immuno) +
@@ -1417,11 +1421,21 @@ SOD.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=SOD/10^3, group=int, co
 ```{r, univariate figures, fig.align='center', results="hide"}
 
 # legend plot
-fig.legend<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=SOD, group=int, color=int)) +
+fig.legend.phys<-ggplot(data=fig.df.phys, aes(x=Period, y=zoox, group=int, color=int)) +
   geom_point(position=pd, size=3) +
   coord_cartesian(ylim=c(0, 1)) +
-  scale_color_manual(values=c(color.scheme2),
-                     name= "Site:Clade",
+  scale_color_manual(values=c(color.scheme),
+                     name= "Clade:Site",
+                     breaks=break.points,
+                     labels=legend.names) +
+  theme_void()
+
+
+fig.legend.immun<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=SOD, group=int, color=int)) +
+  geom_point(position=pd, size=3) +
+  coord_cartesian(ylim=c(0, 1)) +
+  scale_color_manual(values=c(color.scheme.immuno),
+                     name= "Clade:Site",
                      breaks=break.points.immuno,
                      labels=legend.names.immuno) +
   theme_void()
@@ -1431,7 +1445,7 @@ Phys.figs<-plot_grid( (zoox.fig + theme(legend.position = "none")),
            (chlacell.fig + theme(legend.position = "none")), 
            (prot.fig+ theme(legend.position = "none")),
            (AFDW.fig+ theme(legend.position = "none")),
-           fig.legend,
+           fig.legend.phys,
           labels = c("a", "b", "c", "d", "e",""), ncol = 3)
 Phys.figs
 dev.copy(pdf, "figures/Phys.figs.pdf", encod="MacRoman", height=5, width=8)
@@ -1442,7 +1456,7 @@ Immuno.figs<-plot_grid( (MEL.fig + theme(legend.position = "none")),
            (POX.fig+ theme(legend.position = "none")),
            (CAT.fig+ theme(legend.position = "none")),
            SOD.fig + theme(legend.position = "none"),
-           fig.legend,
+           fig.legend.immun,
           labels = c("a", "b", "c", "d", "e",""), ncol = 3)
 Immuno.figs
 dev.copy(pdf, "figures/Immuno.figs.pdf", encod="MacRoman", height=5, width=8)
@@ -1784,8 +1798,8 @@ with(plot, lines(NMDS.mean[c(13:16),2], NMDS.mean[c(13:16),3], lwd=1.5, col =col
 # add labels
 text(-0.38, 0.28, "Bleaching \n 2015", cex=0.7, col="gray50")
 text(-0.28, -0.2, "Bleaching \n 2014", cex=0.7, col="gray50")
-text(0.27, -0.1, "Recovery \n 2014", cex=0.7, col="gray50")
-text(0.07, 0.21, "Recovery \n 2015", cex=0.7, col="gray50")
+text(0.27, -0.1, "Recovery \n 2015", cex=0.7, col="gray50")
+text(0.07, 0.21, "Recovery \n 2016", cex=0.7, col="gray50")
 legend("topright", legend=groups2, inset=c(0.045, -0.02), x.intersp=0.3, y.intersp=0.5, cex=0.7, pch=16, col=colors, lty=c(1,2,1,2), seg.len=1, pt.cex=1, bty="n")
 
 dev.copy(pdf, "figures/1panel_allNMDS.pdf", height=5, width=5, useDingbats=FALSE)

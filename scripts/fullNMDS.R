@@ -11,6 +11,7 @@ var.fullNMDS<-fullNMDS[, 4:13] # just responses
 ##  Run MANOVA
 all.Manova<-adonis2(var.fullNMDS~Site*Period*dom, data=fullNMDS,permutations=1000, 
                           method="bray", sqrt.dist = TRUE)
+pairwise.adonis(var.fullNMDS, Site)
 
 allNMDS<-metaMDS(var.fullNMDS, distane='bray', k=2, trymax=100) 
 stressplot(allNMDS)
@@ -43,7 +44,7 @@ plot<-ordiplot(allNMDS, type="n", cex.main=1, display="sites", cex.lab=0.8, cex.
 axis(side = 1, labels = FALSE, tck = -0.05)
 abline(h = 0, lty = "dotted")
 abline(v = 0, lty = "dotted")
-ordihull(plot, groups=fullNMDS$Period, draw="polygon", alpha=30, col="gray50", border=FALSE)
+ordihull(plot, groups=fullNMDS$Period, draw="polygon", alpha=30, col=c("gray20", "gray40", "gray30", "gray50"), border=FALSE)
 
 # points for start and end
 with(plot, points(NMDS.mean[1,2], NMDS.mean[1,3], col=colors[1], pch=16, cex=0.7, lwd=1)) # Lil C
