@@ -11,17 +11,10 @@ output:
   pdf_document:
     toc: yes
     toc_depth: '4'
-editor_options: 
-  chunk_output_type: inline
 ---
 ```{r setup, message=FALSE, warning=FALSE, echo=FALSE}
-require("knitr")
-knitr::opts_chunk$set(warning=FALSE, message=FALSE, fig.align='center')
-
-
 ## load packages
 library(lmerTest)
-library(multcomp)
 library(lmtest)
 library(lme4)
 library(car)
@@ -44,16 +37,15 @@ library(smacof)
 library(devtools)
 library(zoo)
 
-#install_github("vqv/ggbiplot")
+install_github("vqv/ggbiplot")
 library(ggbiplot)
 require(graphics)
 library(tidyr)
 library(vegan)
-
-#if (!requireNamespace("BiocManager", quietly = TRUE))
-#install.packages("BiocManager")
-#BiocManager::install("mixOmics")
 library(RVAideMemoire)
+
+#install_github("vqv/ggbiplot")
+#library(ggbiplot)
 
 ```
 ## Background
@@ -564,8 +556,7 @@ dev.off()
 ecology<-read.csv("data/ecology/Reef survey 2014-2016.csv") #import your data file here
 
 # remove "Slope" and Flat habitat where corals were not collected
-ecology<-ecology[(ecology$Habitat=="Crest") ,] 
-droplevels(ecology$Habitat)
+ecology<-ecology[!(ecology$Habitat=="Slope" & !ecology$Habitat=="Flat") ,] 
 
 ##### make a dataframe for data means by transect (= unit of replication)
 
@@ -1539,19 +1530,19 @@ full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
 print(Anova(full, type=2), digits=4)
 
 posthoc<-lsmeans(full, ~Period)
-multcomp::cld(posthoc, Letters=letters)
+cld(posthoc, Letters=letters)
 
 posthoc<-lsmeans(full, ~dom)
-multcomp::cld(posthoc, Letters=letters)
+cld(posthoc, Letters=letters)
 
 posthoc<-lsmeans(full, ~Site|Period)
-multcomp::cld(posthoc, Letters=letters)
+cld(posthoc, Letters=letters)
 
 posthoc<-lsmeans(full, ~dom|Period)
-multcomp::cld(posthoc, Letters=letters)
+cld(posthoc, Letters=letters)
 
 posthoc<-lsmeans(full, ~Site*dom|Period)
-multcomp::cld(posthoc, Letters=letters)
+cld(posthoc, Letters=letters)
 
 plot(allEffects(full), ylab="zoox", par.strip.text=list(cex=0.7))
 ```
@@ -1565,13 +1556,13 @@ full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
 print(Anova(full, type=2), digits=4)
 
 posthoc<-lsmeans(full, ~Period)
-multcomp::cld(posthoc, Letters=letters)
+cld(posthoc, Letters=letters)
 
 posthoc<-lsmeans(full, ~Site)
-multcomp::cld(posthoc, Letters=letters)
+cld(posthoc, Letters=letters)
 
 posthoc<-lsmeans(full, ~dom|Period)
-multcomp::cld(posthoc, Letters=letters)
+cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="chla", par.strip.text=list(cex=0.7))
 ```
 
@@ -1584,16 +1575,16 @@ full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
 print(Anova(full, type=2), digits=4)
 
 posthoc<-lsmeans(full, ~Period)
-multcomp::cld(posthoc, Letters=letters)
+cld(posthoc, Letters=letters)
 
 posthoc<-lsmeans(full, ~Site)
-multcomp::cld(posthoc, Letters=letters)
+cld(posthoc, Letters=letters)
 
 posthoc<-lsmeans(full, ~dom)
-multcomp::cld(posthoc, Letters=letters)
+cld(posthoc, Letters=letters)
 
 posthoc<-lsmeans(full, ~dom|Period)
-multcomp::cld(posthoc, Letters=letters)
+cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="AFDW", par.strip.text=list(cex=0.7))
 ```
 
@@ -1606,10 +1597,10 @@ full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
 print(Anova(full, type=2), digits=4)
 
 posthoc<-lsmeans(full, ~dom)
-multcomp::cld(posthoc, Letters=letters)
+cld(posthoc, Letters=letters)
 
 posthoc<-lsmeans(full, ~Site|Period)
-multcomp::cld(posthoc, Letters=letters)
+cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="prot", par.strip.text=list(cex=0.7))
 ```
 
@@ -1626,16 +1617,16 @@ full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
 print(Anova(full, type=2), digits=4)
 
 posthoc<-lsmeans(full, ~Period)
-multcomp::cld(posthoc, Letters=letters)
+cld(posthoc, Letters=letters)
 
 posthoc<-lsmeans(full, ~Site)
-multcomp::cld(posthoc, Letters=letters)
+cld(posthoc, Letters=letters)
 
 posthoc<-lsmeans(full, ~dom)
-multcomp::cld(posthoc, Letters=letters)
+cld(posthoc, Letters=letters)
 
 posthoc<-lsmeans(full, ~Site|Period)
-multcomp::cld(posthoc, Letters=letters)
+cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="CAT", par.strip.text=list(cex=0.7))
 ```
 
@@ -1648,10 +1639,10 @@ full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
 print(Anova(full, type=2), digits=4)
 
 posthoc<-lsmeans(full, ~Period)
-multcomp::cld(posthoc, Letters=letters)
+cld(posthoc, Letters=letters)
 
 posthoc<-lsmeans(full, ~dom|Period)
-multcomp::cld(posthoc, Letters=letters)
+cld(posthoc, Letters=letters)
 
 plot(allEffects(full), ylab="POX", par.strip.text=list(cex=0.7))
 ```
@@ -1665,10 +1656,10 @@ full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
 print(Anova(full, type=2), digits=4)
 
 posthoc<-lsmeans(full, ~Period)
-multcomp::cld(posthoc, Letters=letters)
+cld(posthoc, Letters=letters)
 
 posthoc<-lsmeans(full, ~Site)
-multcomp::cld(posthoc, Letters=letters)
+cld(posthoc, Letters=letters)
 
 plot(allEffects(full), ylab="SOD", par.strip.text=list(cex=0.7))
 ```
@@ -1682,13 +1673,13 @@ full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
 print(Anova(full, type=2), digits=4)
 
 posthoc<-lsmeans(full, ~Period)
-multcomp::cld(posthoc, Letters=letters)
+cld(posthoc, Letters=letters)
 
 posthoc<-lsmeans(full, ~Site)
-multcomp::cld(posthoc, Letters=letters)
+cld(posthoc, Letters=letters)
 
 posthoc<-lsmeans(full, ~dom)
-multcomp::cld(posthoc, Letters=letters)
+cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="PPO", par.strip.text=list(cex=0.7))
 ```
 
@@ -1701,10 +1692,10 @@ full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
 print(Anova(full, type=2), digits=4)
 
 posthoc<-lsmeans(full, ~Period)
-multcomp::cld(posthoc, Letters=letters)
+cld(posthoc, Letters=letters)
 
 posthoc<-lsmeans(full, ~Site|Period)
-multcomp::cld(posthoc, Letters=letters)
+cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="prot", par.strip.text=list(cex=0.7))
 ```
 
