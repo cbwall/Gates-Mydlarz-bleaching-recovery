@@ -1147,12 +1147,26 @@ colnames(fig.df.phys)<-c("Site","Status", "Period", "dom", "zoox", "zoox.SE", "c
 fig.df.phys$int<-interaction(fig.df.phys$dom, fig.df.phys$Site)
 fig.df.phys$int<-factor(fig.df.phys$int)
 ####
+####
 
-
+#### 
 #### immuno dataframe
 fig.df.immuno<-cbind(CAT.m, CAT.SE[c(5,0)], POX.m[c(5,0)], POX.SE[c(5,0)], SOD.m[c(5,0)], SOD.SE[c(5,0)], PPO.m[c(5,0)], PPO.SE[c(5,0)], MEL.m[c(5,0)], MEL.SE[c(5,0)])
 
 colnames(fig.df.immuno)<-c("Site","Status", "Period", "dom", "CAT", "CAT.SE", "POX", "POX.SE", "SOD", "SOD.SE", "PPO", "PPO.SE", "MEL", "MEL.SE")
+
+Pre.immuno<-immuno.site.df[c(1:2),]
+Pre.immuno$dom<-"unident"
+Pre.immuno<-Pre.immuno[, c(1:3, 14, 4:13)]
+
+## now this subset of site means can be overlayed with datafame from Oct 2014- Feb 2016
+fig.df.immuno.comp<-rbind(Pre.immuno, fig.df.immuno)
+
+# make an interaction column
+fig.df.immuno.comp$int<-interaction(fig.df.immuno.comp$dom, fig.df.immuno.comp$Site)
+fig.df.immuno.comp$int<-factor(fig.df.immuno.comp$int)
+
+fig.df.immuno.comp$int<-factor(fig.df.immuno.comp$int, levels=c("unident.Lilipuna.Pre", "unident.Reef 14.Pre", "C.Lilipuna", "C.Reef 14", "D.Lilipuna", "D.Reef 14"))
 
 ```
 
@@ -1285,40 +1299,6 @@ AFDW.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=AFDW, group=int, color=int)) 
 
 ```{r immunity figures}
 ### ### ### ### ### Immunity figures ### ### ### ### ### 
-
-
-# site means
-CAT.m2<-aggregate(CAT~Site+Status+Period,data=df, mean)
-POX.m2<-aggregate(POX~Site+Status+Period,data=df, mean)
-SOD.m2<-aggregate(SOD~Site+Status+Period,data=df, mean)
-PPO.m2<-aggregate(PPO~Site+Status+Period,data=df, mean)
-MEL.m2<-aggregate(MEL~Site+Status+Period,data=df, mean)
-
-###------#### SE
-# imunology
-CAT.SE2<-aggregate(CAT~Site+Status+Period,data=df, std.error)
-POX.SE2<-aggregate(POX~Site+Status+Period,data=df, std.error)
-SOD.SE2<-aggregate(SOD~Site+Status+Period,data=df, std.error)
-PPO.SE2<-aggregate(PPO~Site+Status+Period,data=df, std.error)
-MEL.SE2<-aggregate(MEL~Site+Status+Period,data=df, std.error)
-
-immuno.site.df<-cbind(CAT.m2, CAT.SE2[c(4,0)], POX.m2[c(4,0)], POX.SE2[c(4,0)], SOD.m2[c(4,0)], SOD.SE2[c(4,0)], PPO.m2[c(4,0)], PPO.SE2[c(4,0)], MEL.m2[c(4,0)], MEL.SE2[c(4,0)])
-
-colnames(immuno.site.df)<-c("Site","Status", "Period", "CAT", "CAT.SE", "POX", "POX.SE", "SOD", "SOD.SE", "PPO", "PPO.SE", "MEL", "MEL.SE")
-
-Pre.immuno<-immuno.site.df[c(1:2),]
-Pre.immuno$dom<-"unident"
-Pre.immuno<-Pre.immuno[, c(1:3, 14, 4:13)]
-
-## now this subset of site means can be overlayed with datafame from Oct 2014- Feb 2016
-fig.df.immuno.comp<-rbind(Pre.immuno, fig.df.immuno)
-
-# make an interaction column
-fig.df.immuno.comp$int<-interaction(fig.df.immuno.comp$dom, fig.df.immuno.comp$Site)
-fig.df.immuno.comp$int<-factor(fig.df.immuno.comp$int)
-
-fig.df.immuno.comp$int<-factor(fig.df.immuno.comp$int, levels=c("unident.Lilipuna.Pre", "unident.Reef 14.Pre", "C.Lilipuna", "C.Reef 14", "D.Lilipuna", "D.Reef 14"))
-####################
 
 color.scheme.immuno<-c("gray70", "gray50", 
                 "firebrick1", #C Lilipuna
@@ -1728,15 +1708,63 @@ fullNMDS<-df.MV.noNA
 fullNMDS$Period.Site.dom<-interaction(fullNMDS$Period, fullNMDS$Site, fullNMDS$dom)
 
 fac.fullNMDS<-fullNMDS %>% 
-  select(c(Period, Status, Site, dom, Period.Site.dom)) #  sans factors
+  select(c(Period, Status, Site, dom, Period.Site.dom)) #  sans responses
 
-var.fullNMDS<-fullNMDS[, 4:13] # just responses
+resp.fullNMDS<-fullNMDS[, 4:13] # just responses
 
 ##  Run MANOVA
-all.Manova<-adonis2(var.fullNMDS~Site*Period*dom, data=fullNMDS,permutations=1000, 
+all.Manova<-adonis2(resp.fullNMDS~Period*Site*dom, data=fullNMDS,permutations=1000, 
                           method="bray", sqrt.dist = TRUE)
 
-allNMDS<-metaMDS(var.fullNMDS, distane='bray', k=2, trymax=100) 
+
+##### test dispersion using PERMDISP
+disp <- betadisper(vegdist(resp.fullNMDS, method = "bray"), fac.fullNMDS$Period)
+
+#test for overall differences
+anova(disp)
+
+## Permutation test for pairwise comparisons
+permutest(disp, pairwise = TRUE)
+
+######## Period:Site:Symb
+disp.3way <- betadisper(vegdist(resp.fullNMDS, method = "bray"), fac.fullNMDS$Period:fac.fullNMDS$Site:fac.fullNMDS$dom)
+
+#test for differences
+anova(disp.3way)
+
+## Permutation test for 3-way interaction pairwise comparisons
+disp.3way.table<-permutest(disp.3way, pairwise = TRUE)
+#capture.output(disp.3way.table,file="test.csv")
+
+
+############ SIMPER analysis
+# tests similarity percentages, using the contribution of species (or metrics) to the community Bray-Curtis dissimilarity. Finds average contributions of species to overal Bray-Curtis, function displays most important groups that contribute at least 70% of difference between groups
+
+
+# test for Period effects
+sim.period<-with(fac.fullNMDS, simper(resp.fullNMDS, Period, permutations=1000))
+summary(sim.period, ordered=TRUE)
+# Bl1-Rec1: PPO
+# Bl2-Rec2: PPO
+# Bl1-Bl2: zoox, SOD, CAT, AFDW, chla, chlacell
+# Rec1-Rec2: CAT
+
+# test for site effects
+sim.site<-with(fac.fullNMDS, simper(resp.fullNMDS, Site, permutations=1000))
+summary(sim.site, ordered=TRUE)
+# largest effects on zoox, CAT, AFDW
+
+
+# test for Symbiont (dom) effects
+sim.dom<-with(fac.fullNMDS, simper(resp.fullNMDS, dom, permutations=1000))
+summary(sim.dom, ordered=TRUE)
+# largest differences by chlcell, zoox
+
+
+
+###
+
+allNMDS<-metaMDS(resp.fullNMDS, distane='bray', k=2, trymax=100) 
 stressplot(allNMDS)
 
 allNMDS.df<-data.frame(x=allNMDS$point[,1], y=allNMDS$point[,2], 
@@ -2076,68 +2104,4 @@ plot(vars.R14.BR2, col="black", p.max=0.05, cex=0.8, lwd=1)
 dev.copy(pdf, "figures/4panel_NMDS.pdf", height=6, width=7, useDingbats=FALSE)
 dev.off() 
 
-```
-
-
-```{r, eval=FALSE}
-### symbiodinium data
-
-
-###############################
-## making figures, tables, analyses
-
-###############################
-# make a table by dominant symb
-
-df
-
-str(df)
-print(levels(df$Period))
-
-# 4 symbiont categories
-symbcomp=table(df$syms, df$Period:df$Site) 
-prop.table(symbcomp, margin = 2)
-
-# 2 symbiont categories
-domsymb=table(df$dom, df$Period:df$Site)
-prop.table(domsymb, margin = 2)
-
-
-# to specify order in figure, can use... ...(prop.table(symbcomp[,c(1,3,2,4)], 3,4,1,2,5,6
-barplot(prop.table(symbcomp, margin = 2), col = c("slategray4", "slategray2", "dodgerblue", "darkturquoise"), main= "2014 - 2016 qPCR", xlab = "Site and Status", cex.names=0.65, ylab = "Proportion of Symbiont Types")
-legend("topright", cex=0.8, bty="n", legend=c("C","CD", "D", "DC"), fill=c("slategray4", "slategray2", "dodgerblue", "darkturquoise")) #inset = c(-.25, 0), xpd = NA, x.intersp=0.1, y.intersp=0.7)
-
-dev.copy(pdf, "Figures/symb_4 levels.pdf", encod="MacRoman", height=6, width=14)
-dev.off()
-
-
-#####################
-## figures for 2014-2016 dominant symbiont composition figure (2 categories)
-
-# to sepcify order in figure, can use... ...(prop.table(symbcomp[,c(1,3,2,4)],
-barplot(prop.table(domsymb, margin = 2), col = c("slategray4", "darkturquoise"), main= "2014 - 2015 qPCR", xlab = "Site and Status", cex.names=0.65, ylab = "Proportion of Symbiont Types")
-legend("topright", legend=c("C", "D"), bty="n", fill=c("slategray4", "darkturquoise"), inset = c(-.23, 0), xpd = NA, x.intersp=0.1, y.intersp=0.7)
-
-dev.copy(pdf, "Figures/symb_2 levels.pdf", encod="MacRoman", height=6, width=14)
-dev.off()
-
-#Chi Squared test for independence
-chisq.test(symbcomp) # p<0.01, accept Ha that symcomb IS related to events
-chisq.test(domsymb) # p=0.1, accept Ho that domsymb is NOT related to events
-
-prop.table(symbcomp, margin = 2)
-par(mar=c(3, 4, 2, 6))
-
-
-# to specify order in figure, can use... ...(prop.table(symbcomp[,c(1,3,2,4)],
-barplot(prop.table(symbcomp, margin = 2), col = c("slategray4", "slategray2", "dodgerblue", "darkturquoise"), main= "2015 - 2016 qPCR", xlab = "Event and Site", cex.names=0.65, ylab = "Proportion of Symbiont Types")
-legend("topright", legend=c("C","CD", "D", "DC"), fill=c("slategray4", "slategray2", "dodgerblue", "darkturquoise"))
-#inset = c(-.15, 0), xpd = NA)
-
-##########
-prop.table(domsymb, margin = 2)
-par(mar=c(3, 4, 2, 6))
-
-barplot(prop.table(domsymb, margin = 2), col = c("slategray4", "darkturquoise"), main= "2015 - 2016 qPCR", xlab = "Site and Status", cex.names=0.65, ylab = "Proportion of Symbiont Types")
-legend("topright", legend=c("C", "D"), fill=c("slategray4", "darkturquoise"), inset = c(-.15, 0), xpd = NA)
 ```
