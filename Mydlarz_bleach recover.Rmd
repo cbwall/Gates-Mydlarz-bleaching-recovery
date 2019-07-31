@@ -267,9 +267,9 @@ temps$temp.diff<-temps$Lil.temp-temps$Rf14.temp
 # attach the 3 years of temp data from HIMB
 setwd("data/environmental/Temp data/HIMB station")
 
-annual.temps<-rbind(read.csv("temp_2014.csv"), 
-                    read.csv("temp_2015.csv"), 
-                    read.csv("temp_2016.csv"))
+annual.temps<-rbind(read.csv("data/environmental/Temp data/HIMB station/temp_2014.csv"), 
+                    read.csv("data/environmental/Temp data/HIMB station/temp_2015.csv"), 
+                    read.csv("data/environmental/Temp data/HIMB station/temp_2016.csv"))
 
 
 annual.temps<-annual.temps[!c(annual.temps$X.YY==2014 & annual.temps$MM<= 6),] #start June 2014
@@ -1712,13 +1712,15 @@ fac.fullNMDS<-fullNMDS %>%
 
 resp.fullNMDS<-fullNMDS[, 4:13] # just responses
 
+resp.fullNMDS <- scale(resp.fullNMDS, center = TRUE, scale = TRUE) 
+
 ##  Run MANOVA
-all.Manova<-adonis2(resp.fullNMDS~Period*Site*dom, data=fullNMDS,permutations=1000, 
-                          method="bray", sqrt.dist = TRUE)
+all.Manova<-adonis2(resp.fullNMDS~Period*Site*dom, data=fullNMDS, permutations=1000, 
+                          method="euclidian")
 
 
 ##### test dispersion using PERMDISP
-disp <- betadisper(vegdist(resp.fullNMDS, method = "bray"), fac.fullNMDS$Period)
+disp <- betadisper(vegdist(resp.fullNMDS, method = "euclidian"), fac.fullNMDS$Period)
 
 #test for overall differences
 anova(disp)
@@ -1727,7 +1729,7 @@ anova(disp)
 permutest(disp, pairwise = TRUE)
 
 ######## Period:Site:Symb
-disp.3way <- betadisper(vegdist(resp.fullNMDS, method = "bray"), fac.fullNMDS$Period:fac.fullNMDS$Site:fac.fullNMDS$dom)
+disp.3way <- betadisper(vegdist(resp.fullNMDS, method = "euclidian"), fac.fullNMDS$Period:fac.fullNMDS$Site:fac.fullNMDS$dom)
 
 #test for differences
 anova(disp.3way)
@@ -1743,6 +1745,7 @@ disp.3way.table<-permutest(disp.3way, pairwise = TRUE)
 
 # test for Period effects
 sim.period<-with(fac.fullNMDS, simper(resp.fullNMDS, Period, permutations=1000))
+
 summary(sim.period, ordered=TRUE)
 # Bl1-Rec1: PPO
 # Bl2-Rec2: PPO
@@ -1764,7 +1767,7 @@ summary(sim.dom, ordered=TRUE)
 
 ###
 
-allNMDS<-metaMDS(resp.fullNMDS, distane='bray', k=2, trymax=100) 
+allNMDS<-metaMDS(resp.fullNMDS, distance='bray', k=2, trymax=100) 
 stressplot(allNMDS)
 
 allNMDS.df<-data.frame(x=allNMDS$point[,1], y=allNMDS$point[,2], 
