@@ -53,6 +53,7 @@ library(vegan)
 #if (!requireNamespace("BiocManager", quietly = TRUE))
 #install.packages("BiocManager")
 #BiocManager::install("mixOmics")
+library("mixOmics")
 library(RVAideMemoire)
 
 ```
@@ -76,49 +77,49 @@ Physiological and immunological parameters were collected from from *Montipora c
 ### Temperature
 #### Site loggers
 ```{r, temp data, results="hide"}
-setwd("data/environmental/Temp data")
+#setwd("data/environmental/Temp data")
 
 # Import temperature data
 
 #2014 Oct - 2015 Jun
 Lil.temp_log1 <- rbind(
-        read.csv("Lilipuna/SN_10487932/lilipuna_oct-dec 2014.csv"),
-        read.csv("Lilipuna/SN_10487932/lilipuna_dec-feb 2015.csv"))
+        read.csv("data/environmental/Temp data/Lilipuna/SN_10487932/lilipuna_oct-dec 2014.csv"),
+        read.csv("data/environmental/Temp data/Lilipuna/SN_10487932/lilipuna_dec-feb 2015.csv"))
 
 Lil.temp_log2 <- rbind(
-        read.csv("Lilipuna/SN_10487932/lilipuna_feb-apr 2015.csv"),
-        read.csv("Lilipuna/SN_10487932/lilipuna_apr-jun 2015.csv"))
+        read.csv("data/environmental/Temp data/Lilipuna/SN_10487932/lilipuna_feb-apr 2015.csv"),
+        read.csv("data/environmental/Temp data/Lilipuna/SN_10487932/lilipuna_apr-jun 2015.csv"))
 
 #2015 Sep - 2016 Jun
 Lil.temp_log4 <- rbind(
-        read.csv("Lilipuna/SN_10084646/lilipuna_sep-nov 2015.csv"),
-        read.csv("Lilipuna/SN_10084646/lilipuna_nov-jan 2016.csv"),
-        read.csv("Lilipuna/SN_10084646/lilipuna_jan-mar 2016.csv"))
+        read.csv("data/environmental/Temp data/Lilipuna/SN_10084646/lilipuna_sep-nov 2015.csv"),
+        read.csv("data/environmental/Temp data/Lilipuna/SN_10084646/lilipuna_nov-jan 2016.csv"),
+        read.csv("data/environmental/Temp data/Lilipuna/SN_10084646/lilipuna_jan-mar 2016.csv"))
 
 Lil.temp_log5<- rbind(
-        read.csv("Lilipuna/SN_10084646/lilipuna_apr-jun 2016.csv"))
+        read.csv("data/environmental/Temp data/Lilipuna/SN_10084646/lilipuna_apr-jun 2016.csv"))
                    
 
 #2014 Oct - 2015 Jun
 Rf14.temp_log1 <- rbind(
-  read.csv("Reef 14/SN_10487931/reef14_oct-dec 2014.csv"),
-  read.csv("Reef 14/SN_10487931/reef14_dec-feb 2015.csv"))
+  read.csv("data/environmental/Temp data/Reef 14/SN_10487931/reef14_oct-dec 2014.csv"),
+  read.csv("data/environmental/Temp data/Reef 14/SN_10487931/reef14_dec-feb 2015.csv"))
 
 Rf14.temp_log2 <-rbind( 
-  read.csv("Reef 14/SN_10487931/reef14_feb-apr 2015.csv"),
-  read.csv("Reef 14/SN_10487931/reef14_apr-jun 2015.csv"))
+  read.csv("data/environmental/Temp data/Reef 14/SN_10487931/reef14_feb-apr 2015.csv"),
+  read.csv("data/environmental/Temp data/Reef 14/SN_10487931/reef14_apr-jun 2015.csv"))
 
 Rf14.temp_log3 <- 
-  read.csv("Reef 14/SN_9893760/reef14_jun-sep 2015.csv")
+  read.csv("data/environmental/Temp data/Reef 14/SN_9893760/reef14_jun-sep 2015.csv")
 
 Rf14.temp_log4 <- rbind(
-  read.csv("Reef 14/SN_9893760/reef14_sep-nov 2015.csv"),
-  read.csv("Reef 14/SN_9893760/reef14_sep-nov 2015.csv"),
-  read.csv("Reef 14/SN_9893760/reef14_nov-jan 2016.csv"),
-  read.csv("Reef 14/SN_9893760/reef14_jan-mar 2016.csv"))
+  read.csv("data/environmental/Temp data/Reef 14/SN_9893760/reef14_sep-nov 2015.csv"),
+  read.csv("data/environmental/Temp data/Reef 14/SN_9893760/reef14_sep-nov 2015.csv"),
+  read.csv("data/environmental/Temp data/Reef 14/SN_9893760/reef14_nov-jan 2016.csv"),
+  read.csv("data/environmental/Temp data/Reef 14/SN_9893760/reef14_jan-mar 2016.csv"))
   
 Rf14.temp_log5<- rbind(
-  read.csv("Reef 14/SN_9893760/reef14_apr-jun 2016.csv"))
+  read.csv("data/environmental/Temp data/Reef 14/SN_9893760/reef14_apr-jun 2016.csv"))
   
 # set date to date class
 Lil.temp_log1$Date <- as.Date(Lil.temp_log1$Date, format="%Y/%m/%e")
@@ -264,13 +265,13 @@ temps$temp.diff<-temps$Lil.temp-temps$Rf14.temp
 ```
 
 #### HIMB annual temps 
-```{r, light data, results="hide"}
+```{r, HIMB temp data, results="hide"}
 # attach the 3 years of temp data from HIMB
-setwd("data/environmental/Temp data/HIMB station")
+#setwd("data/environmental/Temp data/HIMB station")
 
-annual.temps<-rbind(read.csv("temp_2014.csv"), 
-                    read.csv("temp_2015.csv"), 
-                    read.csv("temp_2016.csv"))
+annual.temps<-rbind(read.csv("data/environmental/Temp data/HIMB station/temp_2014.csv"), 
+                    read.csv("data/environmental/Temp data/HIMB station/temp_2015.csv"), 
+                    read.csv("data/environmental/Temp data/HIMB station/temp_2016.csv"))
 
 
 annual.temps<-annual.temps[!c(annual.temps$X.YY==2014 & annual.temps$MM<= 6),] #start June 2014
@@ -296,48 +297,48 @@ annual.day.temps <- aggregate(data.frame(mean=annual.temps$Water.temp), by=list(
 
 ### Light
 ```{r, light data, results="hide"}
-setwd("data/environmental/Light data")
+#setwd("data/environmental/Light data")
 # Import light data
 
 # Lilipuna
 # 2014 Oct - 2016 Jun
 Lil.PAR1<-rbind(
-  read.csv("Lilipuna/SN_2485/Lilipuna_2485_T1_oct-dec 2014.csv"),
-  read.csv("Lilipuna/SN_2485/Lilipuna_2485_T2_dec-feb 2015.csv"))
+  read.csv("data/environmental/Light data/Lilipuna/SN_2485/Lilipuna_2485_T1_oct-dec 2014.csv"),
+  read.csv("data/environmental/Light data/Lilipuna/SN_2485/Lilipuna_2485_T2_dec-feb 2015.csv"))
 
 Lil.PAR2<-rbind(  
-  read.csv("Lilipuna/SN_2485/Lilipuna_2485_T3_feb-apr 2015.csv"),
-  read.csv("Lilipuna/SN_2485/Lilipuna_2485_T4_apr-jun 2015.csv"))
+  read.csv("data/environmental/Light data/Lilipuna/SN_2485/Lilipuna_2485_T3_feb-apr 2015.csv"),
+  read.csv("data/environmental/Light data/Lilipuna/SN_2485/Lilipuna_2485_T4_apr-jun 2015.csv"))
 
 Lil.PAR4<-rbind(
-  read.csv("Lilipuna/SN_2489/Lilipuna_2489_T6_sep-nov 2015.csv"),
-  read.csv("Lilipuna/SN_2489/Lilipuna_2489_T7_nov-jan 2016.csv"),
-  read.csv("Lilipuna/SN_2489/Lilipuna_2489_T8_jan-mar 2016.csv"))
+  read.csv("data/environmental/Light data/Lilipuna/SN_2489/Lilipuna_2489_T6_sep-nov 2015.csv"),
+  read.csv("data/environmental/Light data/Lilipuna/SN_2489/Lilipuna_2489_T7_nov-jan 2016.csv"),
+  read.csv("data/environmental/Light data/Lilipuna/SN_2489/Lilipuna_2489_T8_jan-mar 2016.csv"))
 
 Lil.PAR5<-
-  read.csv("Lilipuna/SN_2489/Lilipuna_2489_T9_mar-jun 2016.csv")
+  read.csv("data/environmental/Light data/Lilipuna/SN_2489/Lilipuna_2489_T9_mar-jun 2016.csv")
 
   
 # Reef 14
 # 2014 Oct - 2016 Jun
 Rf14.PAR1 <- rbind(
-  read.csv("Reef 14/SN_2488/Reef 14_2488_T1_oct-dec 2014.csv"),
-  read.csv("Reef 14/SN_2488/Reef 14_2488_T2_dec-feb 2015.csv"))
+  read.csv("data/environmental/Light data/Reef 14/SN_2488/Reef 14_2488_T1_oct-dec 2014.csv"),
+  read.csv("data/environmental/Light data/Reef 14/SN_2488/Reef 14_2488_T2_dec-feb 2015.csv"))
 
 Rf14.PAR2 <- rbind(
-  read.csv("Reef 14/SN_2488/Reef 14_2488_T3_feb-apr 2015.csv"),
-  read.csv("Reef 14/SN_2488/Reef 14_2488_T4_apr-jun 2015.csv"))
+  read.csv("data/environmental/Light data/Reef 14/SN_2488/Reef 14_2488_T3_feb-apr 2015.csv"),
+  read.csv("data/environmental/Light data/Reef 14/SN_2488/Reef 14_2488_T4_apr-jun 2015.csv"))
 
 Rf14.PAR3 <- 
-  read.csv("Reef 14/SN_2488/Reef 14_2488_T5_jun-sep 2015.csv")
+  read.csv("data/environmental/Light data/Reef 14/SN_2488/Reef 14_2488_T5_jun-sep 2015.csv")
 
 Rf14.PAR4 <- rbind(
-  read.csv("Reef 14/SN_2488/Reef 14_2488_T6_sep-nov 2015.csv"),
-  read.csv("Reef 14/SN_2488/Reef 14_2488_T7_nov-jan 2016.csv"),
-  read.csv("Reef 14/SN_2488/Reef 14_2488_T8_jan-mar 2016.csv"))
+  read.csv("data/environmental/Light data/Reef 14/SN_2488/Reef 14_2488_T6_sep-nov 2015.csv"),
+  read.csv("data/environmental/Light data/Reef 14/SN_2488/Reef 14_2488_T7_nov-jan 2016.csv"),
+  read.csv("data/environmental/Light data/Reef 14/SN_2488/Reef 14_2488_T8_jan-mar 2016.csv"))
 
 Rf14.PAR5 <-
-  read.csv("Reef 14/SN_2488/Reef 14_2488_T9_apr-jun 2016.csv")
+  read.csv("data/environmental/Light data/Reef 14/SN_2488/Reef 14_2488_T9_apr-jun 2016.csv")
 
 
 # Set date to date class
@@ -973,7 +974,7 @@ fig.df.immuno<-cbind(CAT.m, CAT.SE[c(5,0)], POX.m[c(5,0)], POX.SE[c(5,0)], SOD.m
 
 colnames(fig.df.immuno)<-c("Site","Status", "Period", "dom", "CAT", "CAT.SE", "POX", "POX.SE", "SOD", "SOD.SE", "PPO", "PPO.SE", "MEL", "MEL.SE")
 
-Pre.immuno<-immuno.site.df[c(1:2),]
+Pre.immuno<-fig.df.immuno[c(1:2),]
 Pre.immuno$dom<-"unident"
 Pre.immuno<-Pre.immuno[, c(1:3, 14, 4:13)]
 
