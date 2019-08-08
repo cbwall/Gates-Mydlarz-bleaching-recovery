@@ -1,7 +1,7 @@
 ---
 title: 'Gates & Mydlarz et al: 2014 - 2016 bleaching and recovery of Montipora capitata'
 author: "Chris Wall"
-date: "7/7/2017"
+date: "8/7/2019"
 output:
   html_document:
     code_folding: hide
@@ -540,6 +540,8 @@ ecology<-read.csv("data/ecology/Reef survey 2014-2016.csv") #import your data fi
 ecology<-ecology[(ecology$Habitat=="Crest") ,] 
 droplevels(ecology$Habitat)
 
+ecology$total.MC.bleach<-ecology$MC.pale+ecology$MC.white
+
 ##### make a dataframe for data means by transect (= unit of replication)
 
 coral<-aggregate(coral.cover~Transect+Site+Status+Period, data=ecology, sum)
@@ -551,12 +553,12 @@ MC.healthy<-aggregate(MC.pigmented~Transect+Site+Status+Period, data=ecology, su
 MC.pale<-aggregate(MC.pale~Transect+Site+Status+Period, data=ecology, sum)
 MC.white<-aggregate(MC.white~Transect+Site+Status+Period, data=ecology, sum)
 
-df<-cbind(coral, healthy[c(5,0)], pale[c(5,0)], white[c(5,0)], MC[c(5,0)], MC.healthy[c(5,0)], MC.pale[c(5,0)], MC.white[c(5,0)])
-df<- df %>% mutate(
+df.ecol<-cbind(coral, healthy[c(5,0)], pale[c(5,0)], white[c(5,0)], MC[c(5,0)], MC.healthy[c(5,0)], MC.pale[c(5,0)], MC.white[c(5,0)])
+df.ecol<- df.ecol %>% mutate(
   totalcoral.bleach= coral.pale + coral.white,
   totalMC.bleach= MC.pale + MC.white)
 
-eco.surv<-subset(df, select = c(-coral.pale, -coral.white, -MC.pale, -MC.white))
+eco.surv<-subset(df.ecol, select = c(-coral.pale, -coral.white, -MC.pale, -MC.white))
   
 # use "eco.surv" to test mean and SD 
 # df.m + dfSE to make figures
@@ -569,7 +571,7 @@ MC<-aggregate(MC~Site+Status+Period, data=eco.surv, mean)
 MC.healthy<-aggregate(MC.pigmented~Site+Status+Period, data=eco.surv, mean)
 MC.bleach<-aggregate(totalMC.bleach~Site+Status+Period, data=eco.surv, mean)
 
-df.m<-cbind(coral, healthy[c(4,0)], bleached[c(4,0)], MC[c(4,0)], MC.healthy[c(4,0)], MC.bleach[c(4,0)])
+df.ecol.m<-cbind(coral, healthy[c(4,0)], bleached[c(4,0)], MC[c(4,0)], MC.healthy[c(4,0)], MC.bleach[c(4,0)])
 
 # SD
 coralSD<-aggregate(coral.cover~Site+Status+Period, data=eco.surv, sd)
@@ -580,10 +582,10 @@ MCSD<-aggregate(MC~Site+Status+Period, data=eco.surv, sd)
 MC.healthySD<-aggregate(MC.pigmented~Site+Status+Period, data=eco.surv, sd)
 MC.bleachSD<-aggregate(totalMC.bleach~Site+Status+Period, data=eco.surv, sd)
 
-dfSD<-cbind(coralSD, healthySD[c(4,0)], bleachedSD[c(4,0)], MCSD[c(4,0)], MC.healthySD[c(4,0)], MC.bleachSD[c(4,0)])
+df.ecol.SD<-cbind(coralSD, healthySD[c(4,0)], bleachedSD[c(4,0)], MCSD[c(4,0)], MC.healthySD[c(4,0)], MC.bleachSD[c(4,0)])
 
 
-df.fig<-cbind(df.m, dfSD[c(4:9,0)]); colnames(df.fig) <-c("Site", "Status", "Period", "coral.cover", "coral.pigmented", "totalcoral.bleach", "MC", "MC.pigmented", "totalMC.bleach", "coral.SD", "coral.pigSD", "coral.blSD", "MCSD", "MC.pigSD", "MC.blSD"); df.fig
+df.fig<-cbind(df.ecol.m, df.ecol.SD[c(4:9,0)]); colnames(df.fig) <-c("Site", "Status", "Period", "coral.cover", "coral.pigmented", "totalcoral.bleach", "MC", "MC.pigmented", "totalMC.bleach", "coral.SD", "coral.pigSD", "coral.blSD", "MCSD", "MC.pigSD", "MC.blSD"); df.fig
 
 df.fig<-df.fig %>% mutate(
   groupyear = ifelse(Period =="2014 Oct" | Period =="2015 Feb",
@@ -646,188 +648,41 @@ dev.off()
 ```
 
 
-```{r, year1 B and R stats, eval=FALSE}
+```{r, year1 B and R stats}
 ##################
 ###############
 ##########
 #####
 #
-## TOTAL CORAL COMMUNITY BLEACHING ACROSS SITES AND HABITATS
+#  CORAL COMMUNITY BLEACHING ACROSS SITES
+
+# dataframe is 'ecology'
 
 ################
-# total coral cover
+# total MC cover
 ################
 
-Habitat<-df$Habitat
-Site<-df$Site
+MC.cover.mod<-lm(asin(sqrt(MC))~Period*Site, data=ecology)
+anova(MC.cover.mod)
 
-hist(df$coral.cover)
+posthoc<-lsmeans(MC.cover.mod, ~Site|Period)
+contrast(posthoc)
+multcomp::cld(posthoc, Letters=letters)
 
-mod<-lm(coral.cover~Site*Habitat, data=df)
-
-R <- resid(mod) #save glm residuals
-op<-par(mfrow = c(2,2), mar=c(5,4,1,2))
-plot(mod, add.smooth = FALSE, which=1)
-QQ <- qqnorm(R, main = "") 
-QQline <- qqline(R)
-hist(R, xlab="Residuals", main ="")
-plot(Site, R, xlab="Site", ylab="Residuals")
-plot(Habitat, R, xlab="Habitat", ylab="Residuals")
-
-shapiro <- shapiro.test(R) #runs a normality test on residuals
-shapiro # null = normally distrubuted (P<0.05 = non-normal)
-
-# Model
-mod<-lm(coral.cover~Site*Habitat, data=df); summary(mod)
-Anova(mod, type=3)
-
-
-################
-# pigmented coral
-################
-hist(df$coral.pigmented)
-
-mod<-lm(coral.pigmented~Site*Habitat, data=df)
-
-R <- resid(mod) #save glm residuals
-op<-par(mfrow = c(2,2), mar=c(5,4,1,2))
-plot(mod, add.smooth = FALSE, which=1)
-QQ <- qqnorm(R, main = "") 
-QQline <- qqline(R)
-hist(R, xlab="Residuals", main ="")
-plot(Site, R, xlab="Site", ylab="Residuals")
-plot(Habitat, R, xlab="Habitat", ylab="Residuals")
-
-shapiro <- shapiro.test(R) #runs a normality test on residuals
-shapiro # null = normally distrubuted (P<0.05 = non-normal)
-
-# Model
-mod<-lm(coral.pigmented~Site*Habitat, data=df); summary(mod)
-Anova(mod, type=3)
-
-################
-# bleached coral
-################
-hist(df$coral.bleached)
-
-mod<-lm(coral.bleached~Site*Habitat, data=df)
-
-R <- resid(mod) #save glm residuals
-op<-par(mfrow = c(2,2), mar=c(5,4,1,2))
-plot(mod, add.smooth = FALSE, which=1)
-QQ <- qqnorm(R, main = "") 
-QQline <- qqline(R)
-hist(R, xlab="Residuals", main ="")
-plot(Site, R, xlab="Site", ylab="Residuals")
-plot(Habitat, R, xlab="Habitat", ylab="Residuals")
-
-shapiro <- shapiro.test(R) #runs a normality test on residuals
-shapiro # null = normally distrubuted (P<0.05 = non-normal)
-
-# Models
-mod<-lm(coral.bleached~Site*Habitat, data=df); summary(mod)
-Anova(mod, type=3)
-
-#######################
-# completely white coral
-#######################
-hist(df$coral.white)
-
-mod<-lm(coral.white~Site*Habitat, data=df)
-
-R <- resid(mod) #save glm residuals
-op<-par(mfrow = c(2,2), mar=c(5,4,1,2))
-plot(mod, add.smooth = FALSE, which=1)
-QQ <- qqnorm(R, main = "") 
-QQline <- qqline(R)
-hist(R, xlab="Residuals", main ="")
-plot(Site, R, xlab="Site", ylab="Residuals")
-plot(Habitat, R, xlab="Habitat", ylab="Residuals")
-
-shapiro <- shapiro.test(R) #runs a normality test on residuals
-shapiro # null = normally distrubuted (P<0.05 = non-normal)
-
-# Models
-mod<-lm(coral.white~Site*Habitat, data=df); summary(mod)
-Anova(mod, type=3)
-
-#
-#####
-##########
-##############
-####################
-# MONTIPORA CAPITATA BLEACHING
-####################
-###############
-##########
-#####
-#
-
-################
-# pigmented MC
-################
-hist(df$MC.pigmented)
-
-mod<-lm(MC.pigmented~Site*Habitat, data=df)
-
-R <- resid(mod) #save glm residuals
-op<-par(mfrow = c(2,2), mar=c(5,4,1,2))
-plot(mod, add.smooth = FALSE, which=1)
-QQ <- qqnorm(R, main = "") 
-QQline <- qqline(R)
-hist(R, xlab="Residuals", main ="")
-plot(Site, R, xlab="Site", ylab="Residuals")
-plot(Habitat, R, xlab="Habitat", ylab="Residuals")
-
-
-shapiro <- shapiro.test(R) #runs a normality test on residuals
-shapiro # null = normally distrubuted (P<0.05 = non-normal)
-
-# Model
-mod<-lm(MC.pigmented~Site*Habitat, data=df); summary(mod)
-Anova(mod, type=3)
 
 ################
 # bleached MC
 ################
-hist(df$MC.bleached)
 
-mod<-lm(MC.bleached~Site*Habitat, data=df)
+MC.bleach.mod<-lm(total.MC.bleach~Period*Site, data=ecology)
+anova(MC.bleach.mod)
 
-R <- resid(mod) #save glm residuals
-op<-par(mfrow = c(2,2), mar=c(5,4,1,2))
-plot(mod, add.smooth = FALSE, which=1)
-QQ <- qqnorm(R, main = "") 
-QQline <- qqline(R)
-hist(R, xlab="Residuals", main ="")
+posthoc<-lsmeans(MC.bleach.mod, ~Site)
+contrast(posthoc)
+multcomp::cld(posthoc, Letters=letters)
 
-shapiro <- shapiro.test(R) #runs a normality test on residuals
-shapiro # null = normally distrubuted (P<0.05 = non-normal)
-
-# Models
-mod<-lm(MC.bleached~Site*Habitat, data=df); summary(mod)
-Anova(mod, type=3)
-
-#######################
-# completely white MC
-#######################
-hist(df$MC.white)
-
-mod<-lm(MC.white~Site*Habitat, data=df)
-
-R <- resid(mod) #save glm residuals
-op<-par(mfrow = c(2,2), mar=c(5,4,1,2))
-plot(mod, add.smooth = FALSE, which=1)
-QQ <- qqnorm(R, main = "") 
-QQline <- qqline(R)
-hist(R, xlab="Residuals", main ="")
-
-shapiro <- shapiro.test(R) #runs a normality test on residuals
-shapiro # null = normally distrubuted (P<0.05 = non-normal)
-
-# Models
-mod<-lm(MC.white~Site*Habitat, data=df); summary(mod)
-Anova(mod, type=3)
+posthoc<-lsmeans(MC.bleach.mod, ~Site|Period)
+multcomp::cld(posthoc, Letters=letters)
 ```
 
 
@@ -966,14 +821,39 @@ colnames(fig.df.phys)<-c("Site","Status", "Period", "dom", "zoox", "zoox.SE", "c
 fig.df.phys$int<-interaction(fig.df.phys$dom, fig.df.phys$Site)
 fig.df.phys$int<-factor(fig.df.phys$int)
 ####
-####
-
 #### 
+
 #### immuno dataframe
 fig.df.immuno<-cbind(CAT.m, CAT.SE[c(5,0)], POX.m[c(5,0)], POX.SE[c(5,0)], SOD.m[c(5,0)], SOD.SE[c(5,0)], PPO.m[c(5,0)], PPO.SE[c(5,0)], MEL.m[c(5,0)], MEL.SE[c(5,0)])
 
 colnames(fig.df.immuno)<-c("Site","Status", "Period", "dom", "CAT", "CAT.SE", "POX", "POX.SE", "SOD", "SOD.SE", "PPO", "PPO.SE", "MEL", "MEL.SE")
 
+
+#### Use this code for 'PRE' Site immunity data without symbiont community data
+CAT.m2<-aggregate(CAT~Site+Status+Period,data=df, mean)
+POX.m2<-aggregate(POX~Site+Status+Period,data=df, mean)
+SOD.m2<-aggregate(SOD~Site+Status+Period,data=df, mean)
+PPO.m2<-aggregate(PPO~Site+Status+Period,data=df, mean)
+MEL.m2<-aggregate(MEL~Site+Status+Period,data=df, mean)
+
+### PRE------#### SE immunity
+CAT.SE2<-aggregate(CAT~Site+Status+Period,data=df, std.error)
+POX.SE2<-aggregate(POX~Site+Status+Period,data=df, std.error)
+SOD.SE2<-aggregate(SOD~Site+Status+Period,data=df, std.error)
+PPO.SE2<-aggregate(PPO~Site+Status+Period,data=df, std.error)
+MEL.SE2<-aggregate(MEL~Site+Status+Period,data=df, std.error)
+
+### PRE------#### n immunity (n = 6-8 for PRE-field)
+CAT.2n<-aggregate(CAT~Site+Status+Period,data=df, length)
+POX.2n<-aggregate(POX~Site+Status+Period,data=df, length)
+SOD.2n<-aggregate(SOD~Site+Status+Period,data=df, length)
+PPO.2n<-aggregate(PPO~Site+Status+Period,data=df, length)
+MEL.2n<-aggregate(MEL~Site+Status+Period,data=df, length)
+
+Pre.immuno<-cbind(CAT.m2[c(1:2),], CAT.SE2[c(1:2),4], POX.m2[c(1:2),4], POX.SE2[c(1:2),4], SOD.m2[c(1:2),4], SOD.SE2[c(1:2),4], PPO.m2[c(1:2),4], PPO.SE2[c(1:2),4], MEL.m2[c(1:2),4], MEL.SE2[c(1:2),4])
+colnames(Pre.immuno)<-c("Site","Status", "Period", "CAT", "CAT.SE", "POX", "POX.SE", "SOD", "SOD.SE", "PPO", "PPO.SE", "MEL", "MEL.SE")
+
+##########
 Pre.immuno<-fig.df.immuno[c(1:2),]
 Pre.immuno$dom<-"unident"
 Pre.immuno<-Pre.immuno[, c(1:3, 14, 4:13)]
@@ -986,7 +866,6 @@ fig.df.immuno.comp$int<-interaction(fig.df.immuno.comp$dom, fig.df.immuno.comp$S
 fig.df.immuno.comp$int<-factor(fig.df.immuno.comp$int)
 
 fig.df.immuno.comp$int<-factor(fig.df.immuno.comp$int, levels=c("unident.Lilipuna.Pre", "unident.Reef 14.Pre", "C.Lilipuna", "C.Reef 14", "D.Lilipuna", "D.Reef 14"))
-
 ```
 
 ## Figures
@@ -1544,8 +1423,13 @@ resp.fullNMDS.scaled <- scale(resp.fullNMDS, center = TRUE, scale = TRUE)
 
 ##  Run MANOVA
 all.Manova<-adonis2(resp.fullNMDS.scaled~Period*Site*dom, data=fullNMDS, permutations=1000, 
+<<<<<<< HEAD
+                          method="euclidian",)
+
+=======
                           method="euclidian")
 all.Manova
+>>>>>>> d724dd164eab10e0146b4206c9bc47bc87fa9a7a
 ##### test dispersion using PERMDISP
 disp <- betadisper(vegdist(resp.fullNMDS.scaled, method = "euclidian"), fac.fullNMDS$Period)
 
