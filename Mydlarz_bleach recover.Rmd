@@ -172,8 +172,6 @@ Rf14.Temp5 <- Rf14.temp_log5
 #############################
 ## complete data for both sites across all periods of sampling (2014-2016)
 Lil.Temp<-rbind(Lil.temp_log1,Lil.temp_log2, Lil.temp_log4, Lil.temp_log5)
-write.csv(Lil.Temp, "Lilipuna temp all.csv")
-
 Rf14.Temp<-rbind(Rf14.Temp1,Rf14.Temp2, Rf14.Temp3, Rf14.Temp4, Rf14.Temp5)
 
 #############################
@@ -227,41 +225,6 @@ Rf14_mean3 <- aggregate(data.frame(mean=Rf14.split3[[1]]$Temp_Calib), by=list(Da
 Rf14_mean4 <- aggregate(data.frame(mean=Rf14.split4[[1]]$Temp_Calib), by=list(Date=Rf14.split4[[1]]$Date), FUN=mean)
 
 Rf14_mean5 <- aggregate(data.frame(mean=Rf14.split5[[1]]$Temp_Calib), by=list(Date=Rf14.split5[[1]]$Date), FUN=mean)
-
-#######################
-
-# test for temperature
-# compiled files = Lil.Temp and Rf14.Temp
-# compiles means = Lilipuna = Lil_mean1, Lil_mean2, Lil_mean4, Lil_mean5
-#                = Reef 14 = Rf14_mean1, Rf14_mean2, Rf14_mean3, Rf14_mean4, Rf14_mean5
-
-# removing Reef 14_mean 3 and aligning mean4 gives a balanced dataframe with means for each day matched among sites
-
-Rf14_mean4.amend<-Rf14_mean4[(Rf14_mean4$Date>="2015-09-28"),]
-
-Lil.tempmean.all <-rbind(Lil_mean1, Lil_mean2, Lil_mean4, Lil_mean5)
-Rf14.tempmean.all<-rbind(Rf14_mean1, Rf14_mean2, Rf14_mean4.amend, Rf14_mean5)
-
-
-test.temp<- rbind(
-  data.frame(date=Lil.tempmean.all$Date, reef="Lilipuna", temp=Lil.tempmean.all$mean),
-  data.frame(date=Rf14.tempmean.all$Date, reef="Reef 14", temp=Rf14.tempmean.all$mean))
-
-lmod2<-lmer(temp~reef + (1|date), data=test.temp)
-Anova(lmod2, type=2)
-lsmeans(lmod2, "reef", contr="pairwise")
-
-head(test.temp)
-aggregate(temp~reef, data=test.temp,mean)
-min.temp<-aggregate(temp~reef, data=test.temp, min)
-max.temp<-aggregate(temp~reef, data=test.temp, max)
-
-temps<-cbind(Lil.tempmean.all, Rf14.tempmean.all[c(0,2)]); colnames(temps)<-c("Date", "Lil.temp", "Rf14.temp")
-temps$temp.diff<-temps$Lil.temp-temps$Rf14.temp
-
-#plot(temps$temp.diff~temps$Date, pch=21, cex=1, ylim=c(-2,2), xaxt="n", xlab="Date", ylab="Temperature (°C)", main="Differences in daily mean temperature at Lilipuna relative to Reef 14", cex.main=0.7)
-#axis.Date(1, at=seq(min(temps$Date), max(temps$Date), by="1 mon"), format="%b '%y")
-#abline(0,0, lty=2, lwd=2, col="red")
 ```
 
 #### HIMB annual temps 
@@ -274,7 +237,7 @@ annual.temps<-rbind(read.csv("data/environmental/Temp data/HIMB station/temp_201
                     read.csv("data/environmental/Temp data/HIMB station/temp_2016.csv"))
 
 
-annual.temps<-annual.temps[!c(annual.temps$X.YY==2014 & annual.temps$MM<= 6),] #start June 2014
+annual.temps<-annual.temps[!c(annual.temps$X.YY==2014 & annual.temps$MM< 1),] #start Jan 2014
 annual.temps<-annual.temps[!c(annual.temps$X.YY==2016 & annual.temps$MM > 2),] #end February 2016
 
 #remove unwanted columns
@@ -314,10 +277,6 @@ Lil.PAR4<-rbind(
   read.csv("data/environmental/Light data/Lilipuna/SN_2489/Lilipuna_2489_T6_sep-nov 2015.csv"),
   read.csv("data/environmental/Light data/Lilipuna/SN_2489/Lilipuna_2489_T7_nov-jan 2016.csv"),
   read.csv("data/environmental/Light data/Lilipuna/SN_2489/Lilipuna_2489_T8_jan-mar 2016.csv"))
-
-Lil.PAR5<-
-  read.csv("data/environmental/Light data/Lilipuna/SN_2489/Lilipuna_2489_T9_mar-jun 2016.csv")
-
   
 # Reef 14
 # 2014 Oct - 2016 Jun
@@ -337,25 +296,20 @@ Rf14.PAR4 <- rbind(
   read.csv("data/environmental/Light data/Reef 14/SN_2488/Reef 14_2488_T7_nov-jan 2016.csv"),
   read.csv("data/environmental/Light data/Reef 14/SN_2488/Reef 14_2488_T8_jan-mar 2016.csv"))
 
-Rf14.PAR5 <-
-  read.csv("data/environmental/Light data/Reef 14/SN_2488/Reef 14_2488_T9_apr-jun 2016.csv")
-
 
 # Set date to date class
 Lil.PAR1$Date <- as.Date(Lil.PAR1$Date, format="%e/%m/%Y")
 Lil.PAR2$Date <- as.Date(Lil.PAR2$Date, format="%e/%m/%Y")
 Lil.PAR4$Date <- as.Date(Lil.PAR4$Date, format="%e/%m/%Y")
-Lil.PAR5$Date <- as.Date(Lil.PAR5$Date, format="%e/%m/%Y")
 
 Rf14.PAR1$Date <- as.Date(Rf14.PAR1$Date, format="%e/%m/%Y")
 Rf14.PAR2$Date <- as.Date(Rf14.PAR2$Date, format="%e/%m/%Y")
 Rf14.PAR3$Date <- as.Date(Rf14.PAR3$Date, format="%e/%m/%Y")
 Rf14.PAR4$Date <- as.Date(Rf14.PAR4$Date, format="%e/%m/%Y")
-Rf14.PAR5$Date <- as.Date(Rf14.PAR5$Date, format="%e/%m/%Y")
 
 ##########################
-# Recalibrate light data
-# Lilipuna --- Logger SN: 2485 calibration: y = 23.674x - 48.339 <<< Jen calibration
+# Calibrate light data
+# Lilipuna --- Logger SN: 2485 calibration: y = 23.674x - 48.339 
 # Lilipuna --- Logger SN: 2489 calibration: y = 89.459x
 # Reef 14  --- Logger SN: 2488 calibration: y = 74.242x
 ##########################
@@ -374,9 +328,6 @@ Rf14.PAR1$LiCor_Calibrated<-(Rf14.PAR1$Raw*74.242/(15*60))
     
       Rf14.PAR4<-Rf14.PAR4[,-5]; head(Rf14.PAR4)
       Rf14.PAR4$LiCor_Calibrated<-(Rf14.PAR4$Raw*74.242/(15*60))
-      
-         Rf14.PAR5<-Rf14.PAR5[,-5]; head(Rf14.PAR5)
-         Rf14.PAR5$LiCor_Calibrated<-(Rf14.PAR5$Raw*74.242/(15*60))
          
 
 # Lilipuna -- Odyssey logger 2485 .....calibration
@@ -389,26 +340,21 @@ Lil.PAR1$LiCor_Calibrated<-(Lil.PAR1$Raw*82.0/(15*60)); head(Lil.PAR1)
 # Lilipuna -- Odyssey logger 2489 calibration: 
 Lil.PAR4<-Lil.PAR4[,-5]; head(Lil.PAR4)
 Lil.PAR4$LiCor_Calibrated<-(Lil.PAR4$Raw*89.459/(15*60)); head(Lil.PAR4)
-  Lil.PAR5<-Lil.PAR5[,-5]; head(Lil.PAR5)
-  Lil.PAR5$LiCor_Calibrated<-(Lil.PAR5$Raw*89.459/(15*60)); head(Lil.PAR5)
-
 
 # Combine all calibrated data for Lilipuna, Reef 14
-Lil.PAR  <- rbind(Lil.PAR1, Lil.PAR2, Lil.PAR4, Lil.PAR5)
-write.csv(Lil.PAR, "Lilipuna PAR all.csv")
+Lil.PAR  <- rbind(Lil.PAR1, Lil.PAR2, Lil.PAR4)
 
-Rf14.PAR <- rbind(Rf14.PAR1, Rf14.PAR2, Rf14.PAR3, Rf14.PAR4, Rf14.PAR5)
+Rf14.PAR <- rbind(Rf14.PAR1, Rf14.PAR2, Rf14.PAR3, Rf14.PAR4)
 
 #######################
 #######################
 # compiled data files
 
 Lil.Temp  # Lilipuna temp data
-Lil.PAR   # Lilipuna light data
-
 Rf14.Temp # Reef 14 temp data
-Rf14.PAR  # Reef 14 light data
 
+Lil.PAR   # Lilipuna light data
+Rf14.PAR  # Reef 14 light data
 ########################
 
 # Calculate daily light integrals
@@ -421,8 +367,6 @@ Lil.L2 <- aggregate(data.frame(mean=Lil.PAR2$LiCor_Calibrated), by=list(Date=Lil
 Lil.L4 <- aggregate(data.frame(mean=Lil.PAR4$LiCor_Calibrated), by=list(Date=Lil.PAR4$Date), FUN=mean); Lil.L4$dli <- Lil.L4$mean * 0.0864
 Lil.L4<-Lil.L4[!(Lil.L4$Date=="2016-03-01"),]
 
-Lil.L5 <- aggregate(data.frame(mean=Lil.PAR5$LiCor_Calibrated), by=list(Date=Lil.PAR5$Date), FUN=mean); Lil.L5$dli <- Lil.L5$mean * 0.0864
-
 
 #Reef 14
 Rf14.L1 <- aggregate(data.frame(mean=Rf14.PAR1$LiCor_Calibrated), by=list(Date=Rf14.PAR1$Date), FUN=mean); Rf14.L1$dli <- Rf14.L1$mean * 0.0864
@@ -433,22 +377,16 @@ Rf14.L3 <- aggregate(data.frame(mean=Rf14.PAR3$LiCor_Calibrated), by=list(Date=R
 
 Rf14.L4 <- aggregate(data.frame(mean=Rf14.PAR4$LiCor_Calibrated), by=list(Date=Rf14.PAR4$Date), FUN=mean); Rf14.L4$dli <- Rf14.L4$mean * 0.0864
 
-Rf14.L5 <- aggregate(data.frame(mean=Rf14.PAR5$LiCor_Calibrated), by=list(Date=Rf14.PAR5$Date), FUN=mean); Rf14.L5$dli <- Rf14.L5$mean * 0.0864
 
 # testing for differences among reefs
 
 ## DAILY INTEGRATED LIGHT
 # Light data dli
 # Lil.PAR1-2,4-5  and Rf14.PAR1-5
-Lil.PAR.dli.all<-rbind(Lil.L1, Lil.L2, Lil.L4, Lil.L5)
-Rf14.PAR.dli.all<-rbind(Rf14.L1, Rf14.L2, Rf14.L3, Rf14.L4, Rf14.L5)
 
-test.light<- rbind(
-  data.frame(date=Lil.PAR.dli.all$Date, reef="Lilipuna", dli=Lil.PAR.dli.all$dli),
-  data.frame(date=Rf14.PAR.dli.all$Date, reef="Reef 14", dli=Rf14.PAR.dli.all$dli))
-lmod1<-lmer(dli~reef + (1|date), data=test.light)
-Anova(lmod1, type=2)
-lsmeans(lmod1, "reef", contr="pairwise")
+Lil.PAR.dli.all<-rbind(Lil.L1, Lil.L2, Lil.L4)
+Rf14.PAR.dli.all<-rbind(Rf14.L1, Rf14.L2, Rf14.L3, Rf14.L4)
+
 ```
   
 *Temp and Light plot*
@@ -467,9 +405,9 @@ par(mfrow=c(1,1), mar=c(2,4,2,1), mgp=c(2,0.5,0))
 ### NOAA-HIMB
 k=1; lwd=0.7 # k-day moving averages
 plot(mean ~ Date, annual.day.temps, type="l", ylab="Mean daily temp. (°C)", cex.lab=0.6, cex.axis=0.6, ylim=c(21, 31), xlab="", xaxt="n", col="gray85")
-axis.Date(1, at=seq(min(annual.day.temps$Date), max(annual.day.temps$Date), by="2 mon"), 
+axis.Date(1, at=seq(min(annual.day.temps$Date), max(annual.day.temps$Date), by="3 mon"), 
           format="%b '%y", cex.axis=0.6, cex.lab=0.6)
-legend("topright", lty=1, col=c("gray 80", reefcols2[c(1,2)]), legend=c("NOAA-HIMB", "Lilipuna", "Reef 14"), seg.len= 1.5, cex=0.6, lwd=1, bty="n", inset=c(0.1, 0), y.intersp = 1.3)
+legend("topright", lty=1, col=c("gray 80", reefcols2[c(1,2)]), legend=c("NOAA-HIMB", "Lilipuna", "Reef 14"), seg.len= 1.5, cex=0.6, lwd=1, bty="n", inset=c(0.01, 0), y.intersp = 1.3)
 
 ### Lilipuna
 with(na.omit(data.frame(date=Lil_mean1$Date, mean=rollmean(Lil_mean1$mean, k, fill=NA))), {
@@ -505,26 +443,59 @@ dev.off()
 
 temp.plot <- recordPlot() # records the plot for later
 
+
+###########################
+# Annual heating and cooling 
+###########################
+
+# Temperature and light data analysis ------
+
+#### Temperature plot
+# limit dates
+Temp.event1<-annual.day.temps[(annual.day.temps$Date< "2015-03-01"),]
+Temp.event2<-annual.day.temps[(annual.day.temps$Date>= "2015-01-01"),]
+
+annual.color <- c("coral", "goldenrod")
+par(mfrow=c(1,1), mar=c(2,4,2,1), mgp=c(2,0.5,0))
+
+### 2014-bleaching
+k=1; lwd=0.7 # k-day moving averages
+plot(mean ~ Date, Temp.event1, type="l", ylab="Mean daily temp. (°C)", cex.lab=0.6, cex.axis=0.6, ylim=c(21, 31), xlab="", xaxt="n", col=annual.color[1])
+axis.Date(1, at=seq(min(Temp.event1$Date), max(Temp.event1$Date), by="3 mon"),
+          format="%b", cex.axis=0.6, cex.lab=0.6)
+abline(v=Temp.event1[Temp.event1$Date=="2014-10-10",1], col = "black", lwd=1, lty=2)
+abline(v=Temp.event1[Temp.event1$Date=="2015-02-11",1], col = "black", lwd=1, lty=2)
+legend("topright", lty=1, col=annual.color, legend=c("2014-bleaching", "2015-bleaching"), seg.len= 1.5, cex=0.6, lwd=1, bty="n", inset=c(0.1, 0), y.intersp = 1.3)
+
+### 2015 bleaching
+par(new=T)
+plot(mean ~ Date, Temp.event2, type="l", cex.lab=0.6, cex.axis=0.6, ylim=c(21, 31), xlab="", xaxt="n", ylab="", col=annual.color[2])
+abline(v=Temp.event2[Temp.event2$Date=="2015-10-12",1], col = "gray80", lwd=1, lty=1) 
+abline(v=Temp.event2[Temp.event2$Date=="2016-02-26",1], col = "gray80", lwd=1, lty=2)
+
+dev.copy(pdf, "figures/Temp.AnnualHeating_col.pdf", width=7, height=3)
+dev.off()
+
+
+
 ###########################
 # Plot daily light integrals
 ###########################
 
 par(mfrow=c(1,1), mar=c(2,4,2,1), mgp=c(2,0.5,0))
 k=1; lwd=0.8 # k-day moving averages
-plot(mean ~ Date, TIMESPAN_mean, type="n", ylab=(expression(paste("DLI (mol photons", ~m^-2, ~d^-1, ")", sep=""))), xaxt="n", xlab="", cex.lab=0.7, ylim=c(0,50), cex.axis=0.7)
-axis.Date(1, at=seq(min(TIMESPAN_mean$Date), max(TIMESPAN_mean$Date), by="1 mon"), format="%b '%y", cex.axis=0.7, cex.lab=0.7)
+plot(mean ~ Date, Lil.PAR.dli.all, type="n", ylab=(expression(paste("DLI (mol photons", ~m^-2, ~d^-1, ")", sep=""))), xaxt="n", xlab="", cex.lab=0.7, ylim=c(0,50), cex.axis=0.7)
+axis.Date(1, at=seq(min(Lil.PAR.dli.all$Date), max(Lil.PAR.dli.all$Date), by="1 mon"), format="%b '%y", cex.axis=0.7, cex.lab=0.7)
 with(na.omit(data.frame(date=Lil.L1$Date, dli=rollmean(Lil.L1$dli, k, fill=NA))), lines(date, dli, col=reefcols2[1], lwd=lwd))
 with(na.omit(data.frame(date=Lil.L2$Date, dli=rollmean(Lil.L2$dli, k, fill=NA))), lines(date, dli, col=reefcols2[1], lwd=lwd))
 with(na.omit(data.frame(date=Lil.L4$Date, dli=rollmean(Lil.L4$dli, k, fill=NA))), lines(date, dli, col=reefcols2[1], lwd=lwd))
-with(na.omit(data.frame(date=Lil.L5$Date, dli=rollmean(Lil.L5$dli, k, fill=NA))), lines(date, dli, col=reefcols2[1], lwd=lwd))
 with(na.omit(data.frame(date=Rf14.L1$Date, dli=rollmean(Rf14.L1$dli, k, fill=NA))), lines(date, dli, col=reefcols2[2], lwd=lwd))
 with(na.omit(data.frame(date=Rf14.L2$Date, dli=rollmean(Rf14.L2$dli, k, fill=NA))), lines(date, dli, col=reefcols2[2], lwd=lwd))
 with(na.omit(data.frame(date=Rf14.L3$Date, dli=rollmean(Rf14.L3$dli, k, fill=NA))), lines(date, dli, col=reefcols2[2], lwd=lwd))
 with(na.omit(data.frame(date=Rf14.L4$Date, dli=rollmean(Rf14.L4$dli, k, fill=NA))), lines(date, dli, col=reefcols2[2], lwd=lwd))
-with(na.omit(data.frame(date=Rf14.L5$Date, dli=rollmean(Rf14.L5$dli, k, fill=NA))), lines(date, dli, col=reefcols2[2], lwd=lwd))
 legend("topright", lty=1, col=c(reefcols2[c(1,2)]), legend=c("Lilipuna", "Reef 14"), seg.len= 1.2, cex=0.8, y.intersp=1.2, x.intersp = 0.8, lwd=2, bty="n")
 
-dev.copy(pdf, "figures/supplement/PAR.pdf", width=7, height=3)
+dev.copy(pdf, "figures/PAR.pdf", width=7, height=3)
 dev.off()
 ```
 
@@ -597,11 +568,13 @@ df.fig<-df.fig %>% mutate(
 reefcols <- c("gray60", "gray35")
 ecol.labs<-c("Oct'14 \nBl","Feb'15 \nRc","Oct'15 \nBl", "Feb'16 \nRc")
 
-text.formatting<-theme(text=element_text(size=8),
+text.formatting<-theme_classic() + 
+  theme(text=element_text(size=8),
   axis.text.y=element_text(
       margin=unit(c(0.5, 0.5, 0.5, 0.5), "cm"), colour="black", size=8), 
     axis.text.x=element_text(
-      margin=unit(c(0.5, 0.5, 0.5, 0.5), "cm"), colour="black", size=8))
+      margin=unit(c(0.5, 0.5, 0.5, 0.5), "cm"), colour="black", size=8), 
+  plot.title = element_text(hjust = 0.5))
 
 pd <- position_dodge(0.15) #offset for error bars
 
@@ -613,7 +586,8 @@ FigMC <- ggplot(df.fig, aes(x=Period, y=MC, group=Site, color=Site)) +
   geom_point(position=pd, size=1) +
   ylab("") +
   scale_color_manual(values=reefcols2) +
-  ylab(expression(bold(paste(~bolditalic("M. capitata")~cover, sep="")))) +
+  ggtitle(expression(bold(paste(~bolditalic("M. capitata")~cover, sep="")))) +
+  theme(plot.title = element_text(hjust = 0.5)) +
   scale_y_continuous(limits=c(0,1.05),oob = rescale_none)+ 
   scale_x_discrete(name ="Year and Period", 
       labels=ecol.labs)+
@@ -627,7 +601,7 @@ FigBlMC <- ggplot(df.fig, aes(x=Period, y=totalMC.bleach, group=Site, color=Site
   ylab("") +
   xlab(ecol.labs) +
   scale_color_manual(values=reefcols2) +
-  ylab(expression(bold(paste(~Bleached, bolditalic(" M. capitata")~cover, sep="")))) +
+  ggtitle(expression(bold(paste(~Bleached, bolditalic(" M. capitata")~cover, sep="")))) +
   scale_y_continuous(limits=c(0,1.05),oob = rescale_none)+ 
   scale_x_discrete(name ="Year and Period", 
       labels=ecol.labs)+ text.formatting
@@ -639,11 +613,11 @@ FigBlMC <- ggplot(df.fig, aes(x=Period, y=totalMC.bleach, group=Site, color=Site
 #############
 # color figures all corals
 Ecol.Fig<-plot_grid(FigMC, FigBlMC,
-     labels=c('A', 'B'), label_size=10, hjust=-3, vjust= 3, ncol=1, nrow=2);
+     labels=c('b', 'c'), label_size=10, hjust=-3, vjust= 3, ncol=2, nrow=1);
 Ecol.Fig
 
 ##### save the figure and export to directory? ####
-dev.copy(pdf, "figures/Ecol.Fig_col.pdf", width=4, height=7)
+dev.copy(pdf, "figures/Ecol.Fig_col.pdf", width=7, height=4)
 dev.off()
 ```
 
