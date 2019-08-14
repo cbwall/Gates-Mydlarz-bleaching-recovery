@@ -1431,14 +1431,9 @@ resp.fullNMDS<-fullNMDS[, 4:13] # just responses
 resp.fullNMDS.scaled <- scale(resp.fullNMDS, center = TRUE, scale = TRUE) 
 
 ##  Run MANOVA
-all.Manova<-adonis2(resp.fullNMDS.scaled~Period*Site*dom, data=fullNMDS, permutations=1000, 
-<<<<<<< HEAD
-                          method="euclidian",)
-
-=======
-                          method="euclidian")
+all.Manova<-adonis2(resp.fullNMDS.scaled~Period*Site*dom, data=fullNMDS, permutations=1000,  method="euclidian")
 all.Manova
->>>>>>> d724dd164eab10e0146b4206c9bc47bc87fa9a7a
+
 ##### test dispersion using PERMDISP
 disp <- betadisper(vegdist(resp.fullNMDS.scaled, method = "euclidian"), fac.fullNMDS$Period)
 
