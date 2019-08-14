@@ -615,7 +615,7 @@ FigMC <- ggplot(df.fig, aes(x=Period, y=MC, group=Site, color=Site)) +
   scale_color_manual(values=reefcols2) +
   ylab(expression(bold(paste(~bolditalic("M. capitata")~cover, sep="")))) +
   scale_y_continuous(limits=c(0,1.05),oob = rescale_none)+ 
-  scale_x_discrete(name ="Year and Event", 
+  scale_x_discrete(name ="Year and Period", 
       labels=ecol.labs)+
   text.formatting
 
@@ -629,7 +629,7 @@ FigBlMC <- ggplot(df.fig, aes(x=Period, y=totalMC.bleach, group=Site, color=Site
   scale_color_manual(values=reefcols2) +
   ylab(expression(bold(paste(~Bleached, bolditalic(" M. capitata")~cover, sep="")))) +
   scale_y_continuous(limits=c(0,1.05),oob = rescale_none)+ 
-  scale_x_discrete(name ="Year and Event", 
+  scale_x_discrete(name ="Year and Period", 
       labels=ecol.labs)+ text.formatting
 
 ############
@@ -820,6 +820,7 @@ colnames(fig.df.phys)<-c("Site","Status", "Period", "dom", "zoox", "zoox.SE", "c
 # make an interaction column
 fig.df.phys$int<-interaction(fig.df.phys$dom, fig.df.phys$Site)
 fig.df.phys$int<-factor(fig.df.phys$int)
+fig.df.phys$SimpleSite<-c("Lilipuna", "Reef 14")
 ####
 #### 
 
@@ -854,7 +855,6 @@ Pre.immuno<-cbind(CAT.m2[c(1:2),], CAT.SE2[c(1:2),4], POX.m2[c(1:2),4], POX.SE2[
 colnames(Pre.immuno)<-c("Site","Status", "Period", "CAT", "CAT.SE", "POX", "POX.SE", "SOD", "SOD.SE", "PPO", "PPO.SE", "MEL", "MEL.SE")
 
 ##########
-Pre.immuno<-fig.df.immuno[c(1:2),]
 Pre.immuno$dom<-"unident"
 Pre.immuno<-Pre.immuno[, c(1:3, 14, 4:13)]
 
@@ -864,6 +864,7 @@ fig.df.immuno.comp<-rbind(Pre.immuno, fig.df.immuno)
 # make an interaction column
 fig.df.immuno.comp$int<-interaction(fig.df.immuno.comp$dom, fig.df.immuno.comp$Site)
 fig.df.immuno.comp$int<-factor(fig.df.immuno.comp$int)
+fig.df.immuno.comp$SimpleSite<-c("Lilipuna", "Reef 14")
 
 fig.df.immuno.comp$int<-factor(fig.df.immuno.comp$int, levels=c("unident.Lilipuna.Pre", "unident.Reef 14.Pre", "C.Lilipuna", "C.Reef 14", "D.Lilipuna", "D.Reef 14"))
 ```
@@ -919,16 +920,16 @@ Code for generating individual figures
 ```{r, fig.show= "hide"}
 ###################
 # zoox 
-zoox.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=zoox/10^6, group=int, color=int)) + geom_errorbar(aes(ymin=zoox/10^6-zoox.SE/10^6, ymax=zoox/10^6+zoox.SE/10^6), size=.6, width=0, position=pd) +
-  geom_line(position=pd, size=.6) +
+zoox.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=zoox/10^6, group=int, color=int)) + geom_errorbar(aes(ymin=zoox/10^6-zoox.SE/10^6, ymax=zoox/10^6+zoox.SE/10^6), size=.6, width=0, position=pd) + geom_line(aes(linetype=SimpleSite), position=pd) +
+  scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1, pch=19) +
   coord_cartesian(ylim=c(0, 3)) +
   ylab(expression(paste(~italic("symbionts") ~(10^6~cells~cm^-2), sep=""))) +
   scale_color_manual(values=c(color.scheme),
-                     name= "Site:Clade",
+                     name= "Clade:Site",
                      breaks=break.points,
                      labels=legend.names) +
-  scale_x_discrete(name ="Year and Event", 
+  scale_x_discrete(name ="Year and Period", 
       labels=axis.labels)+
   Fig.formatting
 
@@ -936,30 +937,32 @@ zoox.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=zoox/10^6, group=int, color=i
 
 ########## chla cm2 ############
 chla.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=chla, group=int, color=int)) + geom_errorbar(aes(ymin=chla-chla.SE, ymax=chla+chla.SE), size=.6, width=0, position=pd) +
-  geom_line(position=pd, size=.6) +
+  geom_line(aes(linetype=SimpleSite), position=pd) +
+  scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1) +
   coord_cartesian(ylim=c(0, 8)) +
   ylab(expression(paste("Chlorophyll", ~italic("a"), ~(mu*g~cm^-2), sep=""))) +
   scale_color_manual(values=c(color.scheme),
-                     name= "Site:Clade",
+                     name= "Clade:Site",
                      breaks=break.points,
                      labels=legend.names) +
-  scale_x_discrete(name ="Year and Event", 
+  scale_x_discrete(name ="Year and Period", 
       labels=axis.labels)+
   Fig.formatting
 
 
 ########## chla cell ############
 chlacell.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=chlacell, group=int, color=int)) + geom_errorbar(aes(ymin=chlacell-chlacell.SE, ymax=chlacell+chlacell.SE), size=.6, width=0, position=pd) +
-  geom_line(position=pd, size=.6) +
+  geom_line(aes(linetype=SimpleSite), position=pd) +
+  scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1) +
   coord_cartesian(ylim=c(0, 8)) +
   ylab(expression(paste("Chlorophyll", ~italic("a"), ~(pg~cell^-1), sep=""))) +
   scale_color_manual(values=c(color.scheme),
-                     name= "Site:Clade",
+                     name= "Clade:Site",
                      breaks=break.points,
                      labels=legend.names) +
-  scale_x_discrete(name ="Year and Event", 
+  scale_x_discrete(name ="Year and Period", 
       labels=axis.labels)+
   Fig.formatting
 
@@ -967,30 +970,32 @@ chlacell.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=chlacell, group=int, colo
 
 ########## protein ############
 prot.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=prot, group=int, color=int)) + geom_errorbar(aes(ymin=prot-prot.SE, ymax=prot+prot.SE), size=.6, width=0, position=pd) +
-  geom_line(position=pd, size=.6) +
+  geom_line(aes(linetype=SimpleSite), position=pd) +
+  scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1) +
   coord_cartesian(ylim=c(0, 1)) +
   ylab(expression(paste("Protein", ~(mg~cm^-2), sep=""))) +
   scale_color_manual(values=c(color.scheme),
-                     name= "Site:Clade",
+                     name= "Clade:Site",
                      breaks=break.points,
                      labels=legend.names) +
-  scale_x_discrete(name ="Year and Event", 
+  scale_x_discrete(name ="Year and Period", 
       labels=axis.labels)+
   Fig.formatting
 
 
 ########## AFDW ############
 AFDW.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=AFDW, group=int, color=int)) + geom_errorbar(aes(ymin=AFDW-AFDW.SE, ymax=AFDW+AFDW.SE), size=.6, width=0, position=pd) +
-  geom_line(position=pd, size=.6) +
+  geom_line(aes(linetype=SimpleSite), position=pd) +
+  scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1) +
   coord_cartesian(ylim=c(0, 60)) +
   ylab(expression(paste("Total biomass", ~(mg~cm^-2), sep=""))) +
   scale_color_manual(values=c(color.scheme),
-                     name= "Site:Clade",
+                     name= "Clade:Site",
                      breaks=break.points,
                      labels=legend.names) +
-  scale_x_discrete(name ="Year and Event", 
+  scale_x_discrete(name ="Year and Period", 
       labels=axis.labels)+
   Fig.formatting
 ```
@@ -1014,7 +1019,8 @@ axis.labels.immuno<-c("Prev", "Oct'14 \nBl","Feb'15 \nRc","Oct'15 \nBl", "Feb'16
 
 ########## Prophenoloxidase (PPO) ############
 PPO.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=PPO, group=int, color=int)) + geom_errorbar(aes(ymin=PPO-PPO.SE, ymax=PPO+PPO.SE), size=.6, width=0, position=pd) +
-  geom_line(position=pd, size=.6) +
+  geom_line(aes(linetype=SimpleSite), position=pd) +
+  scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1) +
   coord_cartesian(ylim=c(0, 3)) +
   ylab(expression(paste("PO Activity", ~(Delta~Abs~"490nm"~min^-1~mg~prot^-1), sep=""))) +
@@ -1022,7 +1028,7 @@ PPO.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=PPO, group=int, color=i
                      name= "Site:Clade",
                      breaks=break.points.immuno,
                      labels=legend.names.immuno) +
-  scale_x_discrete(name ="Year and Event", 
+  scale_x_discrete(name ="Year and Period", 
       labels=axis.labels)+
   Fig.formatting
 
@@ -1036,15 +1042,16 @@ MEL.df$Period<-factor(MEL.df$Period, levels=c("2014 Field.Feb", "2014 Lab", "201
 
 ######## Melanin (MEL) #############
 MEL.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=MEL, group=int, color=int)) + geom_errorbar(aes(ymin=MEL-MEL.SE, ymax=MEL+MEL.SE), size=.6, width=0, position=pd) +
-  geom_line(position=pd, size=.6) +
+  geom_line(aes(linetype=SimpleSite), position=pd) +
+  scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1) +
   coord_cartesian(ylim=c(0, 0.02)) +
   ylab(expression(paste("MEL", ~(Abs~"490nm"~mg~tissue^-1), sep="")))+
   scale_color_manual(values=c(color.scheme.immuno),
-                     name= "Site:Clade",
+                     name= "Clade:Site",
                      breaks=break.points.immuno,
                      labels=legend.names.immuno) +
-  scale_x_discrete(name ="Year and Event", 
+  scale_x_discrete(name ="Year and Period", 
       labels=axis.labels)+
   Fig.formatting
 
@@ -1052,45 +1059,48 @@ MEL.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=MEL, group=int, color=i
 
 ########## Peroxidase (POX) ##############
 POX.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=POX, group=int, color=int)) + geom_errorbar(aes(ymin=POX-POX.SE, ymax=POX+POX.SE), size=.6, width=0, position=pd) +
-  geom_line(position=pd, size=.6) +
+  geom_line(aes(linetype=SimpleSite), position=pd) +
+  scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1) +
   coord_cartesian(ylim=c(0, 1.5)) +
   ylab(expression(paste("POX activity", ~(Delta~Abs~"470nm"~min^-1~mg~prot^-1), sep=""))) +
   scale_color_manual(values=c(color.scheme.immuno),
-                     name= "Site:Clade",
+                     name= "Clade:Site",
                      breaks=break.points.immuno,
                      labels=legend.names.immuno) +
-  scale_x_discrete(name ="Year and Event", 
+  scale_x_discrete(name ="Year and Period", 
       labels=axis.labels)+
   Fig.formatting
 
 
 ###### Catalase (CAT) ########
 CAT.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=CAT, group=int, color=int)) + geom_errorbar(aes(ymin=CAT-CAT.SE, ymax=CAT+CAT.SE), size=.6, width=0, position=pd) +
-  geom_line(position=pd, size=.6) +
+  geom_line(aes(linetype=SimpleSite), position=pd) +
+  scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1) +
   coord_cartesian(ylim=c(0, 800)) +
   ylab(expression(paste("CAT activity", ~(Abs~"490nm"~mg~tissue^-1), sep="")))+
   scale_color_manual(values=c(color.scheme.immuno),
-                     name= "Site:Clade",
+                     name= "Clade:Site",
                      breaks=break.points.immuno,
                      labels=legend.names.immuno) +
-  scale_x_discrete(name ="Year and Event", 
+  scale_x_discrete(name ="Year and Period", 
       labels=axis.labels)+
   Fig.formatting
 
 
 ######### Superoxide dismutase (SOD) ########
 SOD.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=SOD/10^3, group=int, color=int)) + geom_errorbar(aes(ymin=SOD/10^3-SOD.SE/10^3, ymax=SOD/10^3+SOD.SE/10^3), size=.6, width=0, position=pd) +
-  geom_line(position=pd, size=.6) +
+  geom_line(aes(linetype=SimpleSite), position=pd) +
+  scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1) +
   coord_cartesian(ylim=c(0, 50)) +
   ylab(expression(paste("SOD activity", ~x10^3~mg~protein^-1, sep=""))) +
   scale_color_manual(values=c(color.scheme.immuno),
-                     name= "Site:Clade",
+                     name= "Clade:Site",
                      breaks=break.points.immuno,
                      labels=legend.names.immuno) +
-  scale_x_discrete(name ="Year and Event", 
+  scale_x_discrete(name ="Year and Period", 
       labels=axis.labels)+
   Fig.formatting
 
@@ -1100,20 +1110,30 @@ The combined plots...
 ```{r, univariate figures, fig.align='center', results="hide"}
 
 # legend plot
-fig.legend.phys<-ggplot(data=fig.df.phys, aes(x=Period, y=zoox, group=int, color=int)) +
+fig.legend.phys<-ggplot(data=fig.df.phys, aes(x=Period, y=zoox, group=int, color=int, linetype=int)) +
+  geom_line() +
   geom_point(position=pd, size=3) +
   coord_cartesian(ylim=c(0, 1)) +
   scale_color_manual(values=c(color.scheme),
                      name= "Clade:Site",
                      breaks=break.points,
                      labels=legend.names) +
+  scale_linetype_manual(values=c(0,0,0,0,1,3,1,3),
+                     name= "Clade:Site",
+                     breaks=break.points,
+                     labels=legend.names) +
   theme_void()
 
 
-fig.legend.immun<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=SOD, group=int, color=int)) +
+fig.legend.immun<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=SOD, group=int, color=int, linetype=int)) +
   geom_point(position=pd, size=3) +
+  geom_line() +
   coord_cartesian(ylim=c(0, 1)) +
   scale_color_manual(values=c(color.scheme.immuno),
+                     name= "Clade:Site",
+                     breaks=break.points.immuno,
+                     labels=legend.names.immuno) +
+  scale_linetype_manual(values=c(0,0,1,3,1,3),
                      name= "Clade:Site",
                      breaks=break.points.immuno,
                      labels=legend.names.immuno) +
@@ -1150,7 +1170,7 @@ dev.off()
 Running models of response variables. First check for assumptions of ANOVA and apply transformations where necessary.  
   
 *lm(Y~Period x Site x dom, data=model.data, na.action=na.exclude)*  
-*Period* is the 4 events, *Site* is the two reefs, *dom* is the symbiont community (C- or D-dominated)
+*Period* is the 4 Periods, *Site* is the two reefs, *dom* is the symbiont community (C- or D-dominated)
 
 ```{r, include=FALSE}
 #df ## this is the data
