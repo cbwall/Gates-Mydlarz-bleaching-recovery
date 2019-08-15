@@ -470,7 +470,7 @@ legend("topright", lty=1, col=annual.color, legend=c("2014-bleaching", "2015-ble
 ### 2015 bleaching
 par(new=T)
 plot(mean ~ Date, Temp.event2, type="l", cex.lab=0.6, cex.axis=0.6, ylim=c(21, 31), xlab="", xaxt="n", ylab="", col=annual.color[2])
-abline(v=Temp.event2[Temp.event2$Date=="2015-10-12",1], col = "gray80", lwd=1, lty=1) 
+abline(v=Temp.event2[Temp.event2$Date=="2015-10-12",1], col = "gray80", lwd=1, lty=2) 
 abline(v=Temp.event2[Temp.event2$Date=="2016-02-26",1], col = "gray80", lwd=1, lty=2)
 
 dev.copy(pdf, "figures/Temp.AnnualHeating_col.pdf", width=7, height=3)
