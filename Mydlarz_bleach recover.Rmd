@@ -229,18 +229,15 @@ Rf14_mean5 <- aggregate(data.frame(mean=Rf14.split5[[1]]$Temp_Calib), by=list(Da
 
 #### HIMB annual temps 
 ```{r, HIMB temp data, results="hide"}
-# attach the 3 years of temp data from HIMB
+# attach the 3 years of temp data from HIMB 
+# note time in file is UTC
 #setwd("data/environmental/Temp data/HIMB station")
 
 annual.temps<-rbind(read.csv("data/environmental/Temp data/HIMB station/temp_2014.csv"), 
                     read.csv("data/environmental/Temp data/HIMB station/temp_2015.csv"), 
                     read.csv("data/environmental/Temp data/HIMB station/temp_2016.csv"))
 
-
-annual.temps<-annual.temps[!c(annual.temps$X.YY==2014 & annual.temps$MM< 1),] #start Jan 2014
-annual.temps<-annual.temps[!c(annual.temps$X.YY==2016 & annual.temps$MM > 2),] #end February 2016
-
-#remove unwanted columns
+#keep these columns
 annual.temps<- annual.temps %>%
   select(c(X.YY, MM, DD, hh, mm, WTMP))
 
@@ -255,6 +252,29 @@ colnames(annual.temps) <- c("Year", "Month", "Day", "hh", "mm", "Water.temp", "D
 annual.temps<- annual.temps %>%
   select(c(Date, Time, Water.temp))
 
+# make a date-time column to correct for format in UTC
+annual.temps$Date<-parse_date_time(annual.temps$Date, "Y-%m-%d") # corrects date format
+annual.temps$date.time<-as.POSIXct(paste(annual.temps$Date, annual.temps$Time), 
+                                   format="%Y-%m-%d %H:%M", tz="UTC")
+
+# correct time zone to HST
+annual.temps$date.time<-with_tz(annual.temps$date.time, tzone = "HST")
+
+annual.temps<-annual.temps[!c(annual.temps$date.time<"2014-01-01 00:00:00"),] #start Jan 2014
+annual.temps<-annual.temps[!c(annual.temps$date.time>="2016-03-01 00:00:00"),] #end February 2016
+
+# correct Date and Time to reflect date-time HST
+annual.temps$Date<-as.Date(annual.temps$date.time)
+annual.temps$Time<-strftime(annual.temps$date.time, format="%H:%M:%S")
+
+#reorder
+annual.temps<- annual.temps %>%
+  select(c(date.time, Date, Time, Water.temp))
+
+# export to csv to use in DHW calculation
+write.csv(annual.temps, "data/environmental/Temp data/annual.temps.csv") 
+
+# calculate rolling mean of temp data as 'daily mean'
 annual.day.temps <- aggregate(data.frame(mean=annual.temps$Water.temp), by=list(Date=annual.temps$Date), FUN=mean)
 ```
 
