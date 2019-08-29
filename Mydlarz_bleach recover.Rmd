@@ -281,7 +281,7 @@ annual.day.temps <- aggregate(data.frame(mean=annual.temps$Water.temp), by=list(
 
 #### Degree Heating Weeks (DHW)
   
-With a 27.7 C Monthly Maximum Mean (Jokiel and Brown 2004) for Kāne'ohe Bay, total DHW for 2014 and 2015 are calculated from NOAA Molu o Lo'e buoy data.  
+With a 27.7 °C Sumer Monthly Maximum Temp (Jokiel and Brown 2004) for Kāne'ohe Bay, total DHW for 2014 and 2015 are calculated from NOAA Molu o Lo'e buoy data.  
 These show a maximum sustained DHW in 2014 of 7.1 (peaked from 04 Oct - 19 Nov). DHW began accumulating 2014-08-30. In 2015 10.2 DHW were sustained (peaked 12 - 19 Nov), with DHW accumulating 2014-07-01. 
   
 ```{r, results="hide"}
@@ -363,6 +363,10 @@ KBay.DHW <- data.frame(half.wk.dates)
 KBay.DHW$DHW<-(rollapply(hotspot.20142016$hotspot, width=k, by=1, sum, fill=c(NA,NA,NA), align="right",partial=FALSE)*0.5)
 
 write.csv(KBay.DHW, "output/KBay.DHW.csv")
+
+plot(KBay.DHW$half.wk.dates, KBay.DHW$DHW, type="l", xlab="Time", ylab=paste(expression("DHW (°C)")), col="red")
+dev.copy(png, "output/KBay.DHWplot.png")
+dev.off()
 ```
   
 
