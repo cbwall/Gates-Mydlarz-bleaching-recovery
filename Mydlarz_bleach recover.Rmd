@@ -1166,7 +1166,7 @@ CAT.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=CAT, group=int, color=i
   scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1) +
   coord_cartesian(ylim=c(0, 800)) +
-  ylab(expression(paste("CAT activity", ~(Abs~"490nm"~mg~tissue^-1), sep="")))+
+  ylab(expression(paste("CAT activity", ~(min^-1~mg~prot^-1), sep="")))+
   scale_color_manual(values=c(color.scheme.immuno),
                      name= "Clade:Site",
                      breaks=break.points.immuno,
