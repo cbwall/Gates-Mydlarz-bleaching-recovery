@@ -1060,7 +1060,7 @@ prot.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=prot, group=int, color=int)) 
   geom_line(aes(linetype=SimpleSite), position=pd) +
   scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1) +
-  coord_cartesian(ylim=c(0, 1)) +
+  coord_cartesian(ylim=c(0.2, 0.7)) +
   ylab(expression(paste("Protein", ~(mg~cm^-2), sep=""))) +
   scale_color_manual(values=c(color.scheme),
                      name= "Clade:Site",
@@ -1076,7 +1076,7 @@ AFDW.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=AFDW, group=int, color=int)) 
   geom_line(aes(linetype=SimpleSite), position=pd) +
   scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1) +
-  coord_cartesian(ylim=c(0, 60)) +
+  coord_cartesian(ylim=c(10, 60)) +
   ylab(expression(paste("Total biomass", ~(mg~cm^-2), sep=""))) +
   scale_color_manual(values=c(color.scheme),
                      name= "Clade:Site",
@@ -1109,7 +1109,7 @@ PPO.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=PPO, group=int, color=i
   geom_line(aes(linetype=SimpleSite), position=pd) +
   scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1) +
-  coord_cartesian(ylim=c(0, 3)) +
+  coord_cartesian(ylim=c(0, 2)) +
   ylab(expression(paste("PO Activity", ~(Delta~Abs~"490nm"~min^-1~mg~prot^-1), sep=""))) +
   scale_color_manual(values=c(color.scheme.immuno),
                      name= "Site:Clade",
@@ -1149,7 +1149,7 @@ POX.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=POX, group=int, color=i
   geom_line(aes(linetype=SimpleSite), position=pd) +
   scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1) +
-  coord_cartesian(ylim=c(0, 1.5)) +
+  coord_cartesian(ylim=c(0, 1.25)) +
   ylab(expression(paste("POX activity", ~(Delta~Abs~"470nm"~min^-1~mg~prot^-1), sep=""))) +
   scale_color_manual(values=c(color.scheme.immuno),
                      name= "Clade:Site",
@@ -1165,7 +1165,7 @@ CAT.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=CAT, group=int, color=i
   geom_line(aes(linetype=SimpleSite), position=pd) +
   scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1) +
-  coord_cartesian(ylim=c(0, 800)) +
+  coord_cartesian(ylim=c(0, 500)) +
   ylab(expression(paste("CAT activity", ~(min^-1~mg~prot^-1), sep="")))+
   scale_color_manual(values=c(color.scheme.immuno),
                      name= "Clade:Site",
@@ -1181,7 +1181,7 @@ SOD.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=SOD/10^3, group=int, co
   geom_line(aes(linetype=SimpleSite), position=pd) +
   scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1) +
-  coord_cartesian(ylim=c(0, 50)) +
+  coord_cartesian(ylim=c(10, 40)) +
   ylab(expression(paste("SOD activity", ~x10^3~mg~protein^-1, sep=""))) +
   scale_color_manual(values=c(color.scheme.immuno),
                      name= "Clade:Site",
