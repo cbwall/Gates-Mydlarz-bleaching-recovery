@@ -981,7 +981,7 @@ Fig.formatting<-(theme_classic()) +
   legend.text.align = 0,
   legend.text=element_text(size=5),
     #legend.title = element_blank(),
-      panel.border = element_rect(fill=NA, colour = "black", size=1),
+      panel.border = element_rect(fill=NA, colour = "black", size=0.7),
       aspect.ratio=1, 
     axis.ticks.length=unit(0.2, "cm"),
     axis.text.y=element_text(
@@ -1007,9 +1007,10 @@ Code for generating individual figures
 ```{r, fig.show= "hide"}
 ###################
 # zoox 
-zoox.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=zoox/10^6, group=int, color=int)) + geom_errorbar(aes(ymin=zoox/10^6-zoox.SE/10^6, ymax=zoox/10^6+zoox.SE/10^6), size=.6, width=0, position=pd) + geom_line(aes(linetype=SimpleSite), position=pd) +
+zoox.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=zoox/10^6, group=int, color=int)) + geom_errorbar(aes(ymin=zoox/10^6-zoox.SE/10^6, ymax=zoox/10^6+zoox.SE/10^6), size=.4, width=0, position=pd) + 
+  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
   scale_linetype_manual(values=c("solid", "longdash"))+
-  geom_point(position=pd, size=1, pch=19) +
+  geom_point(position=pd, size=1.5, pch=19) +
   coord_cartesian(ylim=c(0, 3)) +
   ylab(expression(paste(~italic("symbionts") ~(10^6~cells~cm^-2), sep=""))) +
   scale_color_manual(values=c(color.scheme),
@@ -1023,10 +1024,10 @@ zoox.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=zoox/10^6, group=int, color=i
 
 
 ########## chla cm2 ############
-chla.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=chla, group=int, color=int)) + geom_errorbar(aes(ymin=chla-chla.SE, ymax=chla+chla.SE), size=.6, width=0, position=pd) +
-  geom_line(aes(linetype=SimpleSite), position=pd) +
+chla.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=chla, group=int, color=int)) + geom_errorbar(aes(ymin=chla-chla.SE, ymax=chla+chla.SE), size=.4, width=0, position=pd) +
+  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
   scale_linetype_manual(values=c("solid", "longdash"))+
-  geom_point(position=pd, size=1) +
+  geom_point(position=pd, size=1.5) +
   coord_cartesian(ylim=c(0, 8)) +
   ylab(expression(paste("Chlorophyll", ~italic("a"), ~(mu*g~cm^-2), sep=""))) +
   scale_color_manual(values=c(color.scheme),
@@ -1039,10 +1040,10 @@ chla.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=chla, group=int, color=int)) 
 
 
 ########## chla cell ############
-chlacell.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=chlacell, group=int, color=int)) + geom_errorbar(aes(ymin=chlacell-chlacell.SE, ymax=chlacell+chlacell.SE), size=.6, width=0, position=pd) +
-  geom_line(aes(linetype=SimpleSite), position=pd) +
+chlacell.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=chlacell, group=int, color=int)) + geom_errorbar(aes(ymin=chlacell-chlacell.SE, ymax=chlacell+chlacell.SE), size=.4, width=0, position=pd) +
+  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
   scale_linetype_manual(values=c("solid", "longdash"))+
-  geom_point(position=pd, size=1) +
+  geom_point(position=pd, size=1.5) +
   coord_cartesian(ylim=c(0, 8)) +
   ylab(expression(paste("Chlorophyll", ~italic("a"), ~(pg~cell^-1), sep=""))) +
   scale_color_manual(values=c(color.scheme),
@@ -1056,10 +1057,10 @@ chlacell.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=chlacell, group=int, colo
 
 
 ########## protein ############
-prot.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=prot, group=int, color=int)) + geom_errorbar(aes(ymin=prot-prot.SE, ymax=prot+prot.SE), size=.6, width=0, position=pd) +
-  geom_line(aes(linetype=SimpleSite), position=pd) +
+prot.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=prot, group=int, color=int)) + geom_errorbar(aes(ymin=prot-prot.SE, ymax=prot+prot.SE), size=.4, width=0, position=pd) +
+  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
   scale_linetype_manual(values=c("solid", "longdash"))+
-  geom_point(position=pd, size=1) +
+  geom_point(position=pd, size=1.5) +
   coord_cartesian(ylim=c(0.2, 0.7)) +
   ylab(expression(paste("Protein", ~(mg~cm^-2), sep=""))) +
   scale_color_manual(values=c(color.scheme),
@@ -1072,10 +1073,10 @@ prot.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=prot, group=int, color=int)) 
 
 
 ########## AFDW ############
-AFDW.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=AFDW, group=int, color=int)) + geom_errorbar(aes(ymin=AFDW-AFDW.SE, ymax=AFDW+AFDW.SE), size=.6, width=0, position=pd) +
-  geom_line(aes(linetype=SimpleSite), position=pd) +
+AFDW.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=AFDW, group=int, color=int)) + geom_errorbar(aes(ymin=AFDW-AFDW.SE, ymax=AFDW+AFDW.SE), size=.4, width=0, position=pd) +
+  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
   scale_linetype_manual(values=c("solid", "longdash"))+
-  geom_point(position=pd, size=1) +
+  geom_point(position=pd, size=1.5) +
   coord_cartesian(ylim=c(10, 60)) +
   ylab(expression(paste("Total biomass", ~(mg~cm^-2), sep=""))) +
   scale_color_manual(values=c(color.scheme),
@@ -1105,10 +1106,10 @@ axis.labels.immuno<-c("Prev", "Oct'14 \nBl","Feb'15 \nRc","Oct'15 \nBl", "Feb'16
 
 
 ########## Prophenoloxidase (PPO) ############
-PPO.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=PPO, group=int, color=int)) + geom_errorbar(aes(ymin=PPO-PPO.SE, ymax=PPO+PPO.SE), size=.6, width=0, position=pd) +
-  geom_line(aes(linetype=SimpleSite), position=pd) +
+PPO.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=PPO, group=int, color=int)) + geom_errorbar(aes(ymin=PPO-PPO.SE, ymax=PPO+PPO.SE), size=.4, width=0, position=pd) +
+  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
   scale_linetype_manual(values=c("solid", "longdash"))+
-  geom_point(position=pd, size=1) +
+  geom_point(position=pd, size=1.5) +
   coord_cartesian(ylim=c(0, 2)) +
   ylab(expression(paste("PO Activity", ~(Delta~Abs~"490nm"~min^-1~mg~prot^-1), sep=""))) +
   scale_color_manual(values=c(color.scheme.immuno),
@@ -1128,10 +1129,10 @@ MEL.df$Period<-factor(MEL.df$Period, levels=c("2014 Field.Feb", "2014 Lab", "201
 
 
 ######## Melanin (MEL) #############
-MEL.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=MEL, group=int, color=int)) + geom_errorbar(aes(ymin=MEL-MEL.SE, ymax=MEL+MEL.SE), size=.6, width=0, position=pd) +
-  geom_line(aes(linetype=SimpleSite), position=pd) +
+MEL.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=MEL, group=int, color=int)) + geom_errorbar(aes(ymin=MEL-MEL.SE, ymax=MEL+MEL.SE), size=.4, width=0, position=pd) +
+  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
   scale_linetype_manual(values=c("solid", "longdash"))+
-  geom_point(position=pd, size=1) +
+  geom_point(position=pd, size=1.5) +
   coord_cartesian(ylim=c(0, 0.02)) +
   ylab(expression(paste("MEL", ~(Abs~"490nm"~mg~tissue^-1), sep="")))+
   scale_color_manual(values=c(color.scheme.immuno),
@@ -1145,10 +1146,10 @@ MEL.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=MEL, group=int, color=i
 
 
 ########## Peroxidase (POX) ##############
-POX.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=POX, group=int, color=int)) + geom_errorbar(aes(ymin=POX-POX.SE, ymax=POX+POX.SE), size=.6, width=0, position=pd) +
-  geom_line(aes(linetype=SimpleSite), position=pd) +
+POX.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=POX, group=int, color=int)) + geom_errorbar(aes(ymin=POX-POX.SE, ymax=POX+POX.SE), size=.4, width=0, position=pd) +
+  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
   scale_linetype_manual(values=c("solid", "longdash"))+
-  geom_point(position=pd, size=1) +
+  geom_point(position=pd, size=1.5) +
   coord_cartesian(ylim=c(0, 1.25)) +
   ylab(expression(paste("POX activity", ~(Delta~Abs~"470nm"~min^-1~mg~prot^-1), sep=""))) +
   scale_color_manual(values=c(color.scheme.immuno),
@@ -1161,10 +1162,10 @@ POX.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=POX, group=int, color=i
 
 
 ###### Catalase (CAT) ########
-CAT.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=CAT, group=int, color=int)) + geom_errorbar(aes(ymin=CAT-CAT.SE, ymax=CAT+CAT.SE), size=.6, width=0, position=pd) +
-  geom_line(aes(linetype=SimpleSite), position=pd) +
+CAT.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=CAT, group=int, color=int)) + geom_errorbar(aes(ymin=CAT-CAT.SE, ymax=CAT+CAT.SE), size=.4, width=0, position=pd) +
+  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
   scale_linetype_manual(values=c("solid", "longdash"))+
-  geom_point(position=pd, size=1) +
+  geom_point(position=pd, size=1.5) +
   coord_cartesian(ylim=c(0, 500)) +
   ylab(expression(paste("CAT activity", ~(min^-1~mg~prot^-1), sep="")))+
   scale_color_manual(values=c(color.scheme.immuno),
@@ -1177,10 +1178,10 @@ CAT.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=CAT, group=int, color=i
 
 
 ######### Superoxide dismutase (SOD) ########
-SOD.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=SOD/10^3, group=int, color=int)) + geom_errorbar(aes(ymin=SOD/10^3-SOD.SE/10^3, ymax=SOD/10^3+SOD.SE/10^3), size=.6, width=0, position=pd) +
-  geom_line(aes(linetype=SimpleSite), position=pd) +
+SOD.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=SOD/10^3, group=int, color=int)) + geom_errorbar(aes(ymin=SOD/10^3-SOD.SE/10^3, ymax=SOD/10^3+SOD.SE/10^3), size=.4, width=0, position=pd) +
+  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
   scale_linetype_manual(values=c("solid", "longdash"))+
-  geom_point(position=pd, size=1) +
+  geom_point(position=pd, size=1.5) +
   coord_cartesian(ylim=c(10, 40)) +
   ylab(expression(paste("SOD activity", ~x10^3~mg~protein^-1, sep=""))) +
   scale_color_manual(values=c(color.scheme.immuno),
