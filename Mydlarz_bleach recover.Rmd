@@ -1012,9 +1012,9 @@ zoox.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=zoox/10^6, group=int, color=i
   scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1.5, pch=19) +
   coord_cartesian(ylim=c(0, 3)) +
-  ylab(expression(paste(~italic("symbionts") ~(10^6~cells~cm^-2), sep=""))) +
+  ylab(expression(paste(~("symbionts") ~(x10^6~cells~cm^-2), sep=""))) +
   scale_color_manual(values=c(color.scheme),
-                     name= "Clade:Site",
+                     name= "Symbiont:Site",
                      breaks=break.points,
                      labels=legend.names) +
   scale_x_discrete(name ="Year and Period", 
@@ -1031,7 +1031,7 @@ chla.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=chla, group=int, color=int)) 
   coord_cartesian(ylim=c(0, 8)) +
   ylab(expression(paste("Chlorophyll", ~italic("a"), ~(mu*g~cm^-2), sep=""))) +
   scale_color_manual(values=c(color.scheme),
-                     name= "Clade:Site",
+                     name= "Symbiont:Site",
                      breaks=break.points,
                      labels=legend.names) +
   scale_x_discrete(name ="Year and Period", 
@@ -1047,7 +1047,7 @@ chlacell.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=chlacell, group=int, colo
   coord_cartesian(ylim=c(0, 8)) +
   ylab(expression(paste("Chlorophyll", ~italic("a"), ~(pg~cell^-1), sep=""))) +
   scale_color_manual(values=c(color.scheme),
-                     name= "Clade:Site",
+                     name= "Symbiont:Site",
                      breaks=break.points,
                      labels=legend.names) +
   scale_x_discrete(name ="Year and Period", 
@@ -1064,7 +1064,7 @@ prot.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=prot, group=int, color=int)) 
   coord_cartesian(ylim=c(0.2, 0.7)) +
   ylab(expression(paste("Protein", ~(mg~cm^-2), sep=""))) +
   scale_color_manual(values=c(color.scheme),
-                     name= "Clade:Site",
+                     name= "Symbiont:Site",
                      breaks=break.points,
                      labels=legend.names) +
   scale_x_discrete(name ="Year and Period", 
@@ -1080,7 +1080,7 @@ AFDW.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=AFDW, group=int, color=int)) 
   coord_cartesian(ylim=c(10, 60)) +
   ylab(expression(paste("Total biomass", ~(mg~cm^-2), sep=""))) +
   scale_color_manual(values=c(color.scheme),
-                     name= "Clade:Site",
+                     name= "Symbiont:Site",
                      breaks=break.points,
                      labels=legend.names) +
   scale_x_discrete(name ="Year and Period", 
@@ -1113,7 +1113,7 @@ PPO.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=PPO, group=int, color=i
   coord_cartesian(ylim=c(0, 2)) +
   ylab(expression(paste("PO Activity", ~(Delta~Abs~"490nm"~min^-1~mg~prot^-1), sep=""))) +
   scale_color_manual(values=c(color.scheme.immuno),
-                     name= "Site:Clade",
+                     name= "Symbiont:Site",
                      breaks=break.points.immuno,
                      labels=legend.names.immuno) +
   scale_x_discrete(name ="Year and Period", 
@@ -1136,7 +1136,7 @@ MEL.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=MEL, group=int, color=i
   coord_cartesian(ylim=c(0, 0.02)) +
   ylab(expression(paste("MEL", ~(Abs~"490nm"~mg~tissue^-1), sep="")))+
   scale_color_manual(values=c(color.scheme.immuno),
-                     name= "Clade:Site",
+                     name= "Symbiont:Site",
                      breaks=break.points.immuno,
                      labels=legend.names.immuno) +
   scale_x_discrete(name ="Year and Period", 
@@ -1153,7 +1153,7 @@ POX.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=POX, group=int, color=i
   coord_cartesian(ylim=c(0, 1.25)) +
   ylab(expression(paste("POX activity", ~(Delta~Abs~"470nm"~min^-1~mg~prot^-1), sep=""))) +
   scale_color_manual(values=c(color.scheme.immuno),
-                     name= "Clade:Site",
+                     name= "Symbiont:Site",
                      breaks=break.points.immuno,
                      labels=legend.names.immuno) +
   scale_x_discrete(name ="Year and Period", 
@@ -1169,7 +1169,7 @@ CAT.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=CAT, group=int, color=i
   coord_cartesian(ylim=c(0, 500)) +
   ylab(expression(paste("CAT activity", ~(min^-1~mg~prot^-1), sep="")))+
   scale_color_manual(values=c(color.scheme.immuno),
-                     name= "Clade:Site",
+                     name= "Symbiont:Site",
                      breaks=break.points.immuno,
                      labels=legend.names.immuno) +
   scale_x_discrete(name ="Year and Period", 
@@ -1183,9 +1183,9 @@ SOD.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=SOD/10^3, group=int, co
   scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1.5) +
   coord_cartesian(ylim=c(10, 40)) +
-  ylab(expression(paste("SOD activity", ~x10^3~mg~protein^-1, sep=""))) +
+  ylab(expression(paste("SOD activity", ~(x10^3~mg~prot^-1), sep=""))) +
   scale_color_manual(values=c(color.scheme.immuno),
-                     name= "Clade:Site",
+                     name= "Symbiont:Site",
                      breaks=break.points.immuno,
                      labels=legend.names.immuno) +
   scale_x_discrete(name ="Year and Period", 
@@ -1203,11 +1203,11 @@ fig.legend.phys<-ggplot(data=fig.df.phys, aes(x=Period, y=zoox, group=int, color
   geom_point(position=pd, size=3) +
   coord_cartesian(ylim=c(0, 1)) +
   scale_color_manual(values=c(color.scheme),
-                     name= "Clade:Site",
+                     name= "Symbiont:Site",
                      breaks=break.points,
                      labels=legend.names) +
   scale_linetype_manual(values=c(0,0,0,0,1,3,1,3),
-                     name= "Clade:Site",
+                     name= "Symbiont:Site",
                      breaks=break.points,
                      labels=legend.names) +
   theme_void()
@@ -1218,11 +1218,11 @@ fig.legend.immun<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=SOD, group=int
   geom_line() +
   coord_cartesian(ylim=c(0, 1)) +
   scale_color_manual(values=c(color.scheme.immuno),
-                     name= "Clade:Site",
+                     name= "Symbiont:Site",
                      breaks=break.points.immuno,
                      labels=legend.names.immuno) +
   scale_linetype_manual(values=c(0,0,1,3,1,3),
-                     name= "Clade:Site",
+                     name= "Symbiont:Site",
                      breaks=break.points.immuno,
                      labels=legend.names.immuno) +
   theme_void()
