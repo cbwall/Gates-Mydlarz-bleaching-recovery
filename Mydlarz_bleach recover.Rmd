@@ -1,7 +1,7 @@
 ---
-title: 'Gates & Mydlarz et al: 2014 - 2016 bleaching and recovery of Montipora capitata'
-author: "Chris Wall"
-date: "8/7/2019"
+title: "Repeat bleaching effects on coral physiotypes"
+author: "CB Wall, and co-authors"
+date: "3/1/2020"
 output:
   html_document:
     code_folding: hide
@@ -14,6 +14,9 @@ output:
 editor_options: 
   chunk_output_type: inline
 ---
+  
+Wall CB, Ricci CA, Wen AD, Ledbetter BE, Klinger DE, Mydlarz LD, Gates RD, Putnam HM. Repeat bleaching drives coral physiotypes through interaction with environmental legacies and cellular memory. *(submitted Nature Climate Change)*  
+  
 ```{r setup, message=FALSE, warning=FALSE, echo=FALSE}
 require("knitr")
 knitr::opts_chunk$set(warning=FALSE, message=FALSE, fig.align='center')
@@ -59,24 +62,25 @@ library(RVAideMemoire)
 
 ```
 ## Background
-Data is from Kāne'ohe Bay, O'ahu, Hawai'i. Data extends across **two archipelagic bleaching events and the subsequent recovery periods** where tempertaure stress subsided. Data periods represent:  
+Data is from Kāne'ohe Bay, O'ahu, Hawai'i extending across two archipelagic bleaching events and the subsequent recovery periods (**four Periods**). Data periods represent:  
 - first bleaching (October 2014) 
 - first recovery (February 2015) 
-- second bleaching (October 2015)  
+- second bleaching (October 2015)    
 - second recovery (February 2016)  
 
-Physiological and immunological parameters were collected from from *Montipora capitata* collected from two locations (Sites):  
-- Lilipuna -- a shallow fringing reef west of the Hawaii Insititute of Marine Biology  
-- Reef 14 -- a shallow inshore patch reef in central Kāne'ohe Bay
+Physiological and immunological parameters were collected from from *Montipora capitata* collected from (**two Sites**):  
+- Lilipuna -- a shallow fringing reef west of the Hawai'i Insititute of Marine Biology  
+- Reef 14 -- a shallow inshore patch reef in central Kāne'ohe Bay  
 
-**Lilipuna** has been categorized as experiencing near shore impacts from freshwater inundation, subteranean groundwater discharge, and seawater biogeochemistry influeces by long residence times, low flow, and riverine/terrigenous nutrient inputs. Additionally, pCO2 flux at this site is "moderate", with on average ~200ppm pCO2 +/- flux
+**Lilipuna** has been categorized as experiencing near shore impacts from freshwater inundation, subteranean groundwater discharge, and seawater biogeochemistry influeces by long residence times, low flow, and riverine/terrigenous nutrient inputs. Additionally, pCO~2~ flux at this site is "moderate", with on average ~200ppm pCO~2~ +/- flux
 
-**Reef 14** has seawater with a shorter residence time, little terrestrial impact, but has a greater pCO2 flux due to reef metabolism. This flux can be substantial, being > 600 ppm pCO2 in a 24h period and reaching maximum values of >900ppm pCO2.
+**Reef 14** has seawater with a shorter residence time, little terrestrial impact, but has a greater pCO2 flux due to reef metabolism. This flux can be substantial, being > 600 ppm pCO~2~ in a 24h period and reaching maximum values of >900ppm pCO~2~.
 
 ## Environmental data  
   
-### Temperature
-#### Site loggers
+### Temperature  
+Temperature data was collected at two scales. Each of the sites had loggers placed on the reef where data was continuously recorded over 3 years. Gaps in this data exist due to logger failure or loss, however, temperatures correspond well to NOAA station data. The long term data from NOAA gives indications of the rise and fall of temperautures throughout Kāne'ohe Bay during the 2024-2016 period.     
+**Site loggers** present at each of the two reef sites. 
 ```{r, temp data, results="hide"}
 #setwd("data/environmental/Temp data")
 
@@ -227,8 +231,8 @@ Rf14_mean4 <- aggregate(data.frame(mean=Rf14.split4[[1]]$Temp_Calib), by=list(Da
 
 Rf14_mean5 <- aggregate(data.frame(mean=Rf14.split5[[1]]$Temp_Calib), by=list(Date=Rf14.split5[[1]]$Date), FUN=mean)
 ```
-
-#### HIMB annual temps 
+  
+**NOAA-HIMB annual temps** accessed here (https://www.ndbc.noaa.gov/station_page.php?station=mokh1)
 ```{r, HIMB temp data, results="hide"}
 # attach the 3 years of temp data from HIMB 
 # note time in file is UTC
@@ -281,7 +285,7 @@ annual.day.temps <- aggregate(data.frame(mean=annual.temps$Water.temp), by=list(
 
 #### Degree Heating Weeks (DHW)
   
-With a 27.7 °C Sumer Monthly Maximum Temp (Jokiel and Brown 2004) for Kāne'ohe Bay, total DHW for 2014 and 2015 are calculated from NOAA Molu o Lo'e buoy data.  
+With a 27.7 °C Summer Monthly Maximum Temp (Jokiel and Brown 2004) for Kāne'ohe Bay, total DHW for 2014 and 2015 are calculated from NOAA Molu o Lo'e buoy data.  
 These show a maximum sustained DHW in 2014 of 7.1 (peaked from 04 Oct - 19 Nov). DHW began accumulating 2014-08-30. In 2015 10.2 DHW were sustained (peaked 12 - 19 Nov), with DHW accumulating 2014-07-01. 
   
 ```{r, results="hide"}
@@ -368,11 +372,100 @@ plot(KBay.DHW$half.wk.dates, KBay.DHW$DHW, type="l", xlab="Time", ylab=paste(exp
 dev.copy(png, "output/KBay.DHWplot.png")
 dev.off()
 ```
-  
+
+Temperature plots for logger temp at each site (color, top) and temperatures for the 2 bleachin years (2014-2015) (2015-2016).   
+```{r, temp and light plot, message=FALSE, results="hide", fig.dim=c(7,3), fig.show='hold'}
+
+#######################
+# Plot temp. daily mean temperatures for each reef
+#######################
+# Temperature and light data analysis ------
+reefcolsBW <- c("gray60", "gray35")
+reefcols2 <- c("mediumseagreen", "lightskyblue")
+
+par(mfrow=c(1,1), mar=c(2,4,2,1), mgp=c(2,0.5,0))
+
+#### Temperature plot
+### NOAA-HIMB
+k=1; lwd=0.7 # k-day moving averages
+plot(mean ~ Date, annual.day.temps, type="l", ylab="Mean daily temp. (°C)", cex.lab=0.6, cex.axis=0.6, ylim=c(21, 31), xlab="", xaxt="n", col="gray85")
+axis.Date(1, at=seq(min(annual.day.temps$Date), max(annual.day.temps$Date), by="3 mon"), 
+          format="%b '%y", cex.axis=0.6, cex.lab=0.6)
+legend("topright", lty=1, col=c("gray 80", reefcols2[c(1,2)]), legend=c("NOAA-HIMB", "Lilipuna", "Reef 14"), seg.len= 1.5, cex=0.6, lwd=1, bty="n", inset=c(0.01, 0), y.intersp = 1.3)
+
+### Lilipuna
+with(na.omit(data.frame(date=Lil_mean1$Date, mean=rollmean(Lil_mean1$mean, k, fill=NA))), {
+  lines(date, mean, col=reefcols2[1], lwd=lwd)
+})
+with(na.omit(data.frame(date=Lil_mean2$Date, mean=rollmean(Lil_mean2$mean, k, fill=NA))), {
+  lines(date, mean, col=reefcols2[1], lwd=lwd)
+})
+with(na.omit(data.frame(date=Lil_mean4$Date, mean=rollmean(Lil_mean4$mean, k, fill=NA))), { 
+  lines(date, mean, col=reefcols2[1], lwd=lwd) 
+})
+# with(na.omit(data.frame(date=Lil_mean5$Date, mean=rollmean(Lil_mean5$mean, k, fill=NA))), { 
+# lines(date, mean, col=reefcols2[1], lwd=1.2) })
+
+### Reef 14
+with(na.omit(data.frame(date=Rf14_mean1$Date, mean=rollmean(Rf14_mean1$mean, k, fill=NA))), { 
+  lines(date, mean, col=reefcols2[2], lwd=lwd) 
+})
+with(na.omit(data.frame(date=Rf14_mean2$Date, mean=rollmean(Rf14_mean2$mean, k, fill=NA))), { 
+  lines(date, mean, col=reefcols2[2], lwd=lwd) 
+})
+with(na.omit(data.frame(date=Rf14_mean3$Date, mean=rollmean(Rf14_mean3$mean, k, fill=NA))), { 
+  lines(date, mean, col=reefcols2[2], lwd=lwd)
+})
+with(na.omit(data.frame(date=Rf14_mean4$Date, mean=rollmean(Rf14_mean4$mean, k, fill=NA))), { 
+  lines(date, mean, col=reefcols2[2], lwd=lwd)
+})
+# with(na.omit(data.frame(date=Rf14_mean5$Date, mean=rollmean(Rf14_mean5$mean, k, fill=NA))), { 
+# lines(date, mean, col=reefcols2[2], lwd=1.2) })
+
+dev.copy(pdf, "figures/Temp.2014_2016_col.pdf", width=7, height=3)
+dev.off()
+
+temp.plot <- recordPlot() # records the plot for later
 
 
-### Light
-```{r, light data, results="hide"}
+###########################
+# Annual heating and cooling 
+###########################
+
+# Temperature and light data analysis ------
+
+#### Temperature plot
+# limit dates
+Temp.event1<-annual.day.temps[(annual.day.temps$Date< "2015-03-01"),]
+Temp.event2<-annual.day.temps[(annual.day.temps$Date>= "2015-01-01"),]
+
+annual.color <- c("gray59", "black")
+par(mfrow=c(1,1), mar=c(2,4,2,1), mgp=c(2,0.5,0))
+
+### 2014-bleaching
+k=1; lwd=0.7 # k-day moving averages
+plot(mean ~ Date, Temp.event1, type="l", ylab="Mean daily temp. (°C)", cex.lab=0.6, cex.axis=0.6, ylim=c(21, 31), xlab="", xaxt="n", col=annual.color[1])
+axis.Date(1, at=seq(min(Temp.event1$Date), max(Temp.event1$Date), by="3 mon"),
+          format="%b", cex.axis=0.6, cex.lab=0.6)
+abline(v=Temp.event1[Temp.event1$Date=="2014-10-10",1], col = "black", lwd=1, lty=2)
+abline(v=Temp.event1[Temp.event1$Date=="2015-02-11",1], col = "black", lwd=1, lty=2)
+legend("topleft", lty=1, col=annual.color, legend=c("2014-bleaching", "2015-bleaching"), seg.len= 1.5, cex=0.6, lwd=1, bty="n", inset=c(0.1, 0), y.intersp = 1.3)
+
+### 2015 bleaching
+par(new=T)
+plot(mean ~ Date, Temp.event2, type="l", cex.lab=0.6, cex.axis=0.6, ylim=c(21, 31), xlab="", xaxt="n", ylab="", col=annual.color[2])
+abline(v=Temp.event2[Temp.event2$Date=="2015-10-12",1], col = "gray80", lwd=1, lty=2) 
+abline(v=Temp.event2[Temp.event2$Date=="2016-02-26",1], col = "gray80", lwd=1, lty=2)
+
+dev.copy(pdf, "figures/Temp.AnnualHeating_col.pdf", width=7, height=3)
+dev.off()
+```
+
+
+
+### Light  
+Irradiance at each reef was logged with loggers through time at ~1m depth. The data here was calibrated against a Li-Cor quantum sensor. As with temperature data, gaps represent logger failure or loss.  
+```{r, light data, results="hide", fig.dim=c(7,3)}
 #setwd("data/environmental/Light data")
 # Import light data
 
@@ -500,100 +593,15 @@ Rf14.L4 <- aggregate(data.frame(mean=Rf14.PAR4$LiCor_Calibrated), by=list(Date=R
 Lil.PAR.dli.all<-rbind(Lil.L1, Lil.L2, Lil.L4)
 Rf14.PAR.dli.all<-rbind(Rf14.L1, Rf14.L2, Rf14.L3, Rf14.L4)
 
-```
-  
-*Temp and Light plot*
-```{r, temp and light plot, message=FALSE, results="hide"}
-
-#######################
-# Plot temp. daily mean temperatures for each reef
-#######################
-# Temperature and light data analysis ------
-reefcolsBW <- c("gray60", "gray35")
-reefcols2 <- c("mediumseagreen", "lightskyblue")
-
-par(mfrow=c(1,1), mar=c(2,4,2,1), mgp=c(2,0.5,0))
-
-#### Temperature plot
-### NOAA-HIMB
-k=1; lwd=0.7 # k-day moving averages
-plot(mean ~ Date, annual.day.temps, type="l", ylab="Mean daily temp. (°C)", cex.lab=0.6, cex.axis=0.6, ylim=c(21, 31), xlab="", xaxt="n", col="gray85")
-axis.Date(1, at=seq(min(annual.day.temps$Date), max(annual.day.temps$Date), by="3 mon"), 
-          format="%b '%y", cex.axis=0.6, cex.lab=0.6)
-legend("topright", lty=1, col=c("gray 80", reefcols2[c(1,2)]), legend=c("NOAA-HIMB", "Lilipuna", "Reef 14"), seg.len= 1.5, cex=0.6, lwd=1, bty="n", inset=c(0.01, 0), y.intersp = 1.3)
-
-### Lilipuna
-with(na.omit(data.frame(date=Lil_mean1$Date, mean=rollmean(Lil_mean1$mean, k, fill=NA))), {
-  lines(date, mean, col=reefcols2[1], lwd=lwd)
-})
-with(na.omit(data.frame(date=Lil_mean2$Date, mean=rollmean(Lil_mean2$mean, k, fill=NA))), {
-  lines(date, mean, col=reefcols2[1], lwd=lwd)
-})
-with(na.omit(data.frame(date=Lil_mean4$Date, mean=rollmean(Lil_mean4$mean, k, fill=NA))), { 
-  lines(date, mean, col=reefcols2[1], lwd=lwd) 
-})
-# with(na.omit(data.frame(date=Lil_mean5$Date, mean=rollmean(Lil_mean5$mean, k, fill=NA))), { 
-# lines(date, mean, col=reefcols2[1], lwd=1.2) })
-
-### Reef 14
-with(na.omit(data.frame(date=Rf14_mean1$Date, mean=rollmean(Rf14_mean1$mean, k, fill=NA))), { 
-  lines(date, mean, col=reefcols2[2], lwd=lwd) 
-})
-with(na.omit(data.frame(date=Rf14_mean2$Date, mean=rollmean(Rf14_mean2$mean, k, fill=NA))), { 
-  lines(date, mean, col=reefcols2[2], lwd=lwd) 
-})
-with(na.omit(data.frame(date=Rf14_mean3$Date, mean=rollmean(Rf14_mean3$mean, k, fill=NA))), { 
-  lines(date, mean, col=reefcols2[2], lwd=lwd)
-})
-with(na.omit(data.frame(date=Rf14_mean4$Date, mean=rollmean(Rf14_mean4$mean, k, fill=NA))), { 
-  lines(date, mean, col=reefcols2[2], lwd=lwd)
-})
-# with(na.omit(data.frame(date=Rf14_mean5$Date, mean=rollmean(Rf14_mean5$mean, k, fill=NA))), { 
-# lines(date, mean, col=reefcols2[2], lwd=1.2) })
-
-dev.copy(pdf, "figures/Temp.2014_2016_col.pdf", width=7, height=3)
-dev.off()
-
-temp.plot <- recordPlot() # records the plot for later
-
-
-###########################
-# Annual heating and cooling 
-###########################
-
-# Temperature and light data analysis ------
-
-#### Temperature plot
-# limit dates
-Temp.event1<-annual.day.temps[(annual.day.temps$Date< "2015-03-01"),]
-Temp.event2<-annual.day.temps[(annual.day.temps$Date>= "2015-01-01"),]
-
-annual.color <- c("gray59", "black")
-par(mfrow=c(1,1), mar=c(2,4,2,1), mgp=c(2,0.5,0))
-
-### 2014-bleaching
-k=1; lwd=0.7 # k-day moving averages
-plot(mean ~ Date, Temp.event1, type="l", ylab="Mean daily temp. (°C)", cex.lab=0.6, cex.axis=0.6, ylim=c(21, 31), xlab="", xaxt="n", col=annual.color[1])
-axis.Date(1, at=seq(min(Temp.event1$Date), max(Temp.event1$Date), by="3 mon"),
-          format="%b", cex.axis=0.6, cex.lab=0.6)
-abline(v=Temp.event1[Temp.event1$Date=="2014-10-10",1], col = "black", lwd=1, lty=2)
-abline(v=Temp.event1[Temp.event1$Date=="2015-02-11",1], col = "black", lwd=1, lty=2)
-legend("topleft", lty=1, col=annual.color, legend=c("2014-bleaching", "2015-bleaching"), seg.len= 1.5, cex=0.6, lwd=1, bty="n", inset=c(0.1, 0), y.intersp = 1.3)
-
-### 2015 bleaching
-par(new=T)
-plot(mean ~ Date, Temp.event2, type="l", cex.lab=0.6, cex.axis=0.6, ylim=c(21, 31), xlab="", xaxt="n", ylab="", col=annual.color[2])
-abline(v=Temp.event2[Temp.event2$Date=="2015-10-12",1], col = "gray80", lwd=1, lty=2) 
-abline(v=Temp.event2[Temp.event2$Date=="2016-02-26",1], col = "gray80", lwd=1, lty=2)
-
-dev.copy(pdf, "figures/Temp.AnnualHeating_col.pdf", width=7, height=3)
-dev.off()
-
 
 
 ###########################
 # Plot daily light integrals
 ###########################
+
+# Light data  ------
+reefcolsBW <- c("gray60", "gray35")
+reefcols2 <- c("mediumseagreen", "lightskyblue")
 
 par(mfrow=c(1,1), mar=c(2,4,2,1), mgp=c(2,0.5,0))
 k=1; lwd=0.8 # k-day moving averages
@@ -612,11 +620,11 @@ dev.copy(pdf, "figures/PAR.pdf", width=7, height=3)
 dev.off()
 ```
 
-
 ## Ecological data
   
-### 2014-2016 B/R
-```{r, ecology, fig.dim=c(6,6), fig.align='center', results="hide"}
+### 2014-2016 benthic
+```{r, ecology, fig.dim=c(7,4), fig.align='center', results="hide"}
+
 #### Bleaching and recovery for year 1 and 2
 ecology<-read.csv("data/ecology/Reef survey 2014-2016.csv") #import your data file here
 
@@ -733,9 +741,11 @@ Ecol.Fig
 dev.copy(pdf, "figures/Ecol.Fig_col.pdf", width=7, height=4)
 dev.off()
 ```
+  
+**Statistics for bleaching and recovery bethic data.**   
 
-
-```{r, year1 B and R stats}
+The **first table output** shows the effects of bleaching on *total Montipora cover* and post-hoc test for the 4 periods, 'sliced' by Period to show Site effects.
+```{r, B and R Montipora}
 ##################
 ###############
 ##########
@@ -755,7 +765,11 @@ anova(MC.cover.mod)
 posthoc<-lsmeans(MC.cover.mod, ~Site|Period)
 contrast(posthoc)
 multcomp::cld(posthoc, Letters=letters)
-
+```
+    
+    
+The **second table output** shows the effects of bleaching on *BLEACHED Montipora cover* and post-hoc test for the 4 periods. THe post-hoc tests show effects of Site, then the effects of Site within each period.
+```{r, B and R bleached Montipora}
 
 ################
 # bleached MC
@@ -777,7 +791,6 @@ multcomp::cld(posthoc, Letters=letters)
   
 *Import data and normalize*  
 Raw data from physiological assessments is imported and normalized according to established protocols. Immunolgical data has been normalized previously and is represented as the final dataframe.
-
 ```{r, results="hide"}
 ###########################################################################
 ## data period: October 2014, February 2015, October 2015, February 2016 ##
@@ -843,12 +856,14 @@ df$CAT[df$CAT >= 900]<- NA # 2 outliers removed
 # don't need "Ramp" lab data, this was lab thermally stressed. Remove this.
 df<-df[!(df$Status=="Lab-Ramp"),]
 
-```
+
+#########################################################
+#########################################################
+#########################################################
 
 ### Summary dataframes
-These dataframes show mean, SE and n for each group. This can be subset to make figures or exported as a summary file. The header of the dataframe is shown below...
+# These dataframes show mean, SE and n for each group. This can be subset to make figures or exported as a summary file. The header of the dataframe is shown below...
 
-```{r, echo=FALSE}
 # make summary dataframes
 
 # dataframes of means can later be divided into categories by "C or D" dominated
@@ -957,8 +972,7 @@ fig.df.immuno.comp$int<-factor(fig.df.immuno.comp$int, levels=c("unident.Lilipun
 ```
 
 ## Figures
-
-```{r, formatting}
+```{r, formatting, fig.show='hide'}
 # side by side figures separated by Sites 
 ### Physiological figures
 
@@ -1001,10 +1015,14 @@ pd <- position_dodge(0.15) #offset for error bars
 ######################## 
 
 fig.df.phys$int<-factor(fig.df.phys$int, levels=c("C.Lilipuna.Pre", "C.Reef 14.Pre", "D.Lilipuna.Pre", "D.Reef 14.Pre", "C.Lilipuna", "C.Reef 14", "D.Lilipuna", "D.Reef 14"))
-```
 
-Code for generating individual figures
-```{r, fig.show= "hide"}
+
+########################
+########################
+########################
+# Code for generating individual figures
+
+
 ###################
 # zoox 
 zoox.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=zoox/10^6, group=int, color=int)) + geom_errorbar(aes(ymin=zoox/10^6-zoox.SE/10^6, ymax=zoox/10^6+zoox.SE/10^6), size=.4, width=0, position=pd) + 
@@ -1086,9 +1104,11 @@ AFDW.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=AFDW, group=int, color=int)) 
   scale_x_discrete(name ="Year and Period", 
       labels=axis.labels)+
   Fig.formatting
-```
 
-```{r immunity figures}
+########################################################################
+########################################################################
+
+
 ### ### ### ### ### Immunity figures ### ### ### ### ### 
 
 color.scheme.immuno<-c("gray70", "gray50", 
@@ -1111,7 +1131,7 @@ PPO.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=PPO, group=int, color=i
   scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1.5) +
   coord_cartesian(ylim=c(0, 2)) +
-  ylab(expression(paste("PO Activity", ~(Delta~Abs~"490nm"~min^-1~mg~prot^-1), sep=""))) +
+  ylab(expression(paste("PPO Activity", ~(Delta~Abs~"490nm"~min^-1~mg~prot^-1), sep=""))) +
   scale_color_manual(values=c(color.scheme.immuno),
                      name= "Symbiont:Site",
                      breaks=break.points.immuno,
@@ -1142,7 +1162,6 @@ MEL.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=MEL, group=int, color=i
   scale_x_discrete(name ="Year and Period", 
       labels=axis.labels)+
   Fig.formatting
-
 
 
 ########## Peroxidase (POX) ##############
@@ -1191,11 +1210,10 @@ SOD.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=SOD/10^3, group=int, co
   scale_x_discrete(name ="Year and Period", 
       labels=axis.labels)+
   Fig.formatting
-
 ```
 
-The combined plots...
-```{r, univariate figures, fig.align='center', results="hide"}
+The combined plots for physiology and immunity data
+```{r, univariate figures, fig.align='center', results="hide", fig.dim=c(8,5)}
 
 # legend plot
 fig.legend.phys<-ggplot(data=fig.df.phys, aes(x=Period, y=zoox, group=int, color=int, linetype=int)) +
@@ -1253,12 +1271,12 @@ dev.off()
 
 
 
-###Models  
+### Models  
 
 Running models of response variables. First check for assumptions of ANOVA and apply transformations where necessary.  
   
 *lm(Y~Period x Site x dom, data=model.data, na.action=na.exclude)*  
-*Period* is the 4 Periods, *Site* is the two reefs, *dom* is the symbiont community (C- or D-dominated)
+*Period* is the 4 Periods, *Site* is the two reefs, *dom* is the symbiont community (*Cladooopium*- or *Durusdinium*-dominated, ie., C- or D-dominated).
 
 ```{r, include=FALSE}
 #df ## this is the data
@@ -1312,7 +1330,8 @@ model.data$MEL<-(model.data$MEL)^0.25
 #### Physiology models
 Run linear models for response variables  
 
-**Symbionts cm^-2^**
+**Symbionts cm^-2^**  
+models and post-hoc comparisons
 ```{r symbiont model, warning=FALSE, message=FALSE}
 # symbionts ---- 
 Y<-model.data$zoox
@@ -1338,7 +1357,8 @@ multcomp::cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="zoox", par.strip.text=list(cex=0.7))
 ```
 
-**Chlorophyll *a* cm^-2^**
+**Chlorophyll *a* cm^-2^**  
+models and post-hoc comparisons
 ```{r chla model, warning=FALSE, message=FALSE}
 # chla ---- 
 Y<-model.data$chla
@@ -1357,7 +1377,8 @@ multcomp::cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="chla", par.strip.text=list(cex=0.7))
 ```
 
-**chlorophyll *a* cell^-1^**
+**chlorophyll *a* cell^-1^**  
+models and post-hoc comparisons
 ```{r chlcell model, warning=FALSE, message=FALSE}
 # chlacell ---- 
 Y<-model.data$chlacell
@@ -1379,7 +1400,8 @@ multcomp::cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="AFDW", par.strip.text=list(cex=0.7))
 ```
 
-**Protein cm^-2^**
+**Protein cm^-2^**  
+models and post-hoc comparisons
 ```{r protein model, warning=FALSE, message=FALSE}
 # prot ---- 
 Y<-model.data$prot
@@ -1395,7 +1417,8 @@ multcomp::cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="prot", par.strip.text=list(cex=0.7))
 ```
 
-**Total biomass cm^-2^**
+**Total biomass cm^-2^**  
+models and post-hoc comparisons
 ```{r AFDW model, warning=FALSE, message=FALSE}
 # prot ---- 
 Y<-model.data$AFDW
@@ -1413,7 +1436,8 @@ plot(allEffects(full), ylab="AFDW", par.strip.text=list(cex=0.7))
 
 ### Immunity models
   
-**Melanin (MEL)**
+**Melanin (MEL)**  
+models and post-hoc comparisons
 ```{r MEL model, warning=FALSE, message=FALSE}
 # MEL ---- 
 Y<-model.data$MEL
@@ -1429,7 +1453,8 @@ multcomp::cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="prot", par.strip.text=list(cex=0.7))
 ```
 
-**Prophenoloxidase (PPO)**
+**Prophenoloxidase (PPO)**  
+models and post-hoc comparisons
 ```{r PPO model, warning=FALSE, message=FALSE}
 # PPO ---- 
 Y<-model.data$PPO
@@ -1449,7 +1474,8 @@ plot(allEffects(full), ylab="PPO", par.strip.text=list(cex=0.7))
 ```
 
 
-**Peroxidase (POX)**
+**Peroxidase (POX)**  
+models and post-hoc comparisons
 ```{r POX model, warning=FALSE, message=FALSE}
 # POX ---- 
 Y<-model.data$POX
@@ -1466,7 +1492,8 @@ multcomp::cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="POX", par.strip.text=list(cex=0.7))
 ```
 
-**Catalase (CAT)**
+**Catalase (CAT)**  
+models and post-hoc comparisons
 ```{r CAT Model, warning=FALSE, message=FALSE}
 ######################## 
 ### immunology
@@ -1492,7 +1519,8 @@ multcomp::cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="CAT", par.strip.text=list(cex=0.7))
 ```
 
-**Superoxide dismutase (SOD)**
+**Superoxide dismutase (SOD)**  
+models and post-hoc comparisons
 ```{r SOD model, warning=FALSE, message=FALSE}
 # SOD ---- 
 Y<-model.data$SOD
@@ -1510,7 +1538,8 @@ plot(allEffects(full), ylab="SOD", par.strip.text=list(cex=0.7))
 ```
 
 
-## NMDS plots
+## NMDS plots  
+Multivariate non-dimensional scaling (NMDS) plots for the coral physiotype trajectories and the plot of physiotypes through time with response vectors.  
 ```{r, MultiVariate, fig.show='hide', results='hide', message=FALSE}
 # multivariate test using adonis-- Manova, mutivariate analysis of variance
 df.MV<-df
@@ -1530,8 +1559,12 @@ df.MV$Period.dom<-droplevels(df.MV$Period.dom)
 #drop all NAs, removing rows where NA was observed
 df.MV.noNA<-df.MV %>% drop_na()
 ```
-
-```{r, full NMDS with sites periods and dom interaction, fig.show='hide', results='hide', message=FALSE}
+  
+#### Coral trajectories  
+The trajectories of corals in multivariate traitspace. Here is the **single panel NMDS** for Lilipuna and Reef 14 corals dominated by C- or D-symbionts through the 4 periods of bleaching and recovery.  
+  
+**PERMANOVA output** here is from adonis2 with a scaled and cnetered matrix.  
+```{r, PERMANOVA, message=FALSE}
 # cleaned data for full dataframe NMDS (Site, Period, dom)
 
 fullNMDS<-df.MV.noNA
@@ -1548,20 +1581,27 @@ resp.fullNMDS.scaled <- scale(resp.fullNMDS, center = TRUE, scale = TRUE)
 all.Manova<-adonis2(resp.fullNMDS.scaled~Period*Site*dom, data=fullNMDS, permutations=1000,  method="euclidian")
 all.Manova
 
+## **not used**
 ##### test dispersion using PERMDISP
 disp <- betadisper(vegdist(resp.fullNMDS.scaled, method = "euclidian"), fac.fullNMDS$Period)
 
 #test for overall differences
-anova(disp)
+#anova(disp)
 
 ## Permutation test for pairwise comparisons
-permutest(disp, pairwise = TRUE)
-
+#permutest(disp, pairwise = TRUE)
+```
+  
+**NMDS trait space trajectory** 
+First showing the observed dissimilarily and fit of NMDS  in stress lot
+```{r, full NMDS stress, results='hide', message=FALSE, fig.dim=c(6,6)}
 
 ###
 allNMDS<-metaMDS(resp.fullNMDS, distance='bray', k=2, trymax=100) 
 stressplot(allNMDS)
+``` 
 
+```{r, full NMDS trajectory, results='hide', message=FALSE, fig.dim=c(7,7)}
 allNMDS.df<-data.frame(x=allNMDS$point[,1], y=allNMDS$point[,2], 
                             Period=as.factor(fac.fullNMDS[,1]),
                             Site=as.factor(fac.fullNMDS[,2]),
@@ -1587,7 +1627,7 @@ colors=c(
 ### 
 
 plot<-ordiplot(allNMDS, type="n", cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.3, 0.3))
-axis(side = 1, labels = FALSE, tck = -0.05)
+axis(side = 1, labels = FALSE)
 abline(h = 0, lty = "dotted")
 abline(v = 0, lty = "dotted")
 ordihull(plot, groups=fullNMDS$Period, draw="polygon", alpha=30, col=c("gray20", "gray40", "gray30", "gray50"), border=FALSE)
@@ -1621,15 +1661,19 @@ with(plot, lines(NMDS.mean[c(13:16),2], NMDS.mean[c(13:16),3], lwd=1.5, col =col
 # add labels
 text(-0.38, 0.28, "Bleaching \n 2015", cex=0.7, col="gray50")
 text(-0.28, -0.2, "Bleaching \n 2014", cex=0.7, col="gray50")
-text(0.27, -0.1, "Recovery \n 2015", cex=0.7, col="gray50")
+text(0.25, -0.1, "Recovery \n 2015", cex=0.7, col="gray50")
 text(0.07, 0.21, "Recovery \n 2016", cex=0.7, col="gray50")
-legend("topright", legend=groups2, inset=c(0.045, -0.02), x.intersp=0.3, y.intersp=0.5, cex=0.7, pch=16, col=colors, lty=c(1,2,1,2), seg.len=1, pt.cex=1, bty="n")
+legend("topright", legend=groups2, inset=c(0.03, -0.01), x.intersp=0.6, y.intersp=0.9, cex=0.7, pch=16, col=colors, lty=c(1,2,1,2), seg.len=1, pt.cex=1, bty="n")
 
-dev.copy(pdf, "figures/1panel_allNMDS.pdf", height=5, width=5, useDingbats=FALSE)
+dev.copy(pdf, "figures/1panel_allNMDS.pdf", height=6, width=6, useDingbats=FALSE)
 dev.off() 
 
 ```
 
+#### Coral physiotypes  
+The physiotypes of corals in multivariate traitspace. Here are the **four panel NMDS** for Lilipuna and Reef 14 Physiology and Immunity data in first bleaching-recovery (2014-2015) and second bleaching-recovery (2015-2016).  
+
+**code** for NMDS analysis separated by sites in each time period.
 ```{r, NMDS separated by sites, fig.show='hide', results='hide', message=FALSE}
 ########## ########## ########## ########## ########## 
  ########## ########## ########## ########## ########## 
@@ -1823,8 +1867,9 @@ colnames(NMDS.df.R14.BR2)[1:2]<-c("MDS1", "MDS2")
 vars.R14.BR2<-envfit(NMDS.R14.BR2, Manova.R14.BR2.dat, permu=999)
 #scores(vars, "vectors")
 ```
-
-```{r, 4 panel NMDS plots}
+  
+**code** for NMDS figures separated by sites in each time period.
+```{r, 4 panel NMDS plots, fig.dim=c(8,7), results='hide'}
 # for exporting 4 panel plot
 par(mfcol=c(2,2), mar=c(4,4,1,1))
 
@@ -1847,7 +1892,7 @@ abline(h = 0, lty = "dotted")
 abline(v = 0, lty = "dotted")
 points(NMDS.plot, "sites", cex=0.8, pch=16, col=MDS.colors[groups])
 ordihull(NMDS.plot, groups=NMDS.df.Lil.BR1$Period.dom, draw="polygon", alpha=100, col=MDS.colors, border=MDS.colors)
-legend("topright", legend=MDS.lev.leg, inset=c(0.59, -0.06), x.intersp=0.8, y.intersp=0.8, cex=0.7, pch=16, col=MDS.colors, pt.cex=1, bty="n")
+legend("topright", legend=MDS.lev.leg, inset=c(0.7, -0.01), x.intersp=0.9, y.intersp=0.8, cex=0.7, pch=16, col=MDS.colors, pt.cex=1, bty="n")
 par.new=T
 plot(vars.Lil.BR1, col="black", p.max=0.05, cex=0.8, lwd=1)
 
@@ -1867,7 +1912,7 @@ abline(h = 0, lty = "dotted")
 abline(v = 0, lty = "dotted")
 points(NMDS.plot, "sites", cex=0.8, pch=16,  col=MDS.colors[groups])
 ordihull(NMDS.plot, groups=NMDS.df.Lil.BR2$Period.dom, draw="polygon", alpha=100, col=MDS.colors, border=MDS.colors)
-legend("topright", legend=MDS.lev.leg, inset=c(0.59, -0.06), x.intersp=0.8, y.intersp=0.8, cex=0.7, pch=16, col=MDS.colors, pt.cex=1, bty="n")
+legend("topright", legend=MDS.lev.leg, inset=c(0.7, -0.01), x.intersp=0.9, y.intersp=0.8, cex=0.7, pch=16, col=MDS.colors, pt.cex=1, bty="n")
 par.new=T
 plot(vars.Lil.BR2, col="black", p.max=0.05, cex=0.8, lwd=1)
 
@@ -1915,5 +1960,4 @@ plot(vars.R14.BR2, col="black", p.max=0.05, cex=0.8, lwd=1)
 
 dev.copy(pdf, "figures/4panel_NMDS.pdf", height=6, width=7, useDingbats=FALSE)
 dev.off() 
-
 ```
