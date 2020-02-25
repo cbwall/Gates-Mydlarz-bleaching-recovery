@@ -61,21 +61,29 @@ library(vegan)
 library(RVAideMemoire)
 
 ```
-## Background
-Data is from Kāne'ohe Bay, O'ahu, Hawai'i extending across two archipelagic bleaching events and the subsequent recovery periods (**four Periods**). Data periods represent:  
+## Background  
+
+<center>  
+  
+![**Figure 1.**. Multivariate analyses of organisms and their response to environmental change and a conceptual diagram of coral physiology and immunity responses during heat stress.](figures/Fig 1. Infographic_traits and immuno_alt color.jpg){ width=80%}
+  
+</center>  
+  
+  
+Thermal stress is challenging corals and their capacity to cope with and survive recurrent belaching events. These events may shift corals to new physiotypes (i.e., multivariate 'trait space') as a result of shifts in host or symbiont biology and constitutive immunity to maintain homeostasis. Here we collected data from Kāne'ohe Bay, O'ahu, Hawai'i extending across two archipelagic bleaching events and the subsequent recovery periods (**four Periods**). Data periods represent:  
 - first bleaching (October 2014)  
 - first recovery (February 2015)  
 - second bleaching (October 2015)     
 - second recovery (February 2016)   
-
+  
  
 <center>  
   
-![**Figure 1 (partial).** A bleached *Montipora capitata* coral. (PC: CB Wall)](figures/Montipora bleached.jpg){ width=30%}
+![**Figure 2 (partial).** A bleached *Montipora capitata* coral. (PC: CB Wall)](figures/Montipora bleached.jpg){ width=30%}
   
 </center>  
   
-
+  
 Physiological and immunological parameters were collected from from *Montipora capitata* collected from (**two Sites**):  
 - Lilipuna -- a shallow fringing reef west of the Hawai'i Insititute of Marine Biology  
 - Reef 14 -- a shallow inshore patch reef in central Kāne'ohe Bay  
@@ -83,6 +91,7 @@ Physiological and immunological parameters were collected from from *Montipora c
 **Lilipuna** has been categorized as experiencing near shore impacts from freshwater inundation, subteranean groundwater discharge, and seawater biogeochemistry influeces by long residence times, low flow, and riverine/terrigenous nutrient inputs. Additionally, pCO~2~ flux at this site is "moderate", with on average ~200ppm pCO~2~ +/- flux
 
 **Reef 14** has seawater with a shorter residence time, little terrestrial impact, but has a greater pCO2 flux due to reef metabolism. This flux can be substantial, being > 600 ppm pCO~2~ in a 24h period and reaching maximum values of >900ppm pCO~2~.
+
 
 ## Environmental data  
   
@@ -632,7 +641,7 @@ dev.off()
 ## Ecological data
   
 ### 2014-2016 benthic
-```{r, ecology, fig.dim=c(7,4), fig.align='center', results="hide", fig.cap="**Figure 1 (partial)**. *Montipora capitata* total cover and bleached cover in Kāne'ohe Bay at the two reefs sites during repeated bleaching and recovery periods."}
+```{r, ecology, fig.dim=c(7,4), fig.align='center', results="hide", fig.cap="**Figure 2 (partial)**. *Montipora capitata* total cover and bleached cover in Kāne'ohe Bay at the two reefs sites during repeated bleaching and recovery periods."}
 
 #### Bleaching and recovery for year 1 and 2
 ecology<-read.csv("data/ecology/Reef survey 2014-2016.csv") #import your data file here
@@ -1978,3 +1987,12 @@ multcomp::cld(posthoc, Letters=letters)
 
 plot(allEffects(full), ylab="SOD", par.strip.text=list(cex=0.7))
 ```
+
+### Schematic  
+Taking into account the observed patterns for bleaching and recovery in *M. capitata* we propose a shift in coral immunity and antioxidants in response to bleaching/recovery with a trend towards antioxidant reliance and increased constitutive responses.  
+
+<center>  
+  
+![**Figure 5.**.  Schematic of coral responses to repeated bleaching and recovery.](figures/Fig 5. schematic4panel.jpg){ width=100%}
+  
+</center>  
