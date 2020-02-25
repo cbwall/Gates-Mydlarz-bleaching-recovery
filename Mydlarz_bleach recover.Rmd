@@ -63,10 +63,18 @@ library(RVAideMemoire)
 ```
 ## Background
 Data is from Kāne'ohe Bay, O'ahu, Hawai'i extending across two archipelagic bleaching events and the subsequent recovery periods (**four Periods**). Data periods represent:  
-- first bleaching (October 2014) 
-- first recovery (February 2015) 
-- second bleaching (October 2015)    
-- second recovery (February 2016)  
+- first bleaching (October 2014)  
+- first recovery (February 2015)  
+- second bleaching (October 2015)     
+- second recovery (February 2016)   
+
+ 
+<center>  
+  
+![**Figure 1 (partial).** A bleached *Montipora capitata* coral. (PC: CB Wall)](figures/Montipora bleached.jpg){ width=30%}
+  
+</center>  
+  
 
 Physiological and immunological parameters were collected from from *Montipora capitata* collected from (**two Sites**):  
 - Lilipuna -- a shallow fringing reef west of the Hawai'i Insititute of Marine Biology  
@@ -288,7 +296,7 @@ annual.day.temps <- aggregate(data.frame(mean=annual.temps$Water.temp), by=list(
 With a 27.7 °C Summer Monthly Maximum Temp (Jokiel and Brown 2004) for Kāne'ohe Bay, total DHW for 2014 and 2015 are calculated from NOAA Molu o Lo'e buoy data.  
 These show a maximum sustained DHW in 2014 of 7.1 (peaked from 04 Oct - 19 Nov). DHW began accumulating 2014-08-30. In 2015 10.2 DHW were sustained (peaked 12 - 19 Nov), with DHW accumulating 2014-07-01. 
   
-```{r, results="hide"}
+```{r, results="hide", fig.dim=c(5,5), fig.cap="**Figure NA.** Degree Heating Weeks over 2014-2016 (data reported, figure not in mansucript)."}
 
 ########## CALCULATE DHW FOR KBAY 
 
@@ -373,8 +381,8 @@ dev.copy(png, "output/KBay.DHWplot.png")
 dev.off()
 ```
 
-Temperature plots for logger temp at each site (color, top) and temperatures for the 2 bleachin years (2014-2015) (2015-2016).   
-```{r, temp and light plot, message=FALSE, results="hide", fig.dim=c(7,3), fig.show='hold'}
+Temperature plots for logger temp at each site (color, top) and temperatures for the 2 bleachin years (2014-2015) (2015-2016).   These plots, along with the benthic data (futher down) constitute **Figure 1**.
+```{r, temp and light plot, message=FALSE, results="hide", fig.dim=c(7,3), fig.show='hold', fig.cap="**Figure 1 (partial)**. Temperatures in Kāne'ohe Bay and the two reefs sites during repeated bleaching and recovery periods"}
 
 #######################
 # Plot temp. daily mean temperatures for each reef
@@ -465,7 +473,8 @@ dev.off()
 
 ### Light  
 Irradiance at each reef was logged with loggers through time at ~1m depth. The data here was calibrated against a Li-Cor quantum sensor. As with temperature data, gaps represent logger failure or loss.  
-```{r, light data, results="hide", fig.dim=c(7,3)}
+```{r, light data, results="hide", fig.dim=c(7,3), fig.cap="**Supplementary Figure 1.**  Light conditions at the two reefs through time."}
+
 #setwd("data/environmental/Light data")
 # Import light data
 
@@ -623,7 +632,7 @@ dev.off()
 ## Ecological data
   
 ### 2014-2016 benthic
-```{r, ecology, fig.dim=c(7,4), fig.align='center', results="hide"}
+```{r, ecology, fig.dim=c(7,4), fig.align='center', results="hide", fig.cap="**Figure 1 (partial)**. *Montipora capitata* total cover and bleached cover in Kāne'ohe Bay at the two reefs sites during repeated bleaching and recovery periods."}
 
 #### Bleaching and recovery for year 1 and 2
 ecology<-read.csv("data/ecology/Reef survey 2014-2016.csv") #import your data file here
@@ -734,7 +743,7 @@ FigBlMC <- ggplot(df.fig, aes(x=Period, y=totalMC.bleach, group=Site, color=Site
 #############
 # color figures all corals
 Ecol.Fig<-plot_grid(FigMC, FigBlMC,
-     labels=c('b', 'c'), label_size=10, hjust=-3, vjust= 3, ncol=2, nrow=1);
+     labels=c('b', 'c'), label_size=8, hjust=-3, vjust= 3, ncol=2, nrow=1);
 Ecol.Fig
 
 ##### save the figure and export to directory? ####
@@ -970,8 +979,438 @@ fig.df.immuno.comp$SimpleSite<-c("Lilipuna", "Reef 14")
 
 fig.df.immuno.comp$int<-factor(fig.df.immuno.comp$int, levels=c("unident.Lilipuna.Pre", "unident.Reef 14.Pre", "C.Lilipuna", "C.Reef 14", "D.Lilipuna", "D.Reef 14"))
 ```
+  
+  
+### Multivariate analyses  
+Multivariate non-dimensional scaling (NMDS) plots for the coral physiotype trajectories and the plot of physiotypes through time with response vectors.  
 
-## Figures
+```{r, MultiVariate, fig.show='hide', results='hide', message=FALSE}
+# multivariate test using adonis-- Manova, mutivariate analysis of variance
+df.MV<-df
+
+# remove columns unnecessary for final analysis, few factors retained
+df.MV<-df.MV[ , !names(df.MV) %in% c("Species", "Status_Site", "ID", "propC", "propD", "syms")]
+
+df.MV$Period.dom<-interaction(df.MV$Period, df.MV$dom)
+
+# remove prior-to-bleaching timepoints and unused levels that arise from this action
+df.MV<-df.MV[(!df.MV$Period=="2014 Lab"),] 
+df.MV<-df.MV[(!df.MV$Period=="2014 Field.Feb"),]
+df.MV$Period<-droplevels(df.MV$Period) 
+df.MV$Status<-droplevels(df.MV$Status)
+df.MV$Period.dom<-droplevels(df.MV$Period.dom)
+
+#drop all NAs, removing rows where NA was observed
+df.MV.noNA<-df.MV %>% drop_na()
+```
+  
+#### Coral trajectories  
+The trajectories of corals in multivariate traitspace. Here is the **single panel NMDS** for Lilipuna and Reef 14 corals dominated by C- or D-symbionts through the 4 periods of bleaching and recovery.  
+  
+**PERMANOVA output** here is from adonis2 with a scaled and cnetered matrix.  
+```{r, PERMANOVA, message=FALSE}
+# cleaned data for full dataframe NMDS (Site, Period, dom)
+
+fullNMDS<-df.MV.noNA
+fullNMDS$Period.Site.dom<-interaction(fullNMDS$Period, fullNMDS$Site, fullNMDS$dom)
+
+fac.fullNMDS<-fullNMDS %>% 
+  select(c(Period, Status, Site, dom, Period.Site.dom)) #  sans responses
+
+resp.fullNMDS<-fullNMDS[, 4:13] # just responses
+
+resp.fullNMDS.scaled <- scale(resp.fullNMDS, center = TRUE, scale = TRUE) 
+
+##  Run MANOVA
+all.Manova<-adonis2(resp.fullNMDS.scaled~Period*Site*dom, data=fullNMDS, permutations=1000,  method="euclidian")
+all.Manova
+
+## **not used**
+##### test dispersion using PERMDISP
+disp <- betadisper(vegdist(resp.fullNMDS.scaled, method = "euclidian"), fac.fullNMDS$Period)
+
+#test for overall differences
+#anova(disp)
+
+## Permutation test for pairwise comparisons
+#permutest(disp, pairwise = TRUE)
+```
+  
+**NMDS trait space trajectory** 
+First showing the observed dissimilarily and fit of NMDS  in stress lot
+```{r, full NMDS stress, results='hide', message=FALSE, fig.dim=c(6,6)}
+
+###
+allNMDS<-metaMDS(resp.fullNMDS, distance='bray', k=2, trymax=100) 
+stressplot(allNMDS)
+``` 
+  
+...now the 4 part convex hulls for coral trajectories.
+```{r, full NMDS trajectory, results='hide', message=FALSE, fig.dim=c(7,7), fig.cap="**Figure 3.** Non-metric multidimensional scaling (NMDS) analyses of coral performance envelopes during bleaching stress and post-bleaching recovery."}
+
+allNMDS.df<-data.frame(x=allNMDS$point[,1], y=allNMDS$point[,2], 
+                            Period=as.factor(fac.fullNMDS[,1]),
+                            Site=as.factor(fac.fullNMDS[,2]),
+                            Status=as.factor(fac.fullNMDS[,3]),
+                            dom=as.factor(fac.fullNMDS[,4]),
+                            Period.Site.dom=as.factor(fac.fullNMDS[,5]))
+
+colnames(allNMDS.df)[1:2]<-c("MDS1", "MDS2")
+
+#centroid means
+NMDS.mean=aggregate(allNMDS.df[,1:2],list(group=allNMDS.df$Period.Site.dom), mean)
+
+############### All groups NMDS
+fullNMDS$Period.Site.dom<-droplevels(fullNMDS$Period.Site.dom)
+groups<-fullNMDS$Period.Site.dom
+groups2<-c("C-Lilipuna", "C-Reef 14", "D-Lilipuna", "D-Reef 14")
+colors=c(
+  "firebrick1", #C Lilipuna
+  "firebrick3", #C Reef 14
+  "steelblue1", # D Lilipuna
+  "steelblue3") # D Reef 14
+
+### 
+
+plot<-ordiplot(allNMDS, type="n", cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.3, 0.3))
+axis(side = 1, labels = FALSE)
+abline(h = 0, lty = "dotted")
+abline(v = 0, lty = "dotted")
+ordihull(plot, groups=fullNMDS$Period, draw="polygon", alpha=30, col=c("gray20", "gray40", "gray30", "gray50"), border=FALSE)
+
+# points for start and end
+with(plot, points(NMDS.mean[1,2], NMDS.mean[1,3], col=colors[1], pch=16, cex=0.7, lwd=1)) # Lil C
+with(plot, points(NMDS.mean[4,2], NMDS.mean[4,3], col=colors[1], pch=17, cex=1, lwd=1)) # Lil C
+with(plot, points(NMDS.mean[5,2], NMDS.mean[5,3], col=colors[2], pch=16, cex=0.7, lwd=1)) # R14 C
+with(plot, points(NMDS.mean[8,2], NMDS.mean[8,3], col=colors[2], pch=17, cex=1, lwd=1)) # R14 C
+with(plot, points(NMDS.mean[9,2], NMDS.mean[9,3], col=colors[3], pch=16, cex=0.7, lwd=1)) # Lil D
+with(plot, points(NMDS.mean[12,2], NMDS.mean[12,3], col=colors[3], pch=17, cex=1, lwd=1)) # Lil D
+with(plot, points(NMDS.mean[13,2], NMDS.mean[13,3], col=colors[4], pch=16, cex=0.7, lwd=1)) # R14 D
+with(plot, points(NMDS.mean[16,2], NMDS.mean[16,3], col=colors[4], pch=17, cex=1, lwd=1)) # R14 D
+
+# points for others (if want)
+with(plot, points(NMDS.mean[2,2], NMDS.mean[2,3], col=colors[1], pch=16, cex=0.7, lwd=1)) # Lil C
+with(plot, points(NMDS.mean[3,2], NMDS.mean[3,3], col=colors[1], pch=16, cex=0.7, lwd=1)) # Lil C
+with(plot, points(NMDS.mean[6,2], NMDS.mean[6,3], col=colors[2], pch=16, cex=0.7, lwd=1)) # R14 C
+with(plot, points(NMDS.mean[7,2], NMDS.mean[7,3], col=colors[2], pch=16, cex=0.7, lwd=1)) # R14 C
+with(plot, points(NMDS.mean[10,2], NMDS.mean[10,3], col=colors[3], pch=16, cex=0.7, lwd=1)) # Lil D
+with(plot, points(NMDS.mean[11,2], NMDS.mean[11,3], col=colors[3], pch=16, cex=0.7, lwd=1)) # Lil D
+with(plot, points(NMDS.mean[14,2], NMDS.mean[14,3], col=colors[4], pch=16, cex=0.7, lwd=1)) # R14 D
+with(plot, points(NMDS.mean[15,2], NMDS.mean[15,3], col=colors[4], pch=16, cex=0.7, lwd=1)) # R14 D
+
+# lines for start and end
+with(plot, lines(NMDS.mean[c(1:4),2], NMDS.mean[c(1:4),3], lwd=1.5, col =colors[1], lty=2))# Lil C
+with(plot, lines(NMDS.mean[c(5:8),2], NMDS.mean[c(5:8),3], lwd=1.5, col =colors[2], lty=1))# R14 C
+with(plot, lines(NMDS.mean[c(9:12),2], NMDS.mean[c(9:12),3], lwd=1.5, col =colors[3], lty=2))# Lil D
+with(plot, lines(NMDS.mean[c(13:16),2], NMDS.mean[c(13:16),3], lwd=1.5, col =colors[4], lty=1))# R14 D
+
+# add labels
+text(-0.38, 0.28, "Bleaching \n 2015", cex=0.7, col="gray50")
+text(-0.28, -0.2, "Bleaching \n 2014", cex=0.7, col="gray50")
+text(0.25, -0.1, "Recovery \n 2015", cex=0.7, col="gray50")
+text(0.07, 0.21, "Recovery \n 2016", cex=0.7, col="gray50")
+legend("topright", legend=groups2, inset=c(0.03, -0.01), x.intersp=0.6, y.intersp=0.9, cex=0.7, pch=16, col=colors, lty=c(1,3,1,3), seg.len=2, pt.cex=1, bty="n")
+
+dev.copy(pdf, "figures/1panel_allNMDS.pdf", height=6, width=6, useDingbats=FALSE)
+dev.off() 
+
+```
+
+#### Coral physiotypes  
+The physiotypes of corals in multivariate traitspace. Here are the **four panel NMDS** for Lilipuna and Reef 14 Physiology and Immunity data in first bleaching-recovery (2014-2015) and second bleaching-recovery (2015-2016).  
+
+**code** for NMDS analysis separated by sites in each time period.
+```{r, NMDS separated by sites, fig.show='hide', results='hide', message=FALSE}
+########## ########## ########## ########## ########## 
+ ########## ########## ########## ########## ########## 
+########## ########## ########## ########## ########## 
+
+# for 4 panel NMDS separated by site and B-R periods
+## build Manova dataframes 
+
+########## Lilipuna 2014-2015
+## Lilipuna only #######
+
+## all data with lilupuna only
+Manova.Lil.lev.dat<-df.MV.noNA %>% # "lev.dat" has levels and data
+  filter(Site=="Lilipuna") 
+
+# lilipuna bleaching-recovery1
+Manova.Lil.BR1.lev.dat<-Manova.Lil.lev.dat %>% # "BR1" is bleaching and recovery 2014-2015
+  filter(Period=="2014 Oct" | Period=="2015 Feb") 
+
+# lilipuna bleaching-recovery2
+Manova.Lil.BR2.lev.dat<-Manova.Lil.lev.dat %>% # "BR2" is bleaching and recovery 2014-2015
+  filter(Period=="2015 Oct" | Period=="2016 Feb") 
+
+Manova.Lil.BR1.lev.dat$Period<-droplevels(Manova.Lil.BR1.lev.dat$Period)
+Manova.Lil.BR1.lev.dat$Site<-droplevels(Manova.Lil.BR1.lev.dat$Site)
+Manova.Lil.BR1.lev.dat$Period.dom<-droplevels(Manova.Lil.BR1.lev.dat$Period.dom)
+
+Manova.Lil.BR2.lev.dat$Period<-droplevels(Manova.Lil.BR2.lev.dat$Period)
+Manova.Lil.BR2.lev.dat$Site<-droplevels(Manova.Lil.BR2.lev.dat$Site)
+Manova.Lil.BR2.lev.dat$Period.dom<-droplevels(Manova.Lil.BR2.lev.dat$Period.dom)
+
+# BR1 just data (sans factors)
+Manova.Lil.BR1.dat<-Manova.Lil.BR1.lev.dat %>% 
+  select(-c(Period, Status, Site, dom, Period.dom)) #  sans factors
+
+# BR2 just data (sans factors)
+Manova.Lil.BR2.dat<-Manova.Lil.BR2.lev.dat %>% 
+  select(-c(Period, Status, Site, dom, Period.dom)) #  sans factors
+
+
+############################
+############### 
+##  Run BR1 2014-2015 MANOVA Lilipuna
+
+## PERMANOVA
+Manova.Lil.BR1.dat.scaled <- scale(Manova.Lil.BR1.dat, center = TRUE, scale = TRUE) 
+
+MVA.Lilipuna.BR1<-adonis2(Manova.Lil.BR1.dat.scaled~Period*dom, data=Manova.Lil.BR1.lev.dat,
+                          permutations=1000, method="euclidian")
+
+## NMDS plots
+NMDS.Lil.BR1<-metaMDS(Manova.Lil.BR1.dat, distane='bray', k=2, trymax=100) 
+stressplot(NMDS.Lil.BR1)
+
+factor.df.Lil.BR1<-Manova.Lil.BR1.lev.dat %>% 
+  select(c(Period, Site, Status, dom, Period.dom)) # get just the factors
+
+NMDS.df.Lil.BR1<-data.frame(x=NMDS.Lil.BR1$point[,1], y=NMDS.Lil.BR1$point[,2], 
+                    Period=as.factor(factor.df.Lil.BR1[,1]),
+                    Site=as.factor(factor.df.Lil.BR1[,2]),
+                    Status=as.factor(factor.df.Lil.BR1[,3]),
+                    dom=as.factor(factor.df.Lil.BR1[,4]),
+                    Period.dom=as.factor(factor.df.Lil.BR1[,5]))
+
+colnames(NMDS.df.Lil.BR1)[1:2]<-c("MDS1", "MDS2")
+
+# vectors for variables
+vars.Lil.BR1<-envfit(NMDS.Lil.BR1, Manova.Lil.BR1.dat, permu=999)
+#scores(vars, "vectors")
+
+
+
+#########################
+########  Run 2015-2016 MANOVA Lilipuna
+## PERMANOVA
+Manova.Lil.BR2.dat.scaled <- scale(Manova.Lil.BR2.dat, center = TRUE, scale = TRUE) 
+
+MVA.Lilipuna.BR2<-adonis2(Manova.Lil.BR2.dat.scaled~Period*dom, data=Manova.Lil.BR2.lev.dat,
+                          permutations=1000, method="euclidian")
+
+## NMDS
+NMDS.Lil.BR2<-metaMDS(Manova.Lil.BR2.dat, distane='bray', k=2, trymax=100) 
+stressplot(NMDS.Lil.BR2)
+
+factor.df.Lil.BR2<-Manova.Lil.BR2.lev.dat %>% 
+  select(c(Period, Site, Status, dom, Period.dom)) # get just the factors
+
+NMDS.df.Lil.BR2<-data.frame(x=NMDS.Lil.BR2$point[,1], y=NMDS.Lil.BR2$point[,2], 
+                    Period=as.factor(factor.df.Lil.BR2[,1]),
+                    Site=as.factor(factor.df.Lil.BR2[,2]),
+                    Status=as.factor(factor.df.Lil.BR2[,3]),
+                    dom=as.factor(factor.df.Lil.BR2[,4]),
+                    Period.dom=as.factor(factor.df.Lil.BR2[,5]))
+
+colnames(NMDS.df.Lil.BR2)[1:2]<-c("MDS1", "MDS2")
+
+# vectors for variables
+vars.Lil.BR2<-envfit(NMDS.Lil.BR2, Manova.Lil.BR2.dat, permu=999)
+#scores(vars, "vectors")
+
+
+########## ########## ########## ########## 
+########## Reef 14 2014-2015
+## Reef 14 only #######
+
+## all data with Reef14 only
+Manova.R14.lev.dat<-df.MV.noNA %>% # "lev.dat" has levels and data
+  filter(Site=="Reef 14") 
+
+# Reef 14 bleaching-recovery1
+Manova.R14.BR1.lev.dat<-Manova.R14.lev.dat %>% # "BR1" is bleachigng and recovery 2014-2015
+  filter(Period=="2014 Oct" | Period=="2015 Feb") 
+
+# Reef 14 bleaching-recovery2
+Manova.R14.BR2.lev.dat<-Manova.R14.lev.dat %>% # "BR2" is bleachigng and recovery 2014-2015
+  filter(Period=="2015 Oct" | Period=="2016 Feb") 
+
+Manova.R14.BR1.lev.dat$Period<-droplevels(Manova.R14.BR1.lev.dat$Period)
+Manova.R14.BR1.lev.dat$Site<-droplevels(Manova.R14.BR1.lev.dat$Site)
+Manova.R14.BR1.lev.dat$Period.dom<-droplevels(Manova.R14.BR1.lev.dat$Period.dom)
+
+Manova.R14.BR2.lev.dat$Period<-droplevels(Manova.R14.BR2.lev.dat$Period)
+Manova.R14.BR2.lev.dat$Site<-droplevels(Manova.R14.BR2.lev.dat$Site)
+Manova.R14.BR2.lev.dat$Period.dom<-droplevels(Manova.R14.BR2.lev.dat$Period.dom)
+
+# BR1 just data (sans factors)
+Manova.R14.BR1.dat<-Manova.R14.BR1.lev.dat %>% 
+  select(-c(Period, Status, Site, dom, Period.dom)) #  sans factors
+
+# BR2 just data (sans factors)
+Manova.R14.BR2.dat<-Manova.R14.BR2.lev.dat %>% 
+  select(-c(Period, Status, Site, dom, Period.dom)) #  sans factors
+
+
+############################# 
+############### 
+##  Run BR1 2014-2015 MANOVA Reef 14
+Manova.R14.BR1.dat.scaled <- scale(Manova.R14.BR1.dat, center = TRUE, scale = TRUE) 
+
+## PERMANOVA
+MVA.R14.BR1<-adonis2(Manova.R14.BR1.dat.scaled~Period*dom, data=Manova.R14.BR1.lev.dat,permutations=1000, 
+                method="euclidian")
+
+## NMDS
+NMDS.R14.BR1<-metaMDS(Manova.R14.BR1.dat, distane='bray', k=2, trymax=100) 
+stressplot(NMDS.R14.BR1)
+
+factor.df.R14.BR1<-Manova.R14.BR1.lev.dat %>% 
+  select(c(Period, Site, Status, dom, Period.dom)) # get just the factors
+
+NMDS.df.R14.BR1<-data.frame(x=NMDS.R14.BR1$point[,1], y=NMDS.R14.BR1$point[,2], 
+                    Period=as.factor(factor.df.R14.BR1[,1]),
+                    Site=as.factor(factor.df.R14.BR1[,2]),
+                    Status=as.factor(factor.df.R14.BR1[,3]),
+                    dom=as.factor(factor.df.R14.BR1[,4]),
+                    Period.dom=as.factor(factor.df.R14.BR1[,5]))
+
+colnames(NMDS.df.R14.BR1)[1:2]<-c("MDS1", "MDS2")
+
+# vectors for variables
+vars.R14.BR1<-envfit(NMDS.R14.BR1, Manova.R14.BR1.dat, permu=999)
+#scores(vars, "vectors")
+
+
+
+############################# 
+########  Run 2015-2016 MANOVA R14
+Manova.R14.BR2.dat.scaled <- scale(Manova.R14.BR2.dat, center = TRUE, scale = TRUE) 
+
+## PERMANOVA
+MVA.R14.BR2<-adonis2(Manova.R14.BR2.dat.scaled~Period*dom, data=Manova.R14.BR2.lev.dat,permutations=1000, 
+                method="euclidean")
+
+## NMDS
+NMDS.R14.BR2<-metaMDS(Manova.R14.BR2.dat, distane='bray', k=2, trymax=100) 
+stressplot(NMDS.R14.BR2)
+
+factor.df.R14.BR2<-Manova.R14.BR2.lev.dat %>% 
+  select(c(Period, Site, Status, dom, Period.dom)) # get just the factors
+
+NMDS.df.R14.BR2<-data.frame(x=NMDS.R14.BR2$point[,1], y=NMDS.R14.BR2$point[,2], 
+                    Period=as.factor(factor.df.R14.BR2[,1]),
+                    Site=as.factor(factor.df.R14.BR2[,2]),
+                    Status=as.factor(factor.df.R14.BR2[,3]),
+                    dom=as.factor(factor.df.R14.BR2[,4]),
+                    Period.dom=as.factor(factor.df.R14.BR2[,5]))
+
+colnames(NMDS.df.R14.BR2)[1:2]<-c("MDS1", "MDS2")
+
+# vectors for variables
+vars.R14.BR2<-envfit(NMDS.R14.BR2, Manova.R14.BR2.dat, permu=999)
+#scores(vars, "vectors")
+```
+  
+**code** for NMDS figures separated by sites in each time period.
+```{r, 4 panel NMDS plots, fig.dim=c(8,7), results='hide', fig.cap="**Figure 4.** Non-metric multidimensional scaling (NMDS) analyses identify coral physiotypes separated by dominant symbiont type (colors), bleaching-recovery periods (lighter and darker shades), sites (columns), and events (rows)."}
+# for exporting 4 panel plot
+par(mfcol=c(2,2), mar=c(4,4,1,1))
+
+###################################### plots
+###################################### start with Lilipuna 2014-2015, then 2015-2016... then Reef 14
+
+############### Lilipuna 2014-2015
+
+NMDS.df.Lil.BR1$Period.dom<-factor(NMDS.df.Lil.BR1$Period.dom, levels =
+                                     c("2014 Oct.C", "2014 Oct.D", "2015 Feb.C", "2015 Feb.D"))
+groups<-NMDS.df.Lil.BR1$Period.dom
+
+MDS.lev.leg<-c("C-Bleach '14", "D-Bleach '14", "C-Recov '15", "D-Recov '15")
+MDS.colors<-c("lightpink", "slategray1", "firebrick3", "dodgerblue3")
+
+### 
+NMDS.plot<-ordiplot(NMDS.Lil.BR1, type="n", main=substitute(paste("Lilipuna")), cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.4, 0.4), xlim=c(-0.6, 0.5), xaxt="n", xlab="")
+axis(side = 1, labels = FALSE, tck = -0.05)
+abline(h = 0, lty = "dotted")
+abline(v = 0, lty = "dotted")
+points(NMDS.plot, "sites", cex=0.8, pch=16, col=MDS.colors[groups])
+ordihull(NMDS.plot, groups=NMDS.df.Lil.BR1$Period.dom, draw="polygon", alpha=100, col=MDS.colors, border=MDS.colors)
+legend("topright", legend=MDS.lev.leg, inset=c(0.7, 0), x.intersp=0.9, y.intersp=1, cex=0.7, pch=16, col=MDS.colors, pt.cex=1, bty="n")
+par.new=T
+plot(vars.Lil.BR1, col="black", p.max=0.05, cex=0.8, lwd=1)
+
+
+############### Lilipuna 2015-2016
+
+NMDS.df.Lil.BR2$Period.dom<-factor(NMDS.df.Lil.BR2$Period.dom, levels =
+                                     c("2015 Oct.C", "2015 Oct.D", "2016 Feb.C", "2016 Feb.D"))
+groups<-NMDS.df.Lil.BR2$Period.dom
+
+MDS.lev.leg<-c("C-Bleach '15", "D-Bleach '15", "C-Recov '16", "D-Recov '16")
+MDS.colors<-c("lightpink", "slategray1", "firebrick3", "dodgerblue3")
+
+NMDS.plot<-ordiplot(NMDS.Lil.BR2, type="n", cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.4, 0.4), xlim=c(-0.6, 0.5))
+axis(side = 2, labels = FALSE, tck = -0.05)
+abline(h = 0, lty = "dotted")
+abline(v = 0, lty = "dotted")
+points(NMDS.plot, "sites", cex=0.8, pch=16,  col=MDS.colors[groups])
+ordihull(NMDS.plot, groups=NMDS.df.Lil.BR2$Period.dom, draw="polygon", alpha=100, col=MDS.colors, border=MDS.colors)
+legend("topright", legend=MDS.lev.leg, inset=c(0.7, 0), x.intersp=0.9, y.intersp=1, cex=0.7, pch=16, col=MDS.colors, pt.cex=1, bty="n")
+par.new=T
+plot(vars.Lil.BR2, col="black", p.max=0.05, cex=0.8, lwd=1)
+
+
+############### ############### ############### ############### ############### 
+############### Reef 14 2014-2015
+
+NMDS.df.R14.BR1$Period.dom<-factor(NMDS.df.R14.BR1$Period.dom, levels =
+                                     c("2014 Oct.C", "2014 Oct.D", "2015 Feb.C", "2015 Feb.D"))
+groups<-NMDS.df.R14.BR1$Period.dom
+
+MDS.lev.leg<-c("C-Bleach '14", "D-Bleach '14", "C-Recov '15", "D-Recov '15")
+MDS.colors<-c("lightpink", "slategray1", "firebrick2", "dodgerblue2")
+
+NMDS.plot<-ordiplot(NMDS.R14.BR1, type="n", main=substitute(paste("Reef 14")), cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.4, 0.4), xlim=c(-0.6, 0.5), yaxt="n", ylab="", xaxt="n", xlab="")
+axis(side = 1, labels = FALSE, tck = -0.05)
+axis(side = 2, labels = FALSE, tck = -0.05)
+abline(h = 0, lty = "dotted")
+abline(v = 0, lty = "dotted")
+points(NMDS.plot, "sites", cex=0.8, pch=16,  col=MDS.colors[groups])
+ordihull(NMDS.plot, groups=NMDS.df.R14.BR1$Period.dom, draw="polygon", alpha=100, col=MDS.colors, border=MDS.colors)
+par.new=T
+plot(vars.R14.BR1, col="black", p.max=0.05, cex=0.8, lwd=1)
+
+
+############### Reef 14 2015-2016
+
+NMDS.df.R14.BR2$Period.dom<-factor(NMDS.df.R14.BR2$Period.dom, levels =
+                                     c("2015 Oct.C", "2015 Oct.D", "2016 Feb.C", "2016 Feb.D"))
+groups<-NMDS.df.R14.BR2$Period.dom
+
+MDS.lev.leg<-c("C-Bleach '15", "D-Bleach '15", "C-Recov '16", "D-Recov '16")
+MDS.colors<-c("lightpink", "slategray1", "firebrick2", "dodgerblue2")
+
+NMDS.plot<-ordiplot(NMDS.R14.BR2, type="n", cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.4, 0.4), xlim=c(-0.6, 0.5), yaxt="n", ylab="")
+axis(side = 2, labels = FALSE, tck = -0.05)
+abline(h = 0, lty = "dotted")
+abline(v = 0, lty = "dotted")
+points(NMDS.plot, "sites", cex=0.8, pch=16,  col=MDS.colors[groups])
+ordihull(NMDS.plot, groups=NMDS.df.R14.BR2$Period.dom, draw="polygon", alpha=100, col=MDS.colors, border=MDS.colors)
+par.new=T
+plot(vars.R14.BR2, col="black", p.max=0.05, cex=0.8, lwd=1)
+
+
+
+dev.copy(pdf, "figures/4panel_NMDS.pdf", height=6, width=7, useDingbats=FALSE)
+dev.off() 
+```
+
+## Univariate analyses
+  
+### Figures
 ```{r, formatting, fig.show='hide'}
 # side by side figures separated by Sites 
 ### Physiological figures
@@ -1212,8 +1651,8 @@ SOD.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=SOD/10^3, group=int, co
   Fig.formatting
 ```
 
-The combined plots for physiology and immunity data
-```{r, univariate figures, fig.align='center', results="hide", fig.dim=c(8,5)}
+The combined plots for physiology and immunity data.
+```{r, physiology figures, fig.align='center', results="hide", fig.dim=c(8,5), fig.cap="**Supplementary Figure 2.** Physiological metrics for *M. capitata* corals dominated dominated by *Cladocopium* sp. or *Durusdinium* sp. symbionts (C or D) from two reefs in Kāne‘ohe Bay during repeated bleaching and recovery periods."}
 
 # legend plot
 fig.legend.phys<-ggplot(data=fig.df.phys, aes(x=Period, y=zoox, group=int, color=int, linetype=int)) +
@@ -1230,6 +1669,19 @@ fig.legend.phys<-ggplot(data=fig.df.phys, aes(x=Period, y=zoox, group=int, color
                      labels=legend.names) +
   theme_void()
 
+Phys.figs<-plot_grid( (zoox.fig + theme(legend.position = "none")), 
+           (chla.fig + theme(legend.position = "none")),
+           (chlacell.fig + theme(legend.position = "none")), 
+           (prot.fig+ theme(legend.position = "none")),
+           (AFDW.fig+ theme(legend.position = "none")),
+           fig.legend.phys,
+          labels = c("a", "b", "c", "d", "e",""), ncol = 3, label_size=8)
+Phys.figs
+dev.copy(pdf, "figures/Phys.figs.pdf", encod="MacRoman", height=5, width=8)
+dev.off()
+```
+
+```{r, immunity figures, fig.align='center', results="hide", fig.dim=c(8,5), fig.cap="**Supplementary Figure 3.** Immunity metrics for *M. capitata* corals dominated dominated by *Cladocopium* sp. or *Durusdinium* sp. symbionts (C or D) from two reefs in Kāne‘ohe Bay during repeated bleaching and recovery periods."}
 
 fig.legend.immun<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=SOD, group=int, color=int, linetype=int)) +
   geom_point(position=pd, size=3) +
@@ -1245,16 +1697,6 @@ fig.legend.immun<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=SOD, group=int
                      labels=legend.names.immuno) +
   theme_void()
 
-Phys.figs<-plot_grid( (zoox.fig + theme(legend.position = "none")), 
-           (chla.fig + theme(legend.position = "none")),
-           (chlacell.fig + theme(legend.position = "none")), 
-           (prot.fig+ theme(legend.position = "none")),
-           (AFDW.fig+ theme(legend.position = "none")),
-           fig.legend.phys,
-          labels = c("a", "b", "c", "d", "e",""), ncol = 3)
-Phys.figs
-dev.copy(pdf, "figures/Phys.figs.pdf", encod="MacRoman", height=5, width=8)
-dev.off()
 
 Immuno.figs<-plot_grid( (MEL.fig + theme(legend.position = "none")),
            (PPO.fig + theme(legend.position = "none")), 
@@ -1262,7 +1704,7 @@ Immuno.figs<-plot_grid( (MEL.fig + theme(legend.position = "none")),
            (CAT.fig+ theme(legend.position = "none")),
            SOD.fig + theme(legend.position = "none"),
            fig.legend.immun,
-          labels = c("a", "b", "c", "d", "e",""), ncol = 3)
+          labels = c("a", "b", "c", "d", "e",""), ncol = 3, label_size=8)
 Immuno.figs
 dev.copy(pdf, "figures/Immuno.figs.pdf", encod="MacRoman", height=5, width=8)
 dev.off()
@@ -1535,429 +1977,4 @@ posthoc<-lsmeans(full, ~Site)
 multcomp::cld(posthoc, Letters=letters)
 
 plot(allEffects(full), ylab="SOD", par.strip.text=list(cex=0.7))
-```
-
-
-## NMDS plots  
-Multivariate non-dimensional scaling (NMDS) plots for the coral physiotype trajectories and the plot of physiotypes through time with response vectors.  
-```{r, MultiVariate, fig.show='hide', results='hide', message=FALSE}
-# multivariate test using adonis-- Manova, mutivariate analysis of variance
-df.MV<-df
-
-# remove columns unnecessary for final analysis, few factors retained
-df.MV<-df.MV[ , !names(df.MV) %in% c("Species", "Status_Site", "ID", "propC", "propD", "syms")]
-
-df.MV$Period.dom<-interaction(df.MV$Period, df.MV$dom)
-
-# remove prior-to-bleaching timepoints and unused levels that arise from this action
-df.MV<-df.MV[(!df.MV$Period=="2014 Lab"),] 
-df.MV<-df.MV[(!df.MV$Period=="2014 Field.Feb"),]
-df.MV$Period<-droplevels(df.MV$Period) 
-df.MV$Status<-droplevels(df.MV$Status)
-df.MV$Period.dom<-droplevels(df.MV$Period.dom)
-
-#drop all NAs, removing rows where NA was observed
-df.MV.noNA<-df.MV %>% drop_na()
-```
-  
-#### Coral trajectories  
-The trajectories of corals in multivariate traitspace. Here is the **single panel NMDS** for Lilipuna and Reef 14 corals dominated by C- or D-symbionts through the 4 periods of bleaching and recovery.  
-  
-**PERMANOVA output** here is from adonis2 with a scaled and cnetered matrix.  
-```{r, PERMANOVA, message=FALSE}
-# cleaned data for full dataframe NMDS (Site, Period, dom)
-
-fullNMDS<-df.MV.noNA
-fullNMDS$Period.Site.dom<-interaction(fullNMDS$Period, fullNMDS$Site, fullNMDS$dom)
-
-fac.fullNMDS<-fullNMDS %>% 
-  select(c(Period, Status, Site, dom, Period.Site.dom)) #  sans responses
-
-resp.fullNMDS<-fullNMDS[, 4:13] # just responses
-
-resp.fullNMDS.scaled <- scale(resp.fullNMDS, center = TRUE, scale = TRUE) 
-
-##  Run MANOVA
-all.Manova<-adonis2(resp.fullNMDS.scaled~Period*Site*dom, data=fullNMDS, permutations=1000,  method="euclidian")
-all.Manova
-
-## **not used**
-##### test dispersion using PERMDISP
-disp <- betadisper(vegdist(resp.fullNMDS.scaled, method = "euclidian"), fac.fullNMDS$Period)
-
-#test for overall differences
-#anova(disp)
-
-## Permutation test for pairwise comparisons
-#permutest(disp, pairwise = TRUE)
-```
-  
-**NMDS trait space trajectory** 
-First showing the observed dissimilarily and fit of NMDS  in stress lot
-```{r, full NMDS stress, results='hide', message=FALSE, fig.dim=c(6,6)}
-
-###
-allNMDS<-metaMDS(resp.fullNMDS, distance='bray', k=2, trymax=100) 
-stressplot(allNMDS)
-``` 
-
-```{r, full NMDS trajectory, results='hide', message=FALSE, fig.dim=c(7,7)}
-allNMDS.df<-data.frame(x=allNMDS$point[,1], y=allNMDS$point[,2], 
-                            Period=as.factor(fac.fullNMDS[,1]),
-                            Site=as.factor(fac.fullNMDS[,2]),
-                            Status=as.factor(fac.fullNMDS[,3]),
-                            dom=as.factor(fac.fullNMDS[,4]),
-                            Period.Site.dom=as.factor(fac.fullNMDS[,5]))
-
-colnames(allNMDS.df)[1:2]<-c("MDS1", "MDS2")
-
-#centroid means
-NMDS.mean=aggregate(allNMDS.df[,1:2],list(group=allNMDS.df$Period.Site.dom), mean)
-
-############### All groups NMDS
-fullNMDS$Period.Site.dom<-droplevels(fullNMDS$Period.Site.dom)
-groups<-fullNMDS$Period.Site.dom
-groups2<-c("C-Lilipuna", "C-Reef 14", "D-Lilipuna", "D-Reef 14")
-colors=c(
-  "firebrick1", #C Lilipuna
-  "firebrick3", #C Reef 14
-  "steelblue1", # D Lilipuna
-  "steelblue3") # D Reef 14
-
-### 
-
-plot<-ordiplot(allNMDS, type="n", cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.3, 0.3))
-axis(side = 1, labels = FALSE)
-abline(h = 0, lty = "dotted")
-abline(v = 0, lty = "dotted")
-ordihull(plot, groups=fullNMDS$Period, draw="polygon", alpha=30, col=c("gray20", "gray40", "gray30", "gray50"), border=FALSE)
-
-# points for start and end
-with(plot, points(NMDS.mean[1,2], NMDS.mean[1,3], col=colors[1], pch=16, cex=0.7, lwd=1)) # Lil C
-with(plot, points(NMDS.mean[4,2], NMDS.mean[4,3], col=colors[1], pch=17, cex=1, lwd=1)) # Lil C
-with(plot, points(NMDS.mean[5,2], NMDS.mean[5,3], col=colors[2], pch=16, cex=0.7, lwd=1)) # R14 C
-with(plot, points(NMDS.mean[8,2], NMDS.mean[8,3], col=colors[2], pch=17, cex=1, lwd=1)) # R14 C
-with(plot, points(NMDS.mean[9,2], NMDS.mean[9,3], col=colors[3], pch=16, cex=0.7, lwd=1)) # Lil D
-with(plot, points(NMDS.mean[12,2], NMDS.mean[12,3], col=colors[3], pch=17, cex=1, lwd=1)) # Lil D
-with(plot, points(NMDS.mean[13,2], NMDS.mean[13,3], col=colors[4], pch=16, cex=0.7, lwd=1)) # R14 D
-with(plot, points(NMDS.mean[16,2], NMDS.mean[16,3], col=colors[4], pch=17, cex=1, lwd=1)) # R14 D
-
-# points for others (if want)
-with(plot, points(NMDS.mean[2,2], NMDS.mean[2,3], col=colors[1], pch=16, cex=0.7, lwd=1)) # Lil C
-with(plot, points(NMDS.mean[3,2], NMDS.mean[3,3], col=colors[1], pch=16, cex=0.7, lwd=1)) # Lil C
-with(plot, points(NMDS.mean[6,2], NMDS.mean[6,3], col=colors[2], pch=16, cex=0.7, lwd=1)) # R14 C
-with(plot, points(NMDS.mean[7,2], NMDS.mean[7,3], col=colors[2], pch=16, cex=0.7, lwd=1)) # R14 C
-with(plot, points(NMDS.mean[10,2], NMDS.mean[10,3], col=colors[3], pch=16, cex=0.7, lwd=1)) # Lil D
-with(plot, points(NMDS.mean[11,2], NMDS.mean[11,3], col=colors[3], pch=16, cex=0.7, lwd=1)) # Lil D
-with(plot, points(NMDS.mean[14,2], NMDS.mean[14,3], col=colors[4], pch=16, cex=0.7, lwd=1)) # R14 D
-with(plot, points(NMDS.mean[15,2], NMDS.mean[15,3], col=colors[4], pch=16, cex=0.7, lwd=1)) # R14 D
-
-# lines for start and end
-with(plot, lines(NMDS.mean[c(1:4),2], NMDS.mean[c(1:4),3], lwd=1.5, col =colors[1], lty=2))# Lil C
-with(plot, lines(NMDS.mean[c(5:8),2], NMDS.mean[c(5:8),3], lwd=1.5, col =colors[2], lty=1))# R14 C
-with(plot, lines(NMDS.mean[c(9:12),2], NMDS.mean[c(9:12),3], lwd=1.5, col =colors[3], lty=2))# Lil D
-with(plot, lines(NMDS.mean[c(13:16),2], NMDS.mean[c(13:16),3], lwd=1.5, col =colors[4], lty=1))# R14 D
-
-# add labels
-text(-0.38, 0.28, "Bleaching \n 2015", cex=0.7, col="gray50")
-text(-0.28, -0.2, "Bleaching \n 2014", cex=0.7, col="gray50")
-text(0.25, -0.1, "Recovery \n 2015", cex=0.7, col="gray50")
-text(0.07, 0.21, "Recovery \n 2016", cex=0.7, col="gray50")
-legend("topright", legend=groups2, inset=c(0.03, -0.01), x.intersp=0.6, y.intersp=0.9, cex=0.7, pch=16, col=colors, lty=c(1,2,1,2), seg.len=1, pt.cex=1, bty="n")
-
-dev.copy(pdf, "figures/1panel_allNMDS.pdf", height=6, width=6, useDingbats=FALSE)
-dev.off() 
-
-```
-
-#### Coral physiotypes  
-The physiotypes of corals in multivariate traitspace. Here are the **four panel NMDS** for Lilipuna and Reef 14 Physiology and Immunity data in first bleaching-recovery (2014-2015) and second bleaching-recovery (2015-2016).  
-
-**code** for NMDS analysis separated by sites in each time period.
-```{r, NMDS separated by sites, fig.show='hide', results='hide', message=FALSE}
-########## ########## ########## ########## ########## 
- ########## ########## ########## ########## ########## 
-########## ########## ########## ########## ########## 
-
-# for 4 panel NMDS separated by site and B-R periods
-## build Manova dataframes 
-
-########## Lilipuna 2014-2015
-## Lilipuna only #######
-
-## all data with lilupuna only
-Manova.Lil.lev.dat<-df.MV.noNA %>% # "lev.dat" has levels and data
-  filter(Site=="Lilipuna") 
-
-# lilipuna bleaching-recovery1
-Manova.Lil.BR1.lev.dat<-Manova.Lil.lev.dat %>% # "BR1" is bleaching and recovery 2014-2015
-  filter(Period=="2014 Oct" | Period=="2015 Feb") 
-
-# lilipuna bleaching-recovery2
-Manova.Lil.BR2.lev.dat<-Manova.Lil.lev.dat %>% # "BR2" is bleaching and recovery 2014-2015
-  filter(Period=="2015 Oct" | Period=="2016 Feb") 
-
-Manova.Lil.BR1.lev.dat$Period<-droplevels(Manova.Lil.BR1.lev.dat$Period)
-Manova.Lil.BR1.lev.dat$Site<-droplevels(Manova.Lil.BR1.lev.dat$Site)
-Manova.Lil.BR1.lev.dat$Period.dom<-droplevels(Manova.Lil.BR1.lev.dat$Period.dom)
-
-Manova.Lil.BR2.lev.dat$Period<-droplevels(Manova.Lil.BR2.lev.dat$Period)
-Manova.Lil.BR2.lev.dat$Site<-droplevels(Manova.Lil.BR2.lev.dat$Site)
-Manova.Lil.BR2.lev.dat$Period.dom<-droplevels(Manova.Lil.BR2.lev.dat$Period.dom)
-
-# BR1 just data (sans factors)
-Manova.Lil.BR1.dat<-Manova.Lil.BR1.lev.dat %>% 
-  select(-c(Period, Status, Site, dom, Period.dom)) #  sans factors
-
-# BR2 just data (sans factors)
-Manova.Lil.BR2.dat<-Manova.Lil.BR2.lev.dat %>% 
-  select(-c(Period, Status, Site, dom, Period.dom)) #  sans factors
-
-
-############################
-############### 
-##  Run BR1 2014-2015 MANOVA Lilipuna
-
-## PERMANOVA
-Manova.Lil.BR1.dat.scaled <- scale(Manova.Lil.BR1.dat, center = TRUE, scale = TRUE) 
-
-MVA.Lilipuna.BR1<-adonis2(Manova.Lil.BR1.dat.scaled~Period*dom, data=Manova.Lil.BR1.lev.dat,
-                          permutations=1000, method="euclidian")
-
-## NMDS plots
-NMDS.Lil.BR1<-metaMDS(Manova.Lil.BR1.dat, distane='bray', k=2, trymax=100) 
-stressplot(NMDS.Lil.BR1)
-
-factor.df.Lil.BR1<-Manova.Lil.BR1.lev.dat %>% 
-  select(c(Period, Site, Status, dom, Period.dom)) # get just the factors
-
-NMDS.df.Lil.BR1<-data.frame(x=NMDS.Lil.BR1$point[,1], y=NMDS.Lil.BR1$point[,2], 
-                    Period=as.factor(factor.df.Lil.BR1[,1]),
-                    Site=as.factor(factor.df.Lil.BR1[,2]),
-                    Status=as.factor(factor.df.Lil.BR1[,3]),
-                    dom=as.factor(factor.df.Lil.BR1[,4]),
-                    Period.dom=as.factor(factor.df.Lil.BR1[,5]))
-
-colnames(NMDS.df.Lil.BR1)[1:2]<-c("MDS1", "MDS2")
-
-# vectors for variables
-vars.Lil.BR1<-envfit(NMDS.Lil.BR1, Manova.Lil.BR1.dat, permu=999)
-#scores(vars, "vectors")
-
-
-
-#########################
-########  Run 2015-2016 MANOVA Lilipuna
-## PERMANOVA
-Manova.Lil.BR2.dat.scaled <- scale(Manova.Lil.BR2.dat, center = TRUE, scale = TRUE) 
-
-MVA.Lilipuna.BR2<-adonis2(Manova.Lil.BR2.dat.scaled~Period*dom, data=Manova.Lil.BR2.lev.dat,
-                          permutations=1000, method="euclidian")
-
-## NMDS
-NMDS.Lil.BR2<-metaMDS(Manova.Lil.BR2.dat, distane='bray', k=2, trymax=100) 
-stressplot(NMDS.Lil.BR2)
-
-factor.df.Lil.BR2<-Manova.Lil.BR2.lev.dat %>% 
-  select(c(Period, Site, Status, dom, Period.dom)) # get just the factors
-
-NMDS.df.Lil.BR2<-data.frame(x=NMDS.Lil.BR2$point[,1], y=NMDS.Lil.BR2$point[,2], 
-                    Period=as.factor(factor.df.Lil.BR2[,1]),
-                    Site=as.factor(factor.df.Lil.BR2[,2]),
-                    Status=as.factor(factor.df.Lil.BR2[,3]),
-                    dom=as.factor(factor.df.Lil.BR2[,4]),
-                    Period.dom=as.factor(factor.df.Lil.BR2[,5]))
-
-colnames(NMDS.df.Lil.BR2)[1:2]<-c("MDS1", "MDS2")
-
-# vectors for variables
-vars.Lil.BR2<-envfit(NMDS.Lil.BR2, Manova.Lil.BR2.dat, permu=999)
-#scores(vars, "vectors")
-
-
-########## ########## ########## ########## 
-########## Reef 14 2014-2015
-## Reef 14 only #######
-
-## all data with Reef14 only
-Manova.R14.lev.dat<-df.MV.noNA %>% # "lev.dat" has levels and data
-  filter(Site=="Reef 14") 
-
-# Reef 14 bleaching-recovery1
-Manova.R14.BR1.lev.dat<-Manova.R14.lev.dat %>% # "BR1" is bleachigng and recovery 2014-2015
-  filter(Period=="2014 Oct" | Period=="2015 Feb") 
-
-# Reef 14 bleaching-recovery2
-Manova.R14.BR2.lev.dat<-Manova.R14.lev.dat %>% # "BR2" is bleachigng and recovery 2014-2015
-  filter(Period=="2015 Oct" | Period=="2016 Feb") 
-
-Manova.R14.BR1.lev.dat$Period<-droplevels(Manova.R14.BR1.lev.dat$Period)
-Manova.R14.BR1.lev.dat$Site<-droplevels(Manova.R14.BR1.lev.dat$Site)
-Manova.R14.BR1.lev.dat$Period.dom<-droplevels(Manova.R14.BR1.lev.dat$Period.dom)
-
-Manova.R14.BR2.lev.dat$Period<-droplevels(Manova.R14.BR2.lev.dat$Period)
-Manova.R14.BR2.lev.dat$Site<-droplevels(Manova.R14.BR2.lev.dat$Site)
-Manova.R14.BR2.lev.dat$Period.dom<-droplevels(Manova.R14.BR2.lev.dat$Period.dom)
-
-# BR1 just data (sans factors)
-Manova.R14.BR1.dat<-Manova.R14.BR1.lev.dat %>% 
-  select(-c(Period, Status, Site, dom, Period.dom)) #  sans factors
-
-# BR2 just data (sans factors)
-Manova.R14.BR2.dat<-Manova.R14.BR2.lev.dat %>% 
-  select(-c(Period, Status, Site, dom, Period.dom)) #  sans factors
-
-
-############################# 
-############### 
-##  Run BR1 2014-2015 MANOVA Reef 14
-Manova.R14.BR1.dat.scaled <- scale(Manova.R14.BR1.dat, center = TRUE, scale = TRUE) 
-
-## PERMANOVA
-MVA.R14.BR1<-adonis2(Manova.R14.BR1.dat.scaled~Period*dom, data=Manova.R14.BR1.lev.dat,permutations=1000, 
-                method="euclidian")
-
-## NMDS
-NMDS.R14.BR1<-metaMDS(Manova.R14.BR1.dat, distane='bray', k=2, trymax=100) 
-stressplot(NMDS.R14.BR1)
-
-factor.df.R14.BR1<-Manova.R14.BR1.lev.dat %>% 
-  select(c(Period, Site, Status, dom, Period.dom)) # get just the factors
-
-NMDS.df.R14.BR1<-data.frame(x=NMDS.R14.BR1$point[,1], y=NMDS.R14.BR1$point[,2], 
-                    Period=as.factor(factor.df.R14.BR1[,1]),
-                    Site=as.factor(factor.df.R14.BR1[,2]),
-                    Status=as.factor(factor.df.R14.BR1[,3]),
-                    dom=as.factor(factor.df.R14.BR1[,4]),
-                    Period.dom=as.factor(factor.df.R14.BR1[,5]))
-
-colnames(NMDS.df.R14.BR1)[1:2]<-c("MDS1", "MDS2")
-
-# vectors for variables
-vars.R14.BR1<-envfit(NMDS.R14.BR1, Manova.R14.BR1.dat, permu=999)
-#scores(vars, "vectors")
-
-
-
-############################# 
-########  Run 2015-2016 MANOVA R14
-Manova.R14.BR2.dat.scaled <- scale(Manova.R14.BR2.dat, center = TRUE, scale = TRUE) 
-
-## PERMANOVA
-MVA.R14.BR2<-adonis2(Manova.R14.BR2.dat.scaled~Period*dom, data=Manova.R14.BR2.lev.dat,permutations=1000, 
-                method="euclidean")
-
-## NMDS
-NMDS.R14.BR2<-metaMDS(Manova.R14.BR2.dat, distane='bray', k=2, trymax=100) 
-stressplot(NMDS.R14.BR2)
-
-factor.df.R14.BR2<-Manova.R14.BR2.lev.dat %>% 
-  select(c(Period, Site, Status, dom, Period.dom)) # get just the factors
-
-NMDS.df.R14.BR2<-data.frame(x=NMDS.R14.BR2$point[,1], y=NMDS.R14.BR2$point[,2], 
-                    Period=as.factor(factor.df.R14.BR2[,1]),
-                    Site=as.factor(factor.df.R14.BR2[,2]),
-                    Status=as.factor(factor.df.R14.BR2[,3]),
-                    dom=as.factor(factor.df.R14.BR2[,4]),
-                    Period.dom=as.factor(factor.df.R14.BR2[,5]))
-
-colnames(NMDS.df.R14.BR2)[1:2]<-c("MDS1", "MDS2")
-
-# vectors for variables
-vars.R14.BR2<-envfit(NMDS.R14.BR2, Manova.R14.BR2.dat, permu=999)
-#scores(vars, "vectors")
-```
-  
-**code** for NMDS figures separated by sites in each time period.
-```{r, 4 panel NMDS plots, fig.dim=c(8,7), results='hide'}
-# for exporting 4 panel plot
-par(mfcol=c(2,2), mar=c(4,4,1,1))
-
-###################################### plots
-###################################### start with Lilipuna 2014-2015, then 2015-2016... then Reef 14
-
-############### Lilipuna 2014-2015
-
-NMDS.df.Lil.BR1$Period.dom<-factor(NMDS.df.Lil.BR1$Period.dom, levels =
-                                     c("2014 Oct.C", "2014 Oct.D", "2015 Feb.C", "2015 Feb.D"))
-groups<-NMDS.df.Lil.BR1$Period.dom
-
-MDS.lev.leg<-c("C-Bleach '14", "D-Bleach '14", "C-Recov '15", "D-Recov '15")
-MDS.colors<-c("lightpink", "slategray1", "firebrick3", "dodgerblue3")
-
-### 
-NMDS.plot<-ordiplot(NMDS.Lil.BR1, type="n", main=substitute(paste("Lilipuna-CRIMP-1")), cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.4, 0.4), xlim=c(-0.6, 0.5), xaxt="n", xlab="")
-axis(side = 1, labels = FALSE, tck = -0.05)
-abline(h = 0, lty = "dotted")
-abline(v = 0, lty = "dotted")
-points(NMDS.plot, "sites", cex=0.8, pch=16, col=MDS.colors[groups])
-ordihull(NMDS.plot, groups=NMDS.df.Lil.BR1$Period.dom, draw="polygon", alpha=100, col=MDS.colors, border=MDS.colors)
-legend("topright", legend=MDS.lev.leg, inset=c(0.7, -0.01), x.intersp=0.9, y.intersp=0.8, cex=0.7, pch=16, col=MDS.colors, pt.cex=1, bty="n")
-par.new=T
-plot(vars.Lil.BR1, col="black", p.max=0.05, cex=0.8, lwd=1)
-
-
-############### Lilipuna 2015-2016
-
-NMDS.df.Lil.BR2$Period.dom<-factor(NMDS.df.Lil.BR2$Period.dom, levels =
-                                     c("2015 Oct.C", "2015 Oct.D", "2016 Feb.C", "2016 Feb.D"))
-groups<-NMDS.df.Lil.BR2$Period.dom
-
-MDS.lev.leg<-c("C-Bleach '15", "D-Bleach '15", "C-Recov '16", "D-Recov '16")
-MDS.colors<-c("lightpink", "slategray1", "firebrick3", "dodgerblue3")
-
-NMDS.plot<-ordiplot(NMDS.Lil.BR2, type="n", cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.4, 0.4), xlim=c(-0.6, 0.5))
-axis(side = 2, labels = FALSE, tck = -0.05)
-abline(h = 0, lty = "dotted")
-abline(v = 0, lty = "dotted")
-points(NMDS.plot, "sites", cex=0.8, pch=16,  col=MDS.colors[groups])
-ordihull(NMDS.plot, groups=NMDS.df.Lil.BR2$Period.dom, draw="polygon", alpha=100, col=MDS.colors, border=MDS.colors)
-legend("topright", legend=MDS.lev.leg, inset=c(0.7, -0.01), x.intersp=0.9, y.intersp=0.8, cex=0.7, pch=16, col=MDS.colors, pt.cex=1, bty="n")
-par.new=T
-plot(vars.Lil.BR2, col="black", p.max=0.05, cex=0.8, lwd=1)
-
-
-############### ############### ############### ############### ############### 
-############### Reef 14 2014-2015
-
-NMDS.df.R14.BR1$Period.dom<-factor(NMDS.df.R14.BR1$Period.dom, levels =
-                                     c("2014 Oct.C", "2014 Oct.D", "2015 Feb.C", "2015 Feb.D"))
-groups<-NMDS.df.R14.BR1$Period.dom
-
-MDS.lev.leg<-c("C-Bleach '14", "D-Bleach '14", "C-Recov '15", "D-Recov '15")
-MDS.colors<-c("lightpink", "slategray1", "firebrick2", "dodgerblue2")
-
-NMDS.plot<-ordiplot(NMDS.R14.BR1, type="n", main=substitute(paste("Reef 14-CRIMP2")), cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.4, 0.4), xlim=c(-0.6, 0.5), yaxt="n", ylab="", xaxt="n", xlab="")
-axis(side = 1, labels = FALSE, tck = -0.05)
-axis(side = 2, labels = FALSE, tck = -0.05)
-abline(h = 0, lty = "dotted")
-abline(v = 0, lty = "dotted")
-points(NMDS.plot, "sites", cex=0.8, pch=16,  col=MDS.colors[groups])
-ordihull(NMDS.plot, groups=NMDS.df.R14.BR1$Period.dom, draw="polygon", alpha=100, col=MDS.colors, border=MDS.colors)
-par.new=T
-plot(vars.R14.BR1, col="black", p.max=0.05, cex=0.8, lwd=1)
-
-
-############### Reef 14 2015-2016
-
-NMDS.df.R14.BR2$Period.dom<-factor(NMDS.df.R14.BR2$Period.dom, levels =
-                                     c("2015 Oct.C", "2015 Oct.D", "2016 Feb.C", "2016 Feb.D"))
-groups<-NMDS.df.R14.BR2$Period.dom
-
-MDS.lev.leg<-c("C-Bleach '15", "D-Bleach '15", "C-Recov '16", "D-Recov '16")
-MDS.colors<-c("lightpink", "slategray1", "firebrick2", "dodgerblue2")
-
-NMDS.plot<-ordiplot(NMDS.R14.BR2, type="n", cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.4, 0.4), xlim=c(-0.6, 0.5), yaxt="n", ylab="")
-axis(side = 2, labels = FALSE, tck = -0.05)
-abline(h = 0, lty = "dotted")
-abline(v = 0, lty = "dotted")
-points(NMDS.plot, "sites", cex=0.8, pch=16,  col=MDS.colors[groups])
-ordihull(NMDS.plot, groups=NMDS.df.R14.BR2$Period.dom, draw="polygon", alpha=100, col=MDS.colors, border=MDS.colors)
-par.new=T
-plot(vars.R14.BR2, col="black", p.max=0.05, cex=0.8, lwd=1)
-
-
-
-dev.copy(pdf, "figures/4panel_NMDS.pdf", height=6, width=7, useDingbats=FALSE)
-dev.off() 
 ```
