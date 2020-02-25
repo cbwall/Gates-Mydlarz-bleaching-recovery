@@ -1,5 +1,5 @@
 # Repeat bleaching effects on coral physiotypes 
-This project examines the response of coral physiology and immunity to repeated bleaching and subsequent recovery during repeat bleaching events in 2014 and 2015 in Hawai'i. The coral *Montipira capitata* was collected from two reef locations within Kāne'ohe Bay, O'ahu, Hawai'i: Lilipuna Reef and Reef 14 in southern and central Kāne'ohe Bay, respectively (reefs previously described in, Wall et al. (2018) Marine Biology 165:56-71).
+This project examines the response of coral physiology and immunity to repeated bleaching and subsequent recovery during repeat bleaching events in 2014 and 2015 in Hawai'i. The coral *Montipira capitata* was collected from two reef locations within Kāne'ohe Bay, O'ahu, Hawai'i: Lilipuna and Reef 14 in southern and central Kāne'ohe Bay, respectively (reefs previously described in, Wall et al. (2018) Marine Biology 165:56-71).
 
 
 ### Folders
@@ -7,6 +7,7 @@ This project examines the response of coral physiology and immunity to repeated 
 - figures
 - manuscript
 - output
+- scripts
 
 #### R Markdown files
  - Mydlarz_bleach recover.proj -- R project for R studio
@@ -15,7 +16,7 @@ This project examines the response of coral physiology and immunity to repeated 
  - Mydlarz_bleach-recover.html
      - html output from data analysis in Rmd. Download this file and open in browser to view html (can't open with GitHub).
       
-#### data: 
+#### data
   - Gates_Mydlarz_20142016_ALL_DATA.csv
       - the master datasheet of physiology, immunity, color scores, and Symbiodiniaceae community
   - Gates_Mydlarz_20142016_physimmun.csv
@@ -45,7 +46,7 @@ This project examines the response of coral physiology and immunity to repeated 
    - Online Supplement.pdf for manuscript 
    - Table 1_Permanova.pdf is formatted table for manuscript
       
-#### output: 
-  - additional figures and products exported during analyses (primarily in degree heating weeks calculations).
+#### output
+  - additional figures and products exported during analyses (primarily in degree heating weeks calculations)
 
 
