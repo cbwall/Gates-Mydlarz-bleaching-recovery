@@ -1988,7 +1988,7 @@ multcomp::cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="SOD", par.strip.text=list(cex=0.7))
 ```
 
-### Schematic  
+### Schematic 
 Taking into account the observed patterns for bleaching and recovery in *M. capitata* we propose a shift in coral immunity and antioxidants in response to bleaching/recovery with a trend towards antioxidant reliance and increased constitutive responses.  
 
 <center>  
