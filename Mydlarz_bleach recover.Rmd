@@ -15,7 +15,7 @@ editor_options:
   chunk_output_type: inline
 ---
   
-Wall CB, Ricci CA, Wen AD, Ledbetter BE, Klinger DE, Mydlarz LD, Gates RD, Putnam HM. Repeat bleaching drives coral physiotypes through interaction with environmental legacies and cellular memory. *(submitted Nature Climate Change)*  
+Wall CB, Ricci CA, Wen AD, Ledbetter BE, Klinger DE, Mydlarz LD, Gates RD, Putnam HM. Repeat bleaching drives coral physiotypes by environmental legacies and cellular memory. *(submitted Nature Climate Change)*  
   
 ```{r setup, message=FALSE, warning=FALSE, echo=FALSE}
 require("knitr")
