@@ -1,5 +1,5 @@
 # Repeat bleaching effects on coral physiotypes 
-This project examines the response of coral physiology and immunity to repeated bleaching and subsequent recovery during repeat bleaching events in 2014 and 2015 in Hawai'i. The coral *Montipira capitata* was collected from two reef locations within Kāne'ohe Bay, O'ahu, Hawai'i: Lilipuna Reef and Reef 14 in southern and central Kāne'ohe Bay, respectively (Wall et al. 2018, Marine Biology 165:56-71).
+This project examines the response of coral physiology and immunity to repeated bleaching and subsequent recovery during repeat bleaching events in 2014 and 2015 in Hawai'i. The coral *Montipira capitata* was collected from two reef locations within Kāne'ohe Bay, O'ahu, Hawai'i: Lilipuna Reef and Reef 14 in southern and central Kāne'ohe Bay, respectively (reefs previously described in, Wall et al. (2018) Marine Biology 165:56-71).
 
 
 ### Folders
