@@ -40,15 +40,15 @@ This project examines the response of coral physiology and immunity to repeated 
       *ug.chla..ml* = μg of chlorophyll a per ml blastate    
       *g.AFDW..ml* = mg of host biomass per ml blastate  
       *CAT* = μmol H2O2 scavenged mg protein–1 min–1  
-      - (slope of change in Abs at 240 nm (0 - 8 min) against μmol H2O2 standard curve)  
+         - (slope of change in Abs at 240 nm (0 - 8 min) against μmol H2O2 standard curve)  
       *POX* = Δ Abs470 nm mg protein-1 min-1  
-      - (slope of change in Abs at 470 nm (0-10 min), normalized to mg protein)  
+         - (slope of change in Abs at 470 nm (0-10 min), normalized to mg protein)  
       *SOD* = SOD activity units mg protein-1  
-      - (% Inhibition of Abs at 450 nm, normalized to mg protein) (1 SOD Unit = 50% inhibition)    
+         - (% Inhibition of Abs at 450 nm, normalized to mg protein) (1 SOD Unit = 50% inhibition)    
       *PPO* = Δ Abs490 nm mg protein-1 min-1  
-      - (slope of change in Abs 490 (0-15 min normalized to mg protein and time)  
+         - (slope of change in Abs 490 (0-15 min normalized to mg protein and time)  
       *MEL* = mg melanin mg tissue-1  
-      - (Abs 490 nm, the concentration of melanin determined using a standard curve)  
+         - (Abs 490 nm, the concentration of melanin determined using a standard curve)  
       *propC* = proportion of community as percentage *Cladocopium*  
       *propD* = proportion of community as percentage *Durusdinium*    
       *syms* = 4 categories of symbiont community: all D, all C, D>C or D<C  
