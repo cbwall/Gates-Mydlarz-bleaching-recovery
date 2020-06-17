@@ -15,7 +15,7 @@ editor_options:
   chunk_output_type: inline
 ---
   
-Wall CB, Ricci CA, Wen AD, Ledbetter BE, Klinger DE, Mydlarz LD, Gates RD, Putnam HM. Repeat bleaching drives coral physiotypes by environmental legacies and cellular memory. *(submitted Nature Climate Change)*  
+Wall CB, Ricci CA, Wen AD, Ledbetter BE, Klinger DE, Mydlarz LD, Gates RD, Putnam HM. Shifting Baselines: Repeat bleaching drives coral physiological legacy and cellular memory. *(submitted Functional Ecology)*  
   
 ```{r setup, message=FALSE, warning=FALSE, echo=FALSE}
 require("knitr")
@@ -815,11 +815,17 @@ Raw data from physiological assessments is imported and normalized according to 
 ###########################################################################
 
 ### data file
-# all lab data from all time points (physio and immuno, PLUS color analysis)
-physimmun<-read.csv("data/Gates_Mydlarz_20142016_physimmun.csv", header=T, na.string=NA) #physimmuno data
-qPCR.data<-read.csv("data/Gates_Mydlarz_20142016_qPCR.csv", header=T, na.string=NA) #qPCR data
+# no lab or pre-2014 data
+# poor data removed prior to import (i.e., negative values in assay)
 
-data<-read.csv("data/Gates_Mydlarz_20142016_ALL_DATA.csv", header=T, na.string=NA) #qPCR data
+# all  data from all time points (physio and immuno, qPCR)
+physimmun<-read.csv("data/Gates_Mydlarz_20142016.nolab_physimmun.csv", header=T, na.string=NA) #physimmuno data
+qPCR.data<-read.csv("data/Gates_Mydlarz_20142016_nolab_qPCR.csv", header=T, na.string=NA) #qPCR data
+
+# qPCR data added with immuno, phys
+# no data pre 2014 bleaching
+# negative values (assay NA, low read, outliers) removed
+data<-read.csv("data/Gates_Mydlarz_20142016_nolab_ALL_DATA.csv", header=T, na.string=NA) 
 
 
 ################################################
@@ -858,21 +864,6 @@ data<-data[!(data$ID=="N37"), ] # this coral has an NA for symbiont type, remove
 # reorder columns to show: hierarchy of structure, physio., immuno., colorimetry
 # this is now the working dataframe
 df<-data[, c(1:6, 16:18,20,19, 7:15)]
-
-# remove negative values for MEL and POX and
-df$MEL[df$MEL <= 0]<- NA
-df$MEL[df$MEL > 0.05]<- NA
-
-df$POX[df$POX <= 0]<- NA
-df$CAT[df$CAT <= 0]<- NA
-df$PPO[df$PPO <= 0]<- NA
-
-
-df$chlacell[df$chlacell >= 10]<- NA # removing 2 outliers
-df$CAT[df$CAT >= 900]<- NA # 2 outliers removed
-
-# don't need "Ramp" lab data, this was lab thermally stressed. Remove this.
-df<-df[!(df$Status=="Lab-Ramp"),]
 
 
 #########################################################
@@ -1003,8 +994,6 @@ df.MV<-df.MV[ , !names(df.MV) %in% c("Species", "Status_Site", "ID", "propC", "p
 df.MV$Period.dom<-interaction(df.MV$Period, df.MV$dom)
 
 # remove prior-to-bleaching timepoints and unused levels that arise from this action
-df.MV<-df.MV[(!df.MV$Period=="2014 Lab"),] 
-df.MV<-df.MV[(!df.MV$Period=="2014 Field.Feb"),]
 df.MV$Period<-droplevels(df.MV$Period) 
 df.MV$Status<-droplevels(df.MV$Status)
 df.MV$Period.dom<-droplevels(df.MV$Period.dom)
@@ -1015,8 +1004,10 @@ df.MV.noNA<-df.MV %>% drop_na()
   
 #### Coral trajectories  
 The trajectories of corals in multivariate traitspace. Here is the **single panel NMDS** for Lilipuna and Reef 14 corals dominated by C- or D-symbionts through the 4 periods of bleaching and recovery.  
+
+Note that all PERMANOVA is performed on centered and scaled dataframes using Euclidian distance. NMDS ordination in 'metaMDS' automatically performs wisconsin(sqrt('response')) for metrics, using euclidean distance, preferred for non-ecological data.
   
-**PERMANOVA output** here is from adonis2 with a scaled and cnetered matrix.  
+**PERMANOVA output** this is from adonis2, with a scaled and centered matrix.  
 ```{r, PERMANOVA, message=FALSE}
 # cleaned data for full dataframe NMDS (Site, Period, dom)
 
@@ -1046,12 +1037,16 @@ disp <- betadisper(vegdist(resp.fullNMDS.scaled, method = "euclidian"), fac.full
 ```
   
 **NMDS trait space trajectory** 
-First showing the observed dissimilarily and fit of NMDS  in stress lot
+First showing the observed dissimilarily and fit of NMDS  in stress lot.  
+MetaMDS stressplot(NMDS.Lil.BR2)
 ```{r, full NMDS stress, results='hide', message=FALSE, fig.dim=c(6,6)}
 
 ###
 allNMDS<-metaMDS(resp.fullNMDS, distance='bray', k=2, trymax=100) 
+
 stressplot(allNMDS)
+dev.print(pdf, "output/AllNMDS.stressplot.pdf", height=5, width=5)
+
 ``` 
   
 ...now the 4 part convex hulls for coral trajectories.
@@ -1118,6 +1113,7 @@ text(-0.38, 0.28, "Bleaching \n 2015", cex=0.7, col="gray50")
 text(-0.28, -0.2, "Bleaching \n 2014", cex=0.7, col="gray50")
 text(0.25, -0.1, "Recovery \n 2015", cex=0.7, col="gray50")
 text(0.07, 0.21, "Recovery \n 2016", cex=0.7, col="gray50")
+text(0.21, -0.32, "2D Stress = 0.21", cex=0.7, col="black")
 legend("topright", legend=groups2, inset=c(0.03, -0.01), x.intersp=0.6, y.intersp=0.9, cex=0.7, pch=16, col=colors, lty=c(1,3,1,3), seg.len=2, pt.cex=1, bty="n")
 
 dev.copy(pdf, "figures/1panel_allNMDS.pdf", height=6, width=6, useDingbats=FALSE)
@@ -1136,6 +1132,9 @@ The physiotypes of corals in multivariate traitspace. Here are the **four panel 
 
 # for 4 panel NMDS separated by site and B-R periods
 ## build Manova dataframes 
+
+# rename "zoox" to symb cells"
+names(df.MV.noNA)[names(df.MV.noNA)=="zoox"] <- "symb cells"
 
 ########## Lilipuna 2014-2015
 ## Lilipuna only #######
@@ -1181,7 +1180,7 @@ MVA.Lilipuna.BR1<-adonis2(Manova.Lil.BR1.dat.scaled~Period*dom, data=Manova.Lil.
 
 ## NMDS plots
 NMDS.Lil.BR1<-metaMDS(Manova.Lil.BR1.dat, distane='bray', k=2, trymax=100) 
-stressplot(NMDS.Lil.BR1)
+stressplot(NMDS.Lil.BR1, main="Lilipuna 2014-2015")
 
 factor.df.Lil.BR1<-Manova.Lil.BR1.lev.dat %>% 
   select(c(Period, Site, Status, dom, Period.dom)) # get just the factors
@@ -1211,7 +1210,7 @@ MVA.Lilipuna.BR2<-adonis2(Manova.Lil.BR2.dat.scaled~Period*dom, data=Manova.Lil.
 
 ## NMDS
 NMDS.Lil.BR2<-metaMDS(Manova.Lil.BR2.dat, distane='bray', k=2, trymax=100) 
-stressplot(NMDS.Lil.BR2)
+stressplot(NMDS.Lil.BR2, main="Lilipuna 2015-2016")
 
 factor.df.Lil.BR2<-Manova.Lil.BR2.lev.dat %>% 
   select(c(Period, Site, Status, dom, Period.dom)) # get just the factors
@@ -1274,7 +1273,7 @@ MVA.R14.BR1<-adonis2(Manova.R14.BR1.dat.scaled~Period*dom, data=Manova.R14.BR1.l
 
 ## NMDS
 NMDS.R14.BR1<-metaMDS(Manova.R14.BR1.dat, distane='bray', k=2, trymax=100) 
-stressplot(NMDS.R14.BR1)
+stressplot(NMDS.R14.BR1, main="Reef 14 2014-2015")
 
 factor.df.R14.BR1<-Manova.R14.BR1.lev.dat %>% 
   select(c(Period, Site, Status, dom, Period.dom)) # get just the factors
@@ -1304,7 +1303,7 @@ MVA.R14.BR2<-adonis2(Manova.R14.BR2.dat.scaled~Period*dom, data=Manova.R14.BR2.l
 
 ## NMDS
 NMDS.R14.BR2<-metaMDS(Manova.R14.BR2.dat, distane='bray', k=2, trymax=100) 
-stressplot(NMDS.R14.BR2)
+stressplot(NMDS.R14.BR2,main="Reef 14 2015-2016")
 
 factor.df.R14.BR2<-Manova.R14.BR2.lev.dat %>% 
   select(c(Period, Site, Status, dom, Period.dom)) # get just the factors
@@ -1321,12 +1320,22 @@ colnames(NMDS.df.R14.BR2)[1:2]<-c("MDS1", "MDS2")
 # vectors for variables
 vars.R14.BR2<-envfit(NMDS.R14.BR2, Manova.R14.BR2.dat, permu=999)
 #scores(vars, "vectors")
+
+# stress plots
+par(mfrow=c(2,2))
+stressplot(NMDS.Lil.BR1,main="Lilipuna 2014-2015")
+stressplot(NMDS.Lil.BR2,main="Lilipuna 2015-2016")
+stressplot(NMDS.R14.BR1,main="Reef 14 2014-2015")
+stressplot(NMDS.R14.BR2,main="Reef 14 2015-2016")
+dev.print(pdf, "output/4.panel.NMDS.stress.pdf", height=8, width=8)
 ```
   
 **code** for NMDS figures separated by sites in each time period.
 ```{r, 4 panel NMDS plots, fig.dim=c(8,7), results='hide', fig.cap="**Figure 4.** Non-metric multidimensional scaling (NMDS) analyses identify coral physiotypes separated by dominant symbiont type (colors), bleaching-recovery periods (lighter and darker shades), sites (columns), and events (rows)."}
+
 # for exporting 4 panel plot
 par(mfcol=c(2,2), mar=c(4,4,1,1))
+
 
 ###################################### plots
 ###################################### start with Lilipuna 2014-2015, then 2015-2016... then Reef 14
@@ -1348,8 +1357,11 @@ abline(v = 0, lty = "dotted")
 points(NMDS.plot, "sites", cex=0.8, pch=16, col=MDS.colors[groups])
 ordihull(NMDS.plot, groups=NMDS.df.Lil.BR1$Period.dom, draw="polygon", alpha=100, col=MDS.colors, border=MDS.colors)
 legend("topright", legend=MDS.lev.leg, inset=c(0.7, 0), x.intersp=0.9, y.intersp=1, cex=0.7, pch=16, col=MDS.colors, pt.cex=1, bty="n")
+text(0.35, -0.42, "2D Stress = 0.14", cex=0.7, col="black")
+
 par.new=T
 plot(vars.Lil.BR1, col="black", p.max=0.05, cex=0.8, lwd=1)
+
 
 
 ############### Lilipuna 2015-2016
@@ -1368,6 +1380,8 @@ abline(v = 0, lty = "dotted")
 points(NMDS.plot, "sites", cex=0.8, pch=16,  col=MDS.colors[groups])
 ordihull(NMDS.plot, groups=NMDS.df.Lil.BR2$Period.dom, draw="polygon", alpha=100, col=MDS.colors, border=MDS.colors)
 legend("topright", legend=MDS.lev.leg, inset=c(0.7, 0), x.intersp=0.9, y.intersp=1, cex=0.7, pch=16, col=MDS.colors, pt.cex=1, bty="n")
+text(0.35, -0.42, "2D Stress = 0.14", cex=0.7, col="black")
+
 par.new=T
 plot(vars.Lil.BR2, col="black", p.max=0.05, cex=0.8, lwd=1)
 
@@ -1389,6 +1403,7 @@ abline(h = 0, lty = "dotted")
 abline(v = 0, lty = "dotted")
 points(NMDS.plot, "sites", cex=0.8, pch=16,  col=MDS.colors[groups])
 ordihull(NMDS.plot, groups=NMDS.df.R14.BR1$Period.dom, draw="polygon", alpha=100, col=MDS.colors, border=MDS.colors)
+text(0.35, -0.42, "2D Stress = 0.16", cex=0.7, col="black")
 par.new=T
 plot(vars.R14.BR1, col="black", p.max=0.05, cex=0.8, lwd=1)
 
@@ -1408,6 +1423,8 @@ abline(h = 0, lty = "dotted")
 abline(v = 0, lty = "dotted")
 points(NMDS.plot, "sites", cex=0.8, pch=16,  col=MDS.colors[groups])
 ordihull(NMDS.plot, groups=NMDS.df.R14.BR2$Period.dom, draw="polygon", alpha=100, col=MDS.colors, border=MDS.colors)
+text(0.35, -0.42, "2D Stress = 0.20", cex=0.7, col="black")
+
 par.new=T
 plot(vars.R14.BR2, col="black", p.max=0.05, cex=0.8, lwd=1)
 
@@ -1424,17 +1441,14 @@ dev.off()
 # side by side figures separated by Sites 
 ### Physiological figures
 
-color.scheme<-c("gray85", "gray65", "gray50", "gray20", 
-                "firebrick1", #C Lilipuna
+color.scheme<-c("firebrick1", #C Lilipuna
                 "firebrick3", #C Reef 14
                 "steelblue1", # D Lilipuna
                 "steelblue3") # D Reef 14
 
-break.points<-c("C.Lilipuna.Pre", "C.Reef 14.Pre", "D.Lilipuna.Pre", 
-                "D.Reef 14.Pre", "C.Lilipuna", "C.Reef 14", "D.Lilipuna", "D.Reef 14")
-legend.names<-c("C-Lilipuna Pre", "C-Reef 14 Pre", "D-Lilipuna Pre", "D-Reef 14 Pre",
-                "C-Lilipuna", "C-Reef 14", "D-Lilipuna", "D-Reef 14")
-axis.labels<-c("Prev", "Oct'14 \nBl","Feb'15 \nRc","Oct'15 \nBl", "Feb'16 \nRc")
+break.points<-c("C.Lilipuna", "C.Reef 14", "D.Lilipuna", "D.Reef 14")
+legend.names<-c("C-Lilipuna", "C-Reef 14", "D-Lilipuna", "D-Reef 14")
+axis.labels<-c("Oct'14 \nBl","Feb'15 \nRc","Oct'15 \nBl", "Feb'16 \nRc")
 
 
 Fig.formatting<-(theme_classic()) +
@@ -1462,7 +1476,7 @@ pd <- position_dodge(0.15) #offset for error bars
 #### graph as category of C/D
 ######################## 
 
-fig.df.phys$int<-factor(fig.df.phys$int, levels=c("C.Lilipuna.Pre", "C.Reef 14.Pre", "D.Lilipuna.Pre", "D.Reef 14.Pre", "C.Lilipuna", "C.Reef 14", "D.Lilipuna", "D.Reef 14"))
+fig.df.phys$int<-factor(fig.df.phys$int, levels=c("C.Lilipuna", "C.Reef 14", "D.Lilipuna", "D.Reef 14"))
 
 
 ########################
@@ -1478,7 +1492,7 @@ zoox.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=zoox/10^6, group=int, color=i
   scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1.5, pch=19) +
   coord_cartesian(ylim=c(0, 3)) +
-  ylab(expression(paste(~("symbionts") ~(x10^6~cells~cm^-2), sep=""))) +
+  ylab(expression(paste(~("symbionts" ~x10^6~cells~cm^-2), sep=""))) +
   scale_color_manual(values=c(color.scheme),
                      name= "Symbiont:Site",
                      breaks=break.points,
@@ -1559,18 +1573,15 @@ AFDW.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=AFDW, group=int, color=int)) 
 
 ### ### ### ### ### Immunity figures ### ### ### ### ### 
 
-color.scheme.immuno<-c("gray70", "gray50", 
-                "firebrick1", #C Lilipuna
+color.scheme.immuno<-c("firebrick1", #C Lilipuna
                 "firebrick3", #C Reef 14
                 "steelblue1", # D Lilipuna
                 "steelblue3") # D Reef 14
 
 
-break.points.immuno<-c("unident.Lilipuna.Pre", "unident.Reef 14.Pre", 
-                       "C.Lilipuna", "C.Reef 14", "D.Lilipuna", "D.Reef 14")
-legend.names.immuno<-c("unk-Lilipuna Pre", "unk-Reef 14 Pre",
-                       "C-Lilipuna", "C-Reef 14", "D-Lilipuna", "D-Reef 14")
-axis.labels.immuno<-c("Prev", "Oct'14 \nBl","Feb'15 \nRc","Oct'15 \nBl", "Feb'16 \nRc")
+break.points.immuno<-c("C.Lilipuna", "C.Reef 14", "D.Lilipuna", "D.Reef 14")
+legend.names.immuno<-c("C-Lilipuna", "C-Reef 14", "D-Lilipuna", "D-Reef 14")
+axis.labels.immuno<-c("Oct'14 \nBl", "Feb'15 \nRc", "Oct'15 \nBl", "Feb'16 \nRc")
 
 
 ########## Prophenoloxidase (PPO) ############
@@ -1579,7 +1590,7 @@ PPO.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=PPO, group=int, color=i
   scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1.5) +
   coord_cartesian(ylim=c(0, 2)) +
-  ylab(expression(paste("PPO Activity", ~(Delta~Abs~"490nm"~min^-1~mg~prot^-1), sep=""))) +
+  ylab(expression(paste("PPO Activity", ~(Delta~Abs~"490nm"~mg~prot^-1~min^-1), sep=""))) +
   scale_color_manual(values=c(color.scheme.immuno),
                      name= "Symbiont:Site",
                      breaks=break.points.immuno,
@@ -1602,7 +1613,7 @@ MEL.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=MEL, group=int, color=i
   scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1.5) +
   coord_cartesian(ylim=c(0, 0.02)) +
-  ylab(expression(paste("MEL", ~(Abs~"490nm"~mg~tissue^-1), sep="")))+
+  ylab(expression(paste("MEL", ~(mg~melanin~mg~tissue^-1), sep="")))+
   scale_color_manual(values=c(color.scheme.immuno),
                      name= "Symbiont:Site",
                      breaks=break.points.immuno,
@@ -1618,7 +1629,7 @@ POX.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=POX, group=int, color=i
   scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1.5) +
   coord_cartesian(ylim=c(0, 1.25)) +
-  ylab(expression(paste("POX activity", ~(Delta~Abs~"470nm"~min^-1~mg~prot^-1), sep=""))) +
+  ylab(expression(paste("POX activity", ~(Delta~Abs~"470nm"~mg~prot^-1~min^-1), sep=""))) +
   scale_color_manual(values=c(color.scheme.immuno),
                      name= "Symbiont:Site",
                      breaks=break.points.immuno,
@@ -1634,7 +1645,7 @@ CAT.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=CAT, group=int, color=i
   scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1.5) +
   coord_cartesian(ylim=c(0, 500)) +
-  ylab(expression(paste("CAT activity", ~(min^-1~mg~prot^-1), sep="")))+
+  ylab(expression(paste("CAT activity", ~(mu*mol~"H"[2]~"O"[2]~scavenged~mg~prot^-1~min^-1), sep="")))+
   scale_color_manual(values=c(color.scheme.immuno),
                      name= "Symbiont:Site",
                      breaks=break.points.immuno,
@@ -1650,7 +1661,7 @@ SOD.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=SOD/10^3, group=int, co
   scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1.5) +
   coord_cartesian(ylim=c(10, 40)) +
-  ylab(expression(paste("SOD activity", ~(x10^3~mg~prot^-1), sep=""))) +
+  ylab(expression(paste("SOD activity", ~(Units~SOD~mg~prot^-1), sep=""))) +
   scale_color_manual(values=c(color.scheme.immuno),
                      name= "Symbiont:Site",
                      breaks=break.points.immuno,
@@ -1672,7 +1683,7 @@ fig.legend.phys<-ggplot(data=fig.df.phys, aes(x=Period, y=zoox, group=int, color
                      name= "Symbiont:Site",
                      breaks=break.points,
                      labels=legend.names) +
-  scale_linetype_manual(values=c(0,0,0,0,1,3,1,3),
+  scale_linetype_manual(values=c(1,3,1,3),
                      name= "Symbiont:Site",
                      breaks=break.points,
                      labels=legend.names) +
@@ -1686,7 +1697,7 @@ Phys.figs<-plot_grid( (zoox.fig + theme(legend.position = "none")),
            fig.legend.phys,
           labels = c("a", "b", "c", "d", "e",""), ncol = 3, label_size=8)
 Phys.figs
-dev.copy(pdf, "figures/Phys.figs.pdf", encod="MacRoman", height=5, width=8)
+dev.copy(pdf, "figures/Phys.figs.pdf", encod="MacRoman", height=5, width=7)
 dev.off()
 ```
 
