@@ -26,8 +26,8 @@ This project examines the response of coral physiology and immunity to repeated 
       - this data file is the amalgamation of the two .csv files above  
       
  **metadata for data as column-by-column**
-  1.**Gates_Mydlarz_20142016_nolab_ALL_DATA.csv** and also **Gates_Mydlarz_20142016_nolab_physimmun.csv**  
-      *Species* = Montipora capitata  
+  1. **Gates_Mydlarz_20142016_nolab_ALL_DATA.csv** and also **Gates_Mydlarz_20142016_nolab_physimmun.csv**    
+      *Species* = Montipora capitata   
       *Period* = 2014 October, 2015 February, 2015 October, 2016 February 
       *Status* = either bleaching or recovery periods  
       *Site* = Lilipuna or Reef 14  
@@ -39,17 +39,17 @@ This project examines the response of coral physiology and immunity to repeated 
       *cells..ml* = symbiont densities in cells per ml blastate  
       *ug.chla..ml* = μg of chlorophyll a per ml blastate    
       *g.AFDW..ml* = mg of host biomass per ml blastate  
-      *CAT* = μmol H2O2 scavenged mg protein–1 min–1 (slope of change in Abs at 240 nm (0 - 8 min) against μmol H2O2 standard curve) 
+      *CAT* = μmol H2O2 scavenged mg protein–1 min–1 (slope of change in Abs at 240 nm (0 - 8 min) against μmol H2O2 standard curve)  
       *POX* = Δ Abs470 nm mg protein-1 min-1 (slope of change in Abs at 470 nm (0-10 min), normalized to mg protein)  
-      *SOD* = SOD activity units mg protein-1 (% Inhibition of Abs at 450 nm, normalized to mg protein) (1 SOD Unit = 50% inhibition)  
-      *PPO* = Δ Abs490 nm mg protein-1 min-1 (slope of change in Abs 490 (0-15 min normalized to mg protein and time)
-      *MEL* = mg melanin mg tissue-1 (Abs 490 nm, the concentration of melanin determined using a standard curve)
+      *SOD* = SOD activity units mg protein-1 (% Inhibition of Abs at 450 nm, normalized to mg protein) (1 SOD Unit = 50% inhibition)    
+      *PPO* = Δ Abs490 nm mg protein-1 min-1 (slope of change in Abs 490 (0-15 min normalized to mg protein and time)  
+      *MEL* = mg melanin mg tissue-1 (Abs 490 nm, the concentration of melanin determined using a standard curve)  
       *propC* = proportion of community as percentage *Cladocopium*  
       *propD* = proportion of community as percentage *Durusdinium*    
       *syms* = 4 categories of symbiont community: all D, all C, D>C or D<C  
       *dom* = dominant symbiont at > 50% community  
       
-  2.**Gates_Mydlarz_20142016_nolab_qPCR.csv**  
+  2. **Gates_Mydlarz_20142016_nolab_qPCR.csv**  
       *Status* = either bleaching or recovery periods  
       *Year* = 2014, 2015, 2016  
       *Event* = 2014 Bleach, 2015 Bleach, 2015 Recovery, 2016 Recovery  
