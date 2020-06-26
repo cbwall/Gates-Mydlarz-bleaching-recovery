@@ -818,21 +818,21 @@ Raw data from physiological assessments is imported and normalized according to 
 # no lab or pre-2014 data
 # poor data removed prior to import (i.e., negative values in assay)
 
-# all  data from all time points (physio and immuno, qPCR)
-physimmun<-read.csv("data/Gates_Mydlarz_20142016.nolab_physimmun.csv", header=T, na.string=NA) #physimmuno data
+# all  data from all time points (physio and immuno)
+physimmun<-read.csv("data/Gates_Mydlarz_20142016.nolab.recal_physimmun.csv", header=T, na.string=NA)
+
+#qPCR data
 qPCR.data<-read.csv("data/Gates_Mydlarz_20142016_nolab_qPCR.csv", header=T, na.string=NA) #qPCR data
 
-# qPCR data added with immuno, phys
-# no data pre 2014 bleaching
-# negative values (assay NA, low read, outliers) removed
-data<-read.csv("data/Gates_Mydlarz_20142016_nolab_ALL_DATA.csv", header=T, na.string=NA) 
+# merged data with NAs added for blank data, or values <0 (errors)
+data<-read.csv("data/Gates_Mydlarz_20142016.nolab.recal_ALLDATA.csv")
 
 
 ################################################
 # PHYSIOLOGY: calculate, normalize dependent variables
 ################################################
 data$cells..ml<-as.numeric(data$cells..ml)
-data$ID<-as.factor(data$ID)
+data$Sample.ID<-as.factor(data$Sample.ID)
 
 # helpful shorthand
 SA<-data$surface.area.cm2 # surface area in cm2
@@ -859,11 +859,14 @@ data$prot<- (data$mg.prot..ml*blastate)/SA
 # drop unwanted columns by name
 data<-data[!colnames(data) %in% c("total.blastate.ml", "surface.area.cm2", "mg.prot..ml", "cells..ml", "ug.chla..ml", "g.AFDW..ml")]
 
-data<-data[!(data$ID=="N37"), ] # this coral has an NA for symbiont type, remove from df
+data<-data[!(data$dom=="NA"), ] # remove samples that don't have combined DNA + physio/immunity  
 
-# reorder columns to show: hierarchy of structure, physio., immuno., colorimetry
+# reorder columns to show: hierarchy of structure, physio., immuno., DNA
 # this is now the working dataframe
 df<-data[, c(1:6, 16:18,20,19, 7:15)]
+
+write.csv(df, "output/Gates_Mydlarz_20142016_standardized.DF.csv")
+
 
 
 #########################################################
@@ -928,56 +931,14 @@ fig.df.phys<-cbind(zoox.m, zoox.SE[c(5,0)],chla.m[c(5,0)], chla.SE[c(5,0)], chla
 
 colnames(fig.df.phys)<-c("Site","Status", "Period", "dom", "zoox", "zoox.SE", "chla", "chla.SE", "chlacell", "chlacell.SE", "prot", "prot.SE", "AFDW", "AFDW.SE", "N-chla")
 
-# make an interaction column
-fig.df.phys$int<-interaction(fig.df.phys$dom, fig.df.phys$Site)
-fig.df.phys$int<-factor(fig.df.phys$int)
-fig.df.phys$SimpleSite<-c("Lilipuna", "Reef 14")
-####
-#### 
 
 #### immuno dataframe
 fig.df.immuno<-cbind(CAT.m, CAT.SE[c(5,0)], POX.m[c(5,0)], POX.SE[c(5,0)], SOD.m[c(5,0)], SOD.SE[c(5,0)], PPO.m[c(5,0)], PPO.SE[c(5,0)], MEL.m[c(5,0)], MEL.SE[c(5,0)])
 
 colnames(fig.df.immuno)<-c("Site","Status", "Period", "dom", "CAT", "CAT.SE", "POX", "POX.SE", "SOD", "SOD.SE", "PPO", "PPO.SE", "MEL", "MEL.SE")
 
+fig.df.immuno$int<-interaction(fig.df.immuno$dom, fig.df.immuno$Site)
 
-#### Use this code for 'PRE' Site immunity data without symbiont community data
-CAT.m2<-aggregate(CAT~Site+Status+Period,data=df, mean)
-POX.m2<-aggregate(POX~Site+Status+Period,data=df, mean)
-SOD.m2<-aggregate(SOD~Site+Status+Period,data=df, mean)
-PPO.m2<-aggregate(PPO~Site+Status+Period,data=df, mean)
-MEL.m2<-aggregate(MEL~Site+Status+Period,data=df, mean)
-
-### PRE------#### SE immunity
-CAT.SE2<-aggregate(CAT~Site+Status+Period,data=df, std.error)
-POX.SE2<-aggregate(POX~Site+Status+Period,data=df, std.error)
-SOD.SE2<-aggregate(SOD~Site+Status+Period,data=df, std.error)
-PPO.SE2<-aggregate(PPO~Site+Status+Period,data=df, std.error)
-MEL.SE2<-aggregate(MEL~Site+Status+Period,data=df, std.error)
-
-### PRE------#### n immunity (n = 6-8 for PRE-field)
-CAT.2n<-aggregate(CAT~Site+Status+Period,data=df, length)
-POX.2n<-aggregate(POX~Site+Status+Period,data=df, length)
-SOD.2n<-aggregate(SOD~Site+Status+Period,data=df, length)
-PPO.2n<-aggregate(PPO~Site+Status+Period,data=df, length)
-MEL.2n<-aggregate(MEL~Site+Status+Period,data=df, length)
-
-Pre.immuno<-cbind(CAT.m2[c(1:2),], CAT.SE2[c(1:2),4], POX.m2[c(1:2),4], POX.SE2[c(1:2),4], SOD.m2[c(1:2),4], SOD.SE2[c(1:2),4], PPO.m2[c(1:2),4], PPO.SE2[c(1:2),4], MEL.m2[c(1:2),4], MEL.SE2[c(1:2),4])
-colnames(Pre.immuno)<-c("Site","Status", "Period", "CAT", "CAT.SE", "POX", "POX.SE", "SOD", "SOD.SE", "PPO", "PPO.SE", "MEL", "MEL.SE")
-
-##########
-Pre.immuno$dom<-"unident"
-Pre.immuno<-Pre.immuno[, c(1:3, 14, 4:13)]
-
-## now this subset of site means can be overlayed with datafame from Oct 2014- Feb 2016
-fig.df.immuno.comp<-rbind(Pre.immuno, fig.df.immuno)
-
-# make an interaction column
-fig.df.immuno.comp$int<-interaction(fig.df.immuno.comp$dom, fig.df.immuno.comp$Site)
-fig.df.immuno.comp$int<-factor(fig.df.immuno.comp$int)
-fig.df.immuno.comp$SimpleSite<-c("Lilipuna", "Reef 14")
-
-fig.df.immuno.comp$int<-factor(fig.df.immuno.comp$int, levels=c("unident.Lilipuna.Pre", "unident.Reef 14.Pre", "C.Lilipuna", "C.Reef 14", "D.Lilipuna", "D.Reef 14"))
 ```
   
   
@@ -989,7 +950,7 @@ Multivariate non-dimensional scaling (NMDS) plots for the coral physiotype traje
 df.MV<-df
 
 # remove columns unnecessary for final analysis, few factors retained
-df.MV<-df.MV[ , !names(df.MV) %in% c("Species", "Status_Site", "ID", "propC", "propD", "syms")]
+df.MV<-df.MV[ , !names(df.MV) %in% c("Species", "Status_Site", "Sample.ID", "propC", "propD", "syms")]
 
 df.MV$Period.dom<-interaction(df.MV$Period, df.MV$dom)
 
@@ -1111,9 +1072,9 @@ with(plot, lines(NMDS.mean[c(13:16),2], NMDS.mean[c(13:16),3], lwd=1.5, col =col
 # add labels
 text(-0.38, 0.28, "Bleaching \n 2015", cex=0.7, col="gray50")
 text(-0.28, -0.2, "Bleaching \n 2014", cex=0.7, col="gray50")
-text(0.25, -0.1, "Recovery \n 2015", cex=0.7, col="gray50")
+text(0.20, -0.2, "Recovery \n 2015", cex=0.7, col="gray50")
 text(0.07, 0.21, "Recovery \n 2016", cex=0.7, col="gray50")
-text(0.21, -0.32, "2D Stress = 0.21", cex=0.7, col="black")
+text(0.19, -0.30, "2D Stress = 0.22", cex=0.7, col="black")
 legend("topright", legend=groups2, inset=c(0.03, -0.01), x.intersp=0.6, y.intersp=0.9, cex=0.7, pch=16, col=colors, lty=c(1,3,1,3), seg.len=2, pt.cex=1, bty="n")
 
 dev.copy(pdf, "figures/1panel_allNMDS.pdf", height=6, width=6, useDingbats=FALSE)
@@ -1238,7 +1199,7 @@ Manova.R14.lev.dat<-df.MV.noNA %>% # "lev.dat" has levels and data
   filter(Site=="Reef 14") 
 
 # Reef 14 bleaching-recovery1
-Manova.R14.BR1.lev.dat<-Manova.R14.lev.dat %>% # "BR1" is bleachigng and recovery 2014-2015
+Manova.R14.BR1.lev.dat<-Manova.R14.lev.dat %>% # "BR1" is bleaching and recovery 2014-2015
   filter(Period=="2014 Oct" | Period=="2015 Feb") 
 
 # Reef 14 bleaching-recovery2
@@ -1357,7 +1318,7 @@ abline(v = 0, lty = "dotted")
 points(NMDS.plot, "sites", cex=0.8, pch=16, col=MDS.colors[groups])
 ordihull(NMDS.plot, groups=NMDS.df.Lil.BR1$Period.dom, draw="polygon", alpha=100, col=MDS.colors, border=MDS.colors)
 legend("topright", legend=MDS.lev.leg, inset=c(0.7, 0), x.intersp=0.9, y.intersp=1, cex=0.7, pch=16, col=MDS.colors, pt.cex=1, bty="n")
-text(0.35, -0.42, "2D Stress = 0.14", cex=0.7, col="black")
+text(0.35, -0.42, "2D Stress = 0.15", cex=0.7, col="black")
 
 par.new=T
 plot(vars.Lil.BR1, col="black", p.max=0.05, cex=0.8, lwd=1)
@@ -1380,7 +1341,7 @@ abline(v = 0, lty = "dotted")
 points(NMDS.plot, "sites", cex=0.8, pch=16,  col=MDS.colors[groups])
 ordihull(NMDS.plot, groups=NMDS.df.Lil.BR2$Period.dom, draw="polygon", alpha=100, col=MDS.colors, border=MDS.colors)
 legend("topright", legend=MDS.lev.leg, inset=c(0.7, 0), x.intersp=0.9, y.intersp=1, cex=0.7, pch=16, col=MDS.colors, pt.cex=1, bty="n")
-text(0.35, -0.42, "2D Stress = 0.14", cex=0.7, col="black")
+text(0.35, -0.42, "2D Stress = 0.15", cex=0.7, col="black")
 
 par.new=T
 plot(vars.Lil.BR2, col="black", p.max=0.05, cex=0.8, lwd=1)
@@ -1476,7 +1437,7 @@ pd <- position_dodge(0.15) #offset for error bars
 #### graph as category of C/D
 ######################## 
 
-fig.df.phys$int<-factor(fig.df.phys$int, levels=c("C.Lilipuna", "C.Reef 14", "D.Lilipuna", "D.Reef 14"))
+fig.df.phys$int<-interaction(fig.df.phys$dom, fig.df.phys$Site)
 
 
 ########################
@@ -1488,7 +1449,7 @@ fig.df.phys$int<-factor(fig.df.phys$int, levels=c("C.Lilipuna", "C.Reef 14", "D.
 ###################
 # zoox 
 zoox.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=zoox/10^6, group=int, color=int)) + geom_errorbar(aes(ymin=zoox/10^6-zoox.SE/10^6, ymax=zoox/10^6+zoox.SE/10^6), size=.4, width=0, position=pd) + 
-  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
+  geom_line(aes(linetype=Site), position=pd, lwd=0.4) +
   scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1.5, pch=19) +
   coord_cartesian(ylim=c(0, 3)) +
@@ -1505,7 +1466,7 @@ zoox.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=zoox/10^6, group=int, color=i
 
 ########## chla cm2 ############
 chla.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=chla, group=int, color=int)) + geom_errorbar(aes(ymin=chla-chla.SE, ymax=chla+chla.SE), size=.4, width=0, position=pd) +
-  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
+  geom_line(aes(linetype=Site), position=pd, lwd=0.4) +
   scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1.5) +
   coord_cartesian(ylim=c(0, 8)) +
@@ -1521,7 +1482,7 @@ chla.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=chla, group=int, color=int)) 
 
 ########## chla cell ############
 chlacell.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=chlacell, group=int, color=int)) + geom_errorbar(aes(ymin=chlacell-chlacell.SE, ymax=chlacell+chlacell.SE), size=.4, width=0, position=pd) +
-  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
+  geom_line(aes(linetype=Site), position=pd, lwd=0.4) +
   scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1.5) +
   coord_cartesian(ylim=c(0, 8)) +
@@ -1538,7 +1499,7 @@ chlacell.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=chlacell, group=int, colo
 
 ########## protein ############
 prot.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=prot, group=int, color=int)) + geom_errorbar(aes(ymin=prot-prot.SE, ymax=prot+prot.SE), size=.4, width=0, position=pd) +
-  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
+  geom_line(aes(linetype=Site), position=pd, lwd=0.4) +
   scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1.5) +
   coord_cartesian(ylim=c(0.2, 0.7)) +
@@ -1554,7 +1515,7 @@ prot.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=prot, group=int, color=int)) 
 
 ########## AFDW ############
 AFDW.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=AFDW, group=int, color=int)) + geom_errorbar(aes(ymin=AFDW-AFDW.SE, ymax=AFDW+AFDW.SE), size=.4, width=0, position=pd) +
-  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
+  geom_line(aes(linetype=Site), position=pd, lwd=0.4) +
   scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1.5) +
   coord_cartesian(ylim=c(10, 60)) +
@@ -1585,8 +1546,8 @@ axis.labels.immuno<-c("Oct'14 \nBl", "Feb'15 \nRc", "Oct'15 \nBl", "Feb'16 \nRc"
 
 
 ########## Prophenoloxidase (PPO) ############
-PPO.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=PPO, group=int, color=int)) + geom_errorbar(aes(ymin=PPO-PPO.SE, ymax=PPO+PPO.SE), size=.4, width=0, position=pd) +
-  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
+PPO.fig<-ggplot(data=fig.df.immuno, aes(x=Period, y=PPO, group=int, color=int)) + geom_errorbar(aes(ymin=PPO-PPO.SE, ymax=PPO+PPO.SE), size=.4, width=0, position=pd) +
+  geom_line(aes(linetype=Site), position=pd, lwd=0.4) +
   scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1.5) +
   coord_cartesian(ylim=c(0, 2)) +
@@ -1600,16 +1561,9 @@ PPO.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=PPO, group=int, color=i
   Fig.formatting
 
 
-### Melanin ###
-MEL.lab<-aggregate(MEL~Site+Status+Period,data=data, mean)
-MEL.labSE<-aggregate(MEL~Site+Status+Period,data=data, std.error)
-MEL.df<-cbind(MEL.lab, MEL.labSE[c(4,0)]); colnames(MEL.df[,4:5])<-c("MEL", "MEL.labSE")
-MEL.df$Period<-factor(MEL.df$Period, levels=c("2014 Field.Feb", "2014 Lab", "2014 Oct", "2015 Feb", "2015 Oct", "2016 Feb"))
-
-
 ######## Melanin (MEL) #############
-MEL.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=MEL, group=int, color=int)) + geom_errorbar(aes(ymin=MEL-MEL.SE, ymax=MEL+MEL.SE), size=.4, width=0, position=pd) +
-  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
+MEL.fig<-ggplot(data=fig.df.immuno, aes(x=Period, y=MEL, group=int, color=int)) + geom_errorbar(aes(ymin=MEL-MEL.SE, ymax=MEL+MEL.SE), size=.4, width=0, position=pd) +
+  geom_line(aes(linetype=Site), position=pd, lwd=0.4) +
   scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1.5) +
   coord_cartesian(ylim=c(0, 0.02)) +
@@ -1624,8 +1578,8 @@ MEL.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=MEL, group=int, color=i
 
 
 ########## Peroxidase (POX) ##############
-POX.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=POX, group=int, color=int)) + geom_errorbar(aes(ymin=POX-POX.SE, ymax=POX+POX.SE), size=.4, width=0, position=pd) +
-  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
+POX.fig<-ggplot(data=fig.df.immuno, aes(x=Period, y=POX, group=int, color=int)) + geom_errorbar(aes(ymin=POX-POX.SE, ymax=POX+POX.SE), size=.4, width=0, position=pd) +
+  geom_line(aes(linetype=Site), position=pd, lwd=0.4) +
   scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1.5) +
   coord_cartesian(ylim=c(0, 1.25)) +
@@ -1640,11 +1594,11 @@ POX.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=POX, group=int, color=i
 
 
 ###### Catalase (CAT) ########
-CAT.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=CAT, group=int, color=int)) + geom_errorbar(aes(ymin=CAT-CAT.SE, ymax=CAT+CAT.SE), size=.4, width=0, position=pd) +
-  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
+CAT.fig<-ggplot(data=fig.df.immuno, aes(x=Period, y=CAT, group=int, color=int)) + geom_errorbar(aes(ymin=CAT-CAT.SE, ymax=CAT+CAT.SE), size=.4, width=0, position=pd) +
+  geom_line(aes(linetype=Site), position=pd, lwd=0.4) +
   scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1.5) +
-  coord_cartesian(ylim=c(0, 500)) +
+  coord_cartesian(ylim=c(0, 4.5)) +
   ylab(expression(paste("CAT activity", ~(mu*mol~"H"[2]~"O"[2]~scavenged~mg~prot^-1~min^-1), sep="")))+
   scale_color_manual(values=c(color.scheme.immuno),
                      name= "Symbiont:Site",
@@ -1656,12 +1610,12 @@ CAT.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=CAT, group=int, color=i
 
 
 ######### Superoxide dismutase (SOD) ########
-SOD.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=SOD/10^3, group=int, color=int)) + geom_errorbar(aes(ymin=SOD/10^3-SOD.SE/10^3, ymax=SOD/10^3+SOD.SE/10^3), size=.4, width=0, position=pd) +
-  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
+SOD.fig<-ggplot(data=fig.df.immuno, aes(x=Period, y=SOD, group=int, color=int)) + geom_errorbar(aes(ymin=SOD-SOD.SE, ymax=SOD+SOD.SE), size=.4, width=0, position=pd) +
+  geom_line(aes(linetype=Site), position=pd, lwd=0.4) +
   scale_linetype_manual(values=c("solid", "longdash"))+
   geom_point(position=pd, size=1.5) +
-  coord_cartesian(ylim=c(10, 40)) +
-  ylab(expression(paste("SOD activity", ~(Units~SOD~mg~prot^-1), sep=""))) +
+  coord_cartesian(ylim=c(200, 800)) +
+  ylab(expression(paste("SOD activity", ~(U~SOD~mg~prot^-1), sep=""))) +
   scale_color_manual(values=c(color.scheme.immuno),
                      name= "Symbiont:Site",
                      breaks=break.points.immuno,
@@ -1675,7 +1629,7 @@ The combined plots for physiology and immunity data.
 ```{r, physiology figures, fig.align='center', results="hide", fig.dim=c(8,5), fig.cap="**Supplementary Figure 2.** Physiological metrics for *M. capitata* corals dominated dominated by *Cladocopium* sp. or *Durusdinium* sp. symbionts (C or D) from two reefs in Kāne‘ohe Bay during repeated bleaching and recovery periods."}
 
 # legend plot
-fig.legend.phys<-ggplot(data=fig.df.phys, aes(x=Period, y=zoox, group=int, color=int, linetype=int)) +
+fig.legend<-ggplot(data=fig.df.phys, aes(x=Period, y=zoox, group=int, color=int, linetype=int)) +
   geom_line() +
   geom_point(position=pd, size=3) +
   coord_cartesian(ylim=c(0, 1)) +
@@ -1694,39 +1648,24 @@ Phys.figs<-plot_grid( (zoox.fig + theme(legend.position = "none")),
            (chlacell.fig + theme(legend.position = "none")), 
            (prot.fig+ theme(legend.position = "none")),
            (AFDW.fig+ theme(legend.position = "none")),
-           fig.legend.phys,
+           fig.legend,
           labels = c("a", "b", "c", "d", "e",""), ncol = 3, label_size=8)
 Phys.figs
-dev.copy(pdf, "figures/Phys.figs.pdf", encod="MacRoman", height=5, width=7)
+dev.copy(pdf, "figures/Phys.figs.pdf", encod="MacRoman", height=6, width=8)
 dev.off()
 ```
 
 ```{r, immunity figures, fig.align='center', results="hide", fig.dim=c(8,5), fig.cap="**Supplementary Figure 3.** Immunity metrics for *M. capitata* corals dominated dominated by *Cladocopium* sp. or *Durusdinium* sp. symbionts (C or D) from two reefs in Kāne‘ohe Bay during repeated bleaching and recovery periods."}
-
-fig.legend.immun<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=SOD, group=int, color=int, linetype=int)) +
-  geom_point(position=pd, size=3) +
-  geom_line() +
-  coord_cartesian(ylim=c(0, 1)) +
-  scale_color_manual(values=c(color.scheme.immuno),
-                     name= "Symbiont:Site",
-                     breaks=break.points.immuno,
-                     labels=legend.names.immuno) +
-  scale_linetype_manual(values=c(0,0,1,3,1,3),
-                     name= "Symbiont:Site",
-                     breaks=break.points.immuno,
-                     labels=legend.names.immuno) +
-  theme_void()
-
 
 Immuno.figs<-plot_grid( (MEL.fig + theme(legend.position = "none")),
            (PPO.fig + theme(legend.position = "none")), 
            (POX.fig+ theme(legend.position = "none")),
            (CAT.fig+ theme(legend.position = "none")),
            SOD.fig + theme(legend.position = "none"),
-           fig.legend.immun,
+           fig.legend,
           labels = c("a", "b", "c", "d", "e",""), ncol = 3, label_size=8)
 Immuno.figs
-dev.copy(pdf, "figures/Immuno.figs.pdf", encod="MacRoman", height=5, width=8)
+dev.copy(pdf, "figures/Immuno.figs.pdf", encod="MacRoman", height=6, width=8)
 dev.off()
 
 ```
@@ -1765,7 +1704,7 @@ for(i in c(7:16)){
 }
 
 # need BoxCox transformation for most immuno data
-Yx<-(model.data$AFDW) 
+Yx<-(model.data$chlacell) 
 
 ### test with transformations
 boxcox(Yx~Period*Site*dom, data=model.data, lambda=seq(-0.25, 1, length=10))
