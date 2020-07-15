@@ -24,6 +24,7 @@ knitr::opts_chunk$set(warning=FALSE, message=FALSE, fig.align='center')
 
 ## load packages
 library(lmerTest)
+library(naniar)
 library(multcomp)
 library(lmtest)
 library(lme4)
@@ -859,7 +860,7 @@ data$prot<- (data$mg.prot..ml*blastate)/SA
 # drop unwanted columns by name
 data<-data[!colnames(data) %in% c("total.blastate.ml", "surface.area.cm2", "mg.prot..ml", "cells..ml", "ug.chla..ml", "g.AFDW..ml")]
 
-data<-data[!(data$dom=="NA"), ] # remove samples that don't have combined DNA + physio/immunity  
+data<-data[!(data$dom=="NA"), ] # remove samples that don't have combined DNA + physio/immunity 
 
 # reorder columns to show: hierarchy of structure, physio., immuno., DNA
 # this is now the working dataframe
@@ -1006,7 +1007,7 @@ MetaMDS stressplot(NMDS.Lil.BR2)
 allNMDS<-metaMDS(resp.fullNMDS, distance='bray', k=2, trymax=100) 
 
 stressplot(allNMDS)
-dev.print(pdf, "output/AllNMDS.stressplot.pdf", height=5, width=5)
+dev.print(pdf, "output/Trajectory.NMDS.stressplot.pdf", height=5, width=5)
 
 ``` 
   
@@ -1718,6 +1719,8 @@ full<-lm(Yx~Period*Site*dom, data=model.data, na.action=na.exclude)
   hist(R, xlab="Residuals")
 
 ##### revised model.data (below are data needing transformations)
+model.data$chlacell<-(model.data$chlacell)^0.25
+
 model.data$AFDW<-(model.data$AFDW)^0.25
 model.data$CAT<-(model.data$CAT)^0.5
 model.data$POX<-(model.data$POX)^0.25
@@ -1740,6 +1743,7 @@ full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
 #summary(full)
 print(Anova(full, type=2), digits=4)
 
+## if want p values for comparisons, lsmeans(full, pairwise~Period)
 posthoc<-lsmeans(full, ~Period)
 multcomp::cld(posthoc, Letters=letters)
 
@@ -1784,21 +1788,19 @@ models and post-hoc comparisons
 # chlacell ---- 
 Y<-model.data$chlacell
 full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
+
 ##summary(full)
 print(Anova(full, type=2), digits=4)
 
 posthoc<-lsmeans(full, ~Period)
 multcomp::cld(posthoc, Letters=letters)
 
-posthoc<-lsmeans(full, ~Site)
-multcomp::cld(posthoc, Letters=letters)
-
 posthoc<-lsmeans(full, ~dom)
 multcomp::cld(posthoc, Letters=letters)
 
-posthoc<-lsmeans(full, ~dom|Period)
+posthoc<-lsmeans(full, ~Period|dom)
 multcomp::cld(posthoc, Letters=letters)
-plot(allEffects(full), ylab="AFDW", par.strip.text=list(cex=0.7))
+plot(allEffects(full), ylab="chlacell", par.strip.text=list(cex=0.7))
 ```
 
 **Protein cm^-2^**  
@@ -1844,7 +1846,7 @@ models and post-hoc comparisons
 Y<-model.data$MEL
 full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
 #summary(full)
-print(Anova(full, type=2), digits=4)
+print(Anova(full, type=2), digits=6)
 
 posthoc<-lsmeans(full, ~Period)
 multcomp::cld(posthoc, Letters=letters)
@@ -1875,24 +1877,6 @@ plot(allEffects(full), ylab="PPO", par.strip.text=list(cex=0.7))
 ```
 
 
-**Peroxidase (POX)**  
-models and post-hoc comparisons
-```{r POX model, warning=FALSE, message=FALSE}
-# POX ---- 
-Y<-model.data$POX
-full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
-#summary(full)
-print(Anova(full, type=2), digits=4)
-
-posthoc<-lsmeans(full, ~Period)
-multcomp::cld(posthoc, Letters=letters)
-
-posthoc<-lsmeans(full, ~dom|Period)
-multcomp::cld(posthoc, Letters=letters)
-
-plot(allEffects(full), ylab="POX", par.strip.text=list(cex=0.7))
-```
-
 **Catalase (CAT)**  
 models and post-hoc comparisons
 ```{r CAT Model, warning=FALSE, message=FALSE}
@@ -1919,7 +1903,30 @@ posthoc<-lsmeans(full, ~Site|Period)
 multcomp::cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="CAT", par.strip.text=list(cex=0.7))
 ```
+  
+  
+**Peroxidase (POX)**  
+models and post-hoc comparisons
+```{r POX model, warning=FALSE, message=FALSE}
+# POX ---- 
+Y<-model.data$POX
+full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
+#summary(full)
+print(Anova(full, type=2), digits=4)
 
+posthoc<-lsmeans(full, ~Period)
+multcomp::cld(posthoc, Letters=letters)
+
+posthoc<-lsmeans(full, ~Site)
+multcomp::cld(posthoc, Letters=letters)
+
+
+posthoc<-lsmeans(full, ~dom|Period)
+multcomp::cld(posthoc, Letters=letters)
+
+plot(allEffects(full), ylab="POX", par.strip.text=list(cex=0.7))
+```
+  
 **Superoxide dismutase (SOD)**  
 models and post-hoc comparisons
 ```{r SOD model, warning=FALSE, message=FALSE}
