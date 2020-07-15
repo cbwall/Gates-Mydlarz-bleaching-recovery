@@ -17,11 +17,11 @@ This project examines the response of coral physiology and immunity to repeated 
      - html output from data analysis in Rmd. Download this file and open in browser to view html (can't open with GitHub).
       
 #### data  <.csvs>
-  - Gates_Mydlarz_20142016_nolab_physimmun.csv  
-      - the physiology and immunity data  
+  - Gates_Mydlarz_20142016.nolab.recal_physimmun.csv  
+      - the physiology and immunity data, recalibrated and using only field samples
   - Gates_Mydlarz_20142016_nolab_qPCR.csv  
       - qPCR data for symbiont community  
-  - Gates_Mydlarz_20142016_nolab_ALL_DATA.csv  
+  - Gates_Mydlarz_20142016.nolab.recal_ALLDATA.csv  
       - the master datasheet of physiology, immunity, and Symbiodiniaceae community  
       - this data file is the amalgamation of the two .csv files above  
       
@@ -74,7 +74,6 @@ This project examines the response of coral physiology and immunity to repeated 
       *dom* = dominant symbiont at > 50%  
         
       
-      
   - ecology <subfolder>
       - benthic data from reef surveys from 2014-2016
       
@@ -88,16 +87,24 @@ This project examines the response of coral physiology and immunity to repeated 
       
    - qPCR <subfolder>
       - this folder has the 12 raw .txt files used in script to determine symbiont community
+ 
+   - recal immunity <subfolder>
+      - raw data for immunity and antioxidant calculations
+ 
+   - unmodified dataframes <subfolder>
+      - old dataframes previously used in 1st round of review
      
 #### figures <folder>
    - exported figures during code execution
    - 'pau published' = final versions formatted for journal
-   
-#### manuscript
-   - Online Supplement.pdf for manuscript 
-   - Table 1_Permanova.pdf is formatted table for manuscript
       
 #### output
   - additional figures and products exported during analyses (primarily in degree heating weeks calculations)
+  - 4.panel.NMDS.stress.pdf  = 2D stress plots for 4 panel NMDS used in Figure 4
+  - annual.temps.csv = annual temps for degree heating week (DHW) calculations
+  - Gates_Mydlarz_20142016_standardized.DF.csv = standardized dataframe used in figure generation (code for standardization in Rmd)
+  - KBay.DHW.csv = DHW datframe by half-week dates
+  - KBay.DHWplot.png = plot of DHW
+  - Trajectory.NMDS.stressplot.pdf = 2D stress plot for NMDS used in Figure 3
 
 
