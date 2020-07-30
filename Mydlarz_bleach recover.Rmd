@@ -1004,7 +1004,7 @@ MetaMDS stressplot(NMDS.Lil.BR2)
 ```{r, full NMDS stress, results='hide', message=FALSE, fig.dim=c(6,6)}
 
 ###
-allNMDS<-metaMDS(resp.fullNMDS, distance='bray', k=2, trymax=100) 
+allNMDS<-metaMDS(resp.fullNMDS, distance='euclidean', k=2, trymax=100) 
 
 stressplot(allNMDS)
 dev.print(pdf, "output/Trajectory.NMDS.stressplot.pdf", height=5, width=5)
@@ -1038,7 +1038,7 @@ colors=c(
 
 ### 
 
-plot<-ordiplot(allNMDS, type="n", cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.3, 0.3))
+plot<-ordiplot(allNMDS, type="n", cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8) #ylim=c(-0.3, 0.3))
 axis(side = 1, labels = FALSE)
 abline(h = 0, lty = "dotted")
 abline(v = 0, lty = "dotted")
@@ -1071,11 +1071,11 @@ with(plot, lines(NMDS.mean[c(9:12),2], NMDS.mean[c(9:12),3], lwd=1.5, col =color
 with(plot, lines(NMDS.mean[c(13:16),2], NMDS.mean[c(13:16),3], lwd=1.5, col =colors[4], lty=1))# R14 D
 
 # add labels
-text(-0.38, 0.28, "Bleaching \n 2015", cex=0.7, col="gray50")
-text(-0.28, -0.2, "Bleaching \n 2014", cex=0.7, col="gray50")
-text(0.20, -0.2, "Recovery \n 2015", cex=0.7, col="gray50")
-text(0.07, 0.21, "Recovery \n 2016", cex=0.7, col="gray50")
-text(0.19, -0.30, "2D Stress = 0.22", cex=0.7, col="black")
+text(-0.14, -0.05, "Bleaching \n 2014", cex=0.7, col="gray50")
+text(-0.14, 0.12, "Bleaching \n 2015", cex=0.7, col="gray50")
+text(0.14, 0.05, "Recovery \n 2015", cex=0.7, col="gray50")
+text(0.06, -0.07, "Recovery \n 2016", cex=0.7, col="gray50")
+text(0.12, -0.12, "2D Stress = 0.20", cex=0.7, col="black")
 legend("topright", legend=groups2, inset=c(0.03, -0.01), x.intersp=0.6, y.intersp=0.9, cex=0.7, pch=16, col=colors, lty=c(1,3,1,3), seg.len=2, pt.cex=1, bty="n")
 
 dev.copy(pdf, "figures/execute code/1panel_allNMDS.pdf", height=6, width=6, useDingbats=FALSE)
@@ -1089,8 +1089,8 @@ The physiotypes of corals in multivariate traitspace. Here are the **four panel 
 **code** for NMDS analysis separated by sites in each time period.
 ```{r, NMDS separated by sites, fig.show='hide', results='hide', message=FALSE}
 ########## ########## ########## ########## ########## 
- ########## ########## ########## ########## ########## 
 ########## ########## ########## ########## ########## 
+########## ########## ########## ########## ##########  
 
 # for 4 panel NMDS separated by site and B-R periods
 ## build Manova dataframes 
@@ -1141,7 +1141,7 @@ MVA.Lilipuna.BR1<-adonis2(Manova.Lil.BR1.dat.scaled~Period*dom, data=Manova.Lil.
                           permutations=1000, method="euclidian")
 
 ## NMDS plots
-NMDS.Lil.BR1<-metaMDS(Manova.Lil.BR1.dat, distane='bray', k=2, trymax=100) 
+NMDS.Lil.BR1<-metaMDS(Manova.Lil.BR1.dat, distane='euclidian', k=2, trymax=100) 
 stressplot(NMDS.Lil.BR1, main="Lilipuna 2014-2015")
 
 factor.df.Lil.BR1<-Manova.Lil.BR1.lev.dat %>% 
@@ -1171,7 +1171,7 @@ MVA.Lilipuna.BR2<-adonis2(Manova.Lil.BR2.dat.scaled~Period*dom, data=Manova.Lil.
                           permutations=1000, method="euclidian")
 
 ## NMDS
-NMDS.Lil.BR2<-metaMDS(Manova.Lil.BR2.dat, distane='bray', k=2, trymax=100) 
+NMDS.Lil.BR2<-metaMDS(Manova.Lil.BR2.dat, distane='euclidian', k=2, trymax=100) 
 stressplot(NMDS.Lil.BR2, main="Lilipuna 2015-2016")
 
 factor.df.Lil.BR2<-Manova.Lil.BR2.lev.dat %>% 
@@ -1234,7 +1234,7 @@ MVA.R14.BR1<-adonis2(Manova.R14.BR1.dat.scaled~Period*dom, data=Manova.R14.BR1.l
                 method="euclidian")
 
 ## NMDS
-NMDS.R14.BR1<-metaMDS(Manova.R14.BR1.dat, distane='bray', k=2, trymax=100) 
+NMDS.R14.BR1<-metaMDS(Manova.R14.BR1.dat, distane='euclidian', k=2, trymax=100) 
 stressplot(NMDS.R14.BR1, main="Reef 14 2014-2015")
 
 factor.df.R14.BR1<-Manova.R14.BR1.lev.dat %>% 
@@ -1264,7 +1264,7 @@ MVA.R14.BR2<-adonis2(Manova.R14.BR2.dat.scaled~Period*dom, data=Manova.R14.BR2.l
                 method="euclidean")
 
 ## NMDS
-NMDS.R14.BR2<-metaMDS(Manova.R14.BR2.dat, distane='bray', k=2, trymax=100) 
+NMDS.R14.BR2<-metaMDS(Manova.R14.BR2.dat, distane='euclidian', k=2, trymax=100) 
 stressplot(NMDS.R14.BR2,main="Reef 14 2015-2016")
 
 factor.df.R14.BR2<-Manova.R14.BR2.lev.dat %>% 
@@ -1828,6 +1828,9 @@ Y<-model.data$AFDW
 full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
 #summary(full)
 print(Anova(full, type=2), digits=4)
+
+posthoc<-lsmeans(full, ~Period)
+multcomp::cld(posthoc, Letters=letters)
 
 posthoc<-lsmeans(full, ~Site|Period)
 multcomp::cld(posthoc, Letters=letters)
