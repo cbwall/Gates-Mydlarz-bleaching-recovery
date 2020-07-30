@@ -5,9 +5,7 @@ This project examines the response of coral physiology and immunity to repeated 
 ### Folders
 - data
 - figures
-- manuscript
 - output
-- scripts
 - tables
 
 #### R Markdown files 
@@ -95,18 +93,21 @@ This project examines the response of coral physiology and immunity to repeated 
    - unmodified dataframes <subfolder>
       - old dataframes previously used in 1st round of review
      
-#### figures <folder>
-   - exported figures during code execution
-   - 'Main text figures' = final versions of main text figures formatted for journal
-   - 'Suppl figures' = final versions of supplemental text figures formatted for journal
+#### figures <folder>  
+   - exported figures during code execution  
+   - 'Main text figures' = final versions of main text figures formatted for journal  
+   - 'Suppl figures' = final versions of supplemental text figures formatted for journal  
       
 #### output
-  - additional figures and products exported during analyses (primarily in degree heating weeks calculations)
-  - 4.panel.NMDS.stress.pdf  = 2D stress plots for 4 panel NMDS used in Figure 4
-  - annual.temps.csv = annual temps for degree heating week (DHW) calculations
-  - Gates_Mydlarz_20142016_standardized.DF.csv = standardized dataframe used in figure generation (code for standardization in Rmd)
-  - KBay.DHW.csv = DHW datframe by half-week dates
-  - KBay.DHWplot.png = plot of DHW
-  - Trajectory.NMDS.stressplot.pdf = 2D stress plot for NMDS used in Figure 3
+  - additional figures and products exported during analyses (primarily in degree heating weeks calculations)  
+  - 4.panel.NMDS.stress.pdf  = 2D stress plots for 4 panel NMDS used in Figure 4  
+  - annual.temps.csv = annual temps for degree heating week (DHW) calculations  
+  - Gates_Mydlarz_20142016_standardized.DF.csv = standardized dataframe used in figure generation (code for standardization in Rmd)  
+  - KBay.DHW.csv = DHW datframe by half-week dates  
+  - KBay.DHWplot.png = plot of DHW 
+  - Trajectory.NMDS.stressplot.pdf = 2D stress plot for NMDS used in Figure 3  
+      
+#### tables
+  - formatted stats tables for the manuscript
 
 
