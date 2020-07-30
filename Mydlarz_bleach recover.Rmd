@@ -66,7 +66,7 @@ library(RVAideMemoire)
 
 <center>  
   
-![**Figure 1.**. Multivariate analyses of organisms and their response to environmental change and a conceptual diagram of coral physiology and immunity responses during heat stress.](figures/Fig 1. Infographic_traits and immuno_alt color.jpg){ width=80%}
+![**Figure 1.**. Multivariate analyses of organisms and their response to environmental change and a conceptual diagram of coral physiology and immunity responses during heat stress.](figures/execute code/Fig 1. Infographic_traits and immuno_alt color.jpg){ width=80%}
   
 </center>  
   
@@ -80,7 +80,7 @@ Thermal stress is challenging corals and their capacity to cope with and survive
  
 <center>  
   
-![**Figure 2 (partial).** A bleached *Montipora capitata* coral. (PC: CB Wall)](figures/Montipora bleached.jpg){ width=30%}
+![**Figure 2 (partial).** A bleached *Montipora capitata* coral. (PC: CB Wall)](figures/execute code/Montipora bleached.jpg){ width=30%}
   
 </center>  
   
@@ -440,7 +440,7 @@ with(na.omit(data.frame(date=Rf14_mean4$Date, mean=rollmean(Rf14_mean4$mean, k, 
 # with(na.omit(data.frame(date=Rf14_mean5$Date, mean=rollmean(Rf14_mean5$mean, k, fill=NA))), { 
 # lines(date, mean, col=reefcols2[2], lwd=1.2) })
 
-dev.copy(pdf, "figures/Temp.2014_2016_col.pdf", width=7, height=3)
+dev.copy(pdf, "figures/execute code/Temp.2014_2016_col.pdf", width=7, height=3)
 dev.off()
 
 temp.plot <- recordPlot() # records the plot for later
@@ -475,7 +475,7 @@ plot(mean ~ Date, Temp.event2, type="l", cex.lab=0.6, cex.axis=0.6, ylim=c(21, 3
 abline(v=Temp.event2[Temp.event2$Date=="2015-10-12",1], col = "gray80", lwd=1, lty=2) 
 abline(v=Temp.event2[Temp.event2$Date=="2016-02-26",1], col = "gray80", lwd=1, lty=2)
 
-dev.copy(pdf, "figures/Temp.AnnualHeating_col.pdf", width=7, height=3)
+dev.copy(pdf, "figures/execute code/Temp.AnnualHeating_col.pdf", width=7, height=3)
 dev.off()
 ```
 
@@ -635,7 +635,7 @@ with(na.omit(data.frame(date=Rf14.L3$Date, dli=rollmean(Rf14.L3$dli, k, fill=NA)
 with(na.omit(data.frame(date=Rf14.L4$Date, dli=rollmean(Rf14.L4$dli, k, fill=NA))), lines(date, dli, col=reefcols2[2], lwd=lwd))
 legend("topright", lty=1, col=c(reefcols2[c(1,2)]), legend=c("Lilipuna", "Reef 14"), seg.len= 1.2, cex=0.8, y.intersp=1.2, x.intersp = 0.8, lwd=2, bty="n")
 
-dev.copy(pdf, "figures/PAR.pdf", width=7, height=3)
+dev.copy(pdf, "figures/execute code/PAR.pdf", width=7, height=3)
 dev.off()
 ```
 
@@ -757,7 +757,7 @@ Ecol.Fig<-plot_grid(FigMC, FigBlMC,
 Ecol.Fig
 
 ##### save the figure and export to directory? ####
-dev.copy(pdf, "figures/Ecol.Fig_col.pdf", width=7, height=4)
+dev.copy(pdf, "figures/execute code/Ecol.Fig_col.pdf", width=7, height=4)
 dev.off()
 ```
   
@@ -1078,7 +1078,7 @@ text(0.07, 0.21, "Recovery \n 2016", cex=0.7, col="gray50")
 text(0.19, -0.30, "2D Stress = 0.22", cex=0.7, col="black")
 legend("topright", legend=groups2, inset=c(0.03, -0.01), x.intersp=0.6, y.intersp=0.9, cex=0.7, pch=16, col=colors, lty=c(1,3,1,3), seg.len=2, pt.cex=1, bty="n")
 
-dev.copy(pdf, "figures/1panel_allNMDS.pdf", height=6, width=6, useDingbats=FALSE)
+dev.copy(pdf, "figures/execute code/1panel_allNMDS.pdf", height=6, width=6, useDingbats=FALSE)
 dev.off() 
 
 ```
@@ -1392,7 +1392,7 @@ plot(vars.R14.BR2, col="black", p.max=0.05, cex=0.8, lwd=1)
 
 
 
-dev.copy(pdf, "figures/4panel_NMDS.pdf", height=6, width=7, useDingbats=FALSE)
+dev.copy(pdf, "figures/execute code/4panel_NMDS.pdf", height=6, width=7, useDingbats=FALSE)
 dev.off() 
 ```
 
@@ -1652,7 +1652,7 @@ Phys.figs<-plot_grid( (zoox.fig + theme(legend.position = "none")),
            fig.legend,
           labels = c("a", "b", "c", "d", "e",""), ncol = 3, label_size=8)
 Phys.figs
-dev.copy(pdf, "figures/Phys.figs.pdf", encod="MacRoman", height=6, width=8)
+dev.copy(pdf, "figures/execute code/Phys.figs.pdf", encod="MacRoman", height=6, width=8)
 dev.off()
 ```
 
@@ -1666,7 +1666,7 @@ Immuno.figs<-plot_grid( (MEL.fig + theme(legend.position = "none")),
            fig.legend,
           labels = c("a", "b", "c", "d", "e",""), ncol = 3, label_size=8)
 Immuno.figs
-dev.copy(pdf, "figures/Immuno.figs.pdf", encod="MacRoman", height=6, width=8)
+dev.copy(pdf, "figures/execute code/Immuno.figs.pdf", encod="MacRoman", height=6, width=8)
 dev.off()
 
 ```
@@ -1950,6 +1950,6 @@ Taking into account the observed patterns for bleaching and recovery in *M. capi
 
 <center>  
   
-![**Figure 5.**.  Schematic of coral responses to repeated bleaching and recovery.](figures/Fig 5. schematic4panel.jpg){ width=100%}
+![**Figure 5.**.  Schematic of coral responses to repeated bleaching and recovery.](figures/execute code/Fig 5. schematic4panel.jpg){ width=100%}
   
 </center>  
