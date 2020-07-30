@@ -8,6 +8,7 @@ This project examines the response of coral physiology and immunity to repeated 
 - manuscript
 - output
 - scripts
+- tables
 
 #### R Markdown files 
  - Mydlarz_bleach recover.proj -- R project for R studio
@@ -96,7 +97,8 @@ This project examines the response of coral physiology and immunity to repeated 
      
 #### figures <folder>
    - exported figures during code execution
-   - 'pau published' = final versions formatted for journal
+   - 'Main text figures' = final versions of main text figures formatted for journal
+   - 'Suppl figures' = final versions of supplemental text figures formatted for journal
       
 #### output
   - additional figures and products exported during analyses (primarily in degree heating weeks calculations)
