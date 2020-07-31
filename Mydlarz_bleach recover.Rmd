@@ -1141,7 +1141,7 @@ MVA.Lilipuna.BR1<-adonis2(Manova.Lil.BR1.dat.scaled~Period*dom, data=Manova.Lil.
                           permutations=1000, method="euclidian")
 
 ## NMDS plots
-NMDS.Lil.BR1<-metaMDS(Manova.Lil.BR1.dat, distane='euclidian', k=2, trymax=100) 
+NMDS.Lil.BR1<-metaMDS(Manova.Lil.BR1.dat, distance='euclidian', k=2, trymax=100) 
 stressplot(NMDS.Lil.BR1, main="Lilipuna 2014-2015")
 
 factor.df.Lil.BR1<-Manova.Lil.BR1.lev.dat %>% 
@@ -1171,7 +1171,7 @@ MVA.Lilipuna.BR2<-adonis2(Manova.Lil.BR2.dat.scaled~Period*dom, data=Manova.Lil.
                           permutations=1000, method="euclidian")
 
 ## NMDS
-NMDS.Lil.BR2<-metaMDS(Manova.Lil.BR2.dat, distane='euclidian', k=2, trymax=100) 
+NMDS.Lil.BR2<-metaMDS(Manova.Lil.BR2.dat, distance='euclidian', k=2, trymax=100) 
 stressplot(NMDS.Lil.BR2, main="Lilipuna 2015-2016")
 
 factor.df.Lil.BR2<-Manova.Lil.BR2.lev.dat %>% 
@@ -1234,7 +1234,7 @@ MVA.R14.BR1<-adonis2(Manova.R14.BR1.dat.scaled~Period*dom, data=Manova.R14.BR1.l
                 method="euclidian")
 
 ## NMDS
-NMDS.R14.BR1<-metaMDS(Manova.R14.BR1.dat, distane='euclidian', k=2, trymax=100) 
+NMDS.R14.BR1<-metaMDS(Manova.R14.BR1.dat, distance='euclidian', k=2, trymax=100) 
 stressplot(NMDS.R14.BR1, main="Reef 14 2014-2015")
 
 factor.df.R14.BR1<-Manova.R14.BR1.lev.dat %>% 
@@ -1264,7 +1264,7 @@ MVA.R14.BR2<-adonis2(Manova.R14.BR2.dat.scaled~Period*dom, data=Manova.R14.BR2.l
                 method="euclidean")
 
 ## NMDS
-NMDS.R14.BR2<-metaMDS(Manova.R14.BR2.dat, distane='euclidian', k=2, trymax=100) 
+NMDS.R14.BR2<-metaMDS(Manova.R14.BR2.dat, distance='euclidian', k=2, trymax=100) 
 stressplot(NMDS.R14.BR2,main="Reef 14 2015-2016")
 
 factor.df.R14.BR2<-Manova.R14.BR2.lev.dat %>% 
@@ -1312,14 +1312,14 @@ MDS.lev.leg<-c("C-Bleach '14", "D-Bleach '14", "C-Recov '15", "D-Recov '15")
 MDS.colors<-c("lightpink", "slategray1", "firebrick3", "dodgerblue3")
 
 ### 
-NMDS.plot<-ordiplot(NMDS.Lil.BR1, type="n", main=substitute(paste("Lilipuna")), cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.4, 0.4), xlim=c(-0.6, 0.5), xaxt="n", xlab="")
+NMDS.plot<-ordiplot(NMDS.Lil.BR1, type="n", main=substitute(paste("Lilipuna")), cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.15, 0.15), xlim=c(-0.2, 0.2), xaxt="n", xlab="")
 axis(side = 1, labels = FALSE, tck = -0.05)
 abline(h = 0, lty = "dotted")
 abline(v = 0, lty = "dotted")
 points(NMDS.plot, "sites", cex=0.8, pch=16, col=MDS.colors[groups])
 ordihull(NMDS.plot, groups=NMDS.df.Lil.BR1$Period.dom, draw="polygon", alpha=100, col=MDS.colors, border=MDS.colors)
-legend("topright", legend=MDS.lev.leg, inset=c(0.7, 0), x.intersp=0.9, y.intersp=1, cex=0.7, pch=16, col=MDS.colors, pt.cex=1, bty="n")
-text(0.35, -0.42, "2D Stress = 0.15", cex=0.7, col="black")
+legend("topright", legend=MDS.lev.leg, inset=c(0.75, 0), x.intersp=0.9, y.intersp=1, cex=0.7, pch=16, col=MDS.colors, pt.cex=1, bty="n")
+text(0.15, -0.15, "2D Stress = 0.13", cex=0.7, col="black")
 
 par.new=T
 plot(vars.Lil.BR1, col="black", p.max=0.05, cex=0.8, lwd=1)
@@ -1335,14 +1335,14 @@ groups<-NMDS.df.Lil.BR2$Period.dom
 MDS.lev.leg<-c("C-Bleach '15", "D-Bleach '15", "C-Recov '16", "D-Recov '16")
 MDS.colors<-c("lightpink", "slategray1", "firebrick3", "dodgerblue3")
 
-NMDS.plot<-ordiplot(NMDS.Lil.BR2, type="n", cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.4, 0.4), xlim=c(-0.6, 0.5))
+NMDS.plot<-ordiplot(NMDS.Lil.BR2, type="n", cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.15, 0.15), xlim=c(-0.2, 0.2))
 axis(side = 2, labels = FALSE, tck = -0.05)
 abline(h = 0, lty = "dotted")
 abline(v = 0, lty = "dotted")
 points(NMDS.plot, "sites", cex=0.8, pch=16,  col=MDS.colors[groups])
 ordihull(NMDS.plot, groups=NMDS.df.Lil.BR2$Period.dom, draw="polygon", alpha=100, col=MDS.colors, border=MDS.colors)
-legend("topright", legend=MDS.lev.leg, inset=c(0.7, 0), x.intersp=0.9, y.intersp=1, cex=0.7, pch=16, col=MDS.colors, pt.cex=1, bty="n")
-text(0.35, -0.42, "2D Stress = 0.15", cex=0.7, col="black")
+legend("topright", legend=MDS.lev.leg, inset=c(0.75, 0), x.intersp=0.9, y.intersp=1, cex=0.7, pch=16, col=MDS.colors, pt.cex=1, bty="n")
+text(0.15, -0.15, "2D Stress = 0.14", cex=0.7, col="black")
 
 par.new=T
 plot(vars.Lil.BR2, col="black", p.max=0.05, cex=0.8, lwd=1)
@@ -1358,14 +1358,14 @@ groups<-NMDS.df.R14.BR1$Period.dom
 MDS.lev.leg<-c("C-Bleach '14", "D-Bleach '14", "C-Recov '15", "D-Recov '15")
 MDS.colors<-c("lightpink", "slategray1", "firebrick2", "dodgerblue2")
 
-NMDS.plot<-ordiplot(NMDS.R14.BR1, type="n", main=substitute(paste("Reef 14")), cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.4, 0.4), xlim=c(-0.6, 0.5), yaxt="n", ylab="", xaxt="n", xlab="")
+NMDS.plot<-ordiplot(NMDS.R14.BR1, type="n", main=substitute(paste("Reef 14")), cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.15, 0.15), xlim=c(-0.2, 0.2), yaxt="n", ylab="", xaxt="n", xlab="")
 axis(side = 1, labels = FALSE, tck = -0.05)
 axis(side = 2, labels = FALSE, tck = -0.05)
 abline(h = 0, lty = "dotted")
 abline(v = 0, lty = "dotted")
 points(NMDS.plot, "sites", cex=0.8, pch=16,  col=MDS.colors[groups])
 ordihull(NMDS.plot, groups=NMDS.df.R14.BR1$Period.dom, draw="polygon", alpha=100, col=MDS.colors, border=MDS.colors)
-text(0.35, -0.42, "2D Stress = 0.16", cex=0.7, col="black")
+text(0.15, -0.15, "2D Stress = 0.13", cex=0.7, col="black")
 par.new=T
 plot(vars.R14.BR1, col="black", p.max=0.05, cex=0.8, lwd=1)
 
@@ -1379,13 +1379,13 @@ groups<-NMDS.df.R14.BR2$Period.dom
 MDS.lev.leg<-c("C-Bleach '15", "D-Bleach '15", "C-Recov '16", "D-Recov '16")
 MDS.colors<-c("lightpink", "slategray1", "firebrick2", "dodgerblue2")
 
-NMDS.plot<-ordiplot(NMDS.R14.BR2, type="n", cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.4, 0.4), xlim=c(-0.6, 0.5), yaxt="n", ylab="")
+NMDS.plot<-ordiplot(NMDS.R14.BR2, type="n", cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.15, 0.15), xlim=c(-0.2, 0.2), yaxt="n", ylab="")
 axis(side = 2, labels = FALSE, tck = -0.05)
 abline(h = 0, lty = "dotted")
 abline(v = 0, lty = "dotted")
 points(NMDS.plot, "sites", cex=0.8, pch=16,  col=MDS.colors[groups])
 ordihull(NMDS.plot, groups=NMDS.df.R14.BR2$Period.dom, draw="polygon", alpha=100, col=MDS.colors, border=MDS.colors)
-text(0.35, -0.42, "2D Stress = 0.20", cex=0.7, col="black")
+text(0.15, -0.15, "2D Stress = 0.19", cex=0.7, col="black")
 
 par.new=T
 plot(vars.R14.BR2, col="black", p.max=0.05, cex=0.8, lwd=1)
