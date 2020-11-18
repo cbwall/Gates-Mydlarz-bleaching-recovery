@@ -1,7 +1,7 @@
 ---
 title: "Repeat bleaching effects on coral physiotypes"
 author: "CB Wall, and co-authors"
-date: "3/1/2020"
+date: "8/1/2020"
 output:
   html_document:
     code_folding: hide
@@ -15,7 +15,7 @@ editor_options:
   chunk_output_type: inline
 ---
   
-Wall CB, Ricci CA, Wen AD, Ledbetter BE, Klinger DE, Mydlarz LD, Gates RD, Putnam HM. Repeat bleaching drives coral physiotypes by environmental legacies and cellular memory. *(submitted Nature Climate Change)*  
+Wall CB, Ricci CA, Wen AD, Ledbetter BE, Klinger DE, Mydlarz LD, Gates RD, Putnam HM. Shifting Baselines: Repeat bleaching drives coral physiological legacy and cellular memory. *(submitted Functional Ecology)*  
   
 ```{r setup, message=FALSE, warning=FALSE, echo=FALSE}
 require("knitr")
@@ -24,6 +24,7 @@ knitr::opts_chunk$set(warning=FALSE, message=FALSE, fig.align='center')
 
 ## load packages
 library(lmerTest)
+library(naniar)
 library(multcomp)
 library(lmtest)
 library(lme4)
@@ -65,7 +66,7 @@ library(RVAideMemoire)
 
 <center>  
   
-![**Figure 1.**. Multivariate analyses of organisms and their response to environmental change and a conceptual diagram of coral physiology and immunity responses during heat stress.](figures/Fig 1. Infographic_traits and immuno_alt color.jpg){ width=80%}
+![**Figure 1.**. Multivariate analyses of organisms and their response to environmental change and a conceptual diagram of coral physiology and immunity responses during heat stress.](figures/execute code/Fig 1. Infographic_traits and immuno_alt color.jpg){ width=80%}
   
 </center>  
   
@@ -79,7 +80,7 @@ Thermal stress is challenging corals and their capacity to cope with and survive
  
 <center>  
   
-![**Figure 2 (partial).** A bleached *Montipora capitata* coral. (PC: CB Wall)](figures/Montipora bleached.jpg){ width=30%}
+![**Figure 2 (partial).** A bleached *Montipora capitata* coral. (PC: CB Wall)](figures/execute code/Montipora bleached.jpg){ width=30%}
   
 </center>  
   
@@ -383,20 +384,21 @@ KBay.DHW <- data.frame(half.wk.dates)
 # Calculate the DHW using rollapply, summing across a 12 week window (k=24 half weeks). Multiply value by 0.5 to get DHW
 KBay.DHW$DHW<-(rollapply(hotspot.20142016$hotspot, width=k, by=1, sum, fill=c(NA,NA,NA), align="right",partial=FALSE)*0.5)
 
+#set NA to zero for DHW
+KBay.DHW[is.na(KBay.DHW)] <- 0
+
 write.csv(KBay.DHW, "output/KBay.DHW.csv")
 
-plot(KBay.DHW$half.wk.dates, KBay.DHW$DHW, type="l", xlab="Time", ylab=paste(expression("DHW (°C)")), col="red")
-dev.copy(png, "output/KBay.DHWplot.png")
-dev.off()
+#plot(KBay.DHW$half.wk.dates, KBay.DHW$DHW, type="l", xlab="Time", ylab=paste(expression("DHW (°C)")), col="red")
 ```
 
 Temperature plots for logger temp at each site (color, top) and temperatures for the 2 bleachin years (2014-2015) (2015-2016).   These plots, along with the benthic data (futher down) constitute **Figure 1**.
-```{r, temp and light plot, message=FALSE, results="hide", fig.dim=c(7,3), fig.show='hold', fig.cap="**Figure 1 (partial)**. Temperatures in Kāne'ohe Bay and the two reefs sites during repeated bleaching and recovery periods"}
+```{r, temp plot, message=FALSE, results="hide", fig.dim=c(7,3), fig.show='hold', fig.cap="**Figure 1 (partial)**. Temperatures in Kāne'ohe Bay and the two reefs sites during repeated bleaching and recovery periods"}
 
 #######################
 # Plot temp. daily mean temperatures for each reef
 #######################
-# Temperature and light data analysis ------
+# Temperature  data analysis ------
 reefcolsBW <- c("gray60", "gray35")
 reefcols2 <- c("mediumseagreen", "lightskyblue")
 
@@ -436,10 +438,8 @@ with(na.omit(data.frame(date=Rf14_mean3$Date, mean=rollmean(Rf14_mean3$mean, k, 
 with(na.omit(data.frame(date=Rf14_mean4$Date, mean=rollmean(Rf14_mean4$mean, k, fill=NA))), { 
   lines(date, mean, col=reefcols2[2], lwd=lwd)
 })
-# with(na.omit(data.frame(date=Rf14_mean5$Date, mean=rollmean(Rf14_mean5$mean, k, fill=NA))), { 
-# lines(date, mean, col=reefcols2[2], lwd=1.2) })
 
-dev.copy(pdf, "figures/Temp.2014_2016_col.pdf", width=7, height=3)
+dev.copy(pdf, "figures/execute code/Temp.2014_2016_col.pdf", width=7, height=3)
 dev.off()
 
 temp.plot <- recordPlot() # records the plot for later
@@ -449,7 +449,7 @@ temp.plot <- recordPlot() # records the plot for later
 # Annual heating and cooling 
 ###########################
 
-# Temperature and light data analysis ------
+# Temperature analysis ------
 
 #### Temperature plot
 # limit dates
@@ -459,9 +459,13 @@ Temp.event2<-annual.day.temps[(annual.day.temps$Date>= "2015-01-01"),]
 annual.color <- c("gray59", "black")
 par(mfrow=c(1,1), mar=c(2,4,2,1), mgp=c(2,0.5,0))
 
+#add DHW for same periods
+KBay.DHW.2014<-KBay.DHW[(KBay.DHW$half.wk.dates< "2015-03-01 00:00:00"),]
+KBay.DHW.2015<-KBay.DHW[(KBay.DHW$half.wk.dates> "2015-01-01 00:00:00"),]
+
 ### 2014-bleaching
 k=1; lwd=0.7 # k-day moving averages
-plot(mean ~ Date, Temp.event1, type="l", ylab="Mean daily temp. (°C)", cex.lab=0.6, cex.axis=0.6, ylim=c(21, 31), xlab="", xaxt="n", col=annual.color[1])
+plot(mean ~ Date, Temp.event1, type="l", ylab="Mean daily temp. (°C)", cex.lab=0.6, cex.axis=0.6, ylim=c(19, 31), xlab="", xaxt="n", col=annual.color[1])
 axis.Date(1, at=seq(min(Temp.event1$Date), max(Temp.event1$Date), by="3 mon"),
           format="%b", cex.axis=0.6, cex.lab=0.6)
 abline(v=Temp.event1[Temp.event1$Date=="2014-10-10",1], col = "black", lwd=1, lty=2)
@@ -470,11 +474,23 @@ legend("topleft", lty=1, col=annual.color, legend=c("2014-bleaching", "2015-blea
 
 ### 2015 bleaching
 par(new=T)
-plot(mean ~ Date, Temp.event2, type="l", cex.lab=0.6, cex.axis=0.6, ylim=c(21, 31), xlab="", xaxt="n", ylab="", col=annual.color[2])
+plot(mean ~ Date, Temp.event2, type="l", cex.lab=0.6, cex.axis=0.6, ylim=c(19, 31), xlab="", xaxt="n", ylab="", col=annual.color[2])
 abline(v=Temp.event2[Temp.event2$Date=="2015-10-12",1], col = "gray80", lwd=1, lty=2) 
 abline(v=Temp.event2[Temp.event2$Date=="2016-02-26",1], col = "gray80", lwd=1, lty=2)
 
-dev.copy(pdf, "figures/Temp.AnnualHeating_col.pdf", width=7, height=3)
+# add DHW 2014
+par(new=T)
+plot(KBay.DHW.2014$half.wk.dates, KBay.DHW.2014$DHW, type="l", lty=1, xaxt = "n", yaxt = "n",
+     ylab="",xlab="", col="gray80", ylim=c(0,20))
+
+# add DHW 2015
+par(new=T)
+plot(KBay.DHW.2015$half.wk.dates, KBay.DHW.2015$DHW, type="l", lty=1, xaxt = "n", yaxt = "n",
+     ylab="",xlab="", col="black", ylim=c(0,20))
+axis(side=4, cex.axis=0.6)
+mtext("DHW (°C)", side=4, cex=0.6)
+
+dev.copy(pdf, "figures/execute code/Temp.AnnualHeating_col2.pdf", width=7, height=4)
 dev.off()
 ```
 
@@ -634,7 +650,7 @@ with(na.omit(data.frame(date=Rf14.L3$Date, dli=rollmean(Rf14.L3$dli, k, fill=NA)
 with(na.omit(data.frame(date=Rf14.L4$Date, dli=rollmean(Rf14.L4$dli, k, fill=NA))), lines(date, dli, col=reefcols2[2], lwd=lwd))
 legend("topright", lty=1, col=c(reefcols2[c(1,2)]), legend=c("Lilipuna", "Reef 14"), seg.len= 1.2, cex=0.8, y.intersp=1.2, x.intersp = 0.8, lwd=2, bty="n")
 
-dev.copy(pdf, "figures/PAR.pdf", width=7, height=3)
+dev.copy(pdf, "figures/execute code/PAR.pdf", width=7, height=3)
 dev.off()
 ```
 
@@ -704,7 +720,7 @@ df.fig<-df.fig %>% mutate(
 ########################
 ## color palettes ######
 ########################
-reefcols <- c("gray60", "gray35")
+reefcols2 <- c("mediumseagreen", "lightskyblue")
 ecol.labs<-c("Oct'14 \nBl","Feb'15 \nRc","Oct'15 \nBl", "Feb'16 \nRc")
 
 text.formatting<-theme_classic() + 
@@ -718,6 +734,20 @@ text.formatting<-theme_classic() +
 pd <- position_dodge(0.15) #offset for error bars
 
 ##############
+# all corals
+Fig.cor <- ggplot(data=df.fig, aes(x=Period, y=coral.cover,  group=Site, color=Site)) +
+  geom_errorbar(aes(ymin=coral.cover-coral.SD, ymax= coral.cover+coral.SD), width=0, position=pd) +
+  geom_line(position=pd, size=.6) +
+  geom_point(position=pd, size=1) +
+  ylab("% benthic cover") +
+  scale_color_manual(values=reefcols2) +
+  ggtitle(expression(bold(paste(~"Coral cover"), sep=""))) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_y_continuous(limits=c(0,1.05),oob = rescale_none)+ 
+  scale_x_discrete(name ="Year and Period", 
+      labels=ecol.labs)+
+  text.formatting
+
 # MC corals
 FigMC <- ggplot(df.fig, aes(x=Period, y=MC, group=Site, color=Site)) + 
   geom_errorbar(aes(ymin=MC-MCSD, ymax= MC+MCSD), width=0, position=pd) +
@@ -745,18 +775,25 @@ FigBlMC <- ggplot(df.fig, aes(x=Period, y=totalMC.bleach, group=Site, color=Site
   scale_x_discrete(name ="Year and Period", 
       labels=ecol.labs)+ text.formatting
 
+
+# get legend
+ecol.legend<-get_legend(FigBlMC)
+
 ############
 ############
 #export figures
 
 #############
 # color figures all corals
-Ecol.Fig<-plot_grid(FigMC, FigBlMC,
-     labels=c('b', 'c'), label_size=8, hjust=-3, vjust= 3, ncol=2, nrow=1);
+Ecol.Fig<-plot_grid(Fig.cor + theme(legend.position = "none"),
+                    FigMC + theme(legend.position = "none"), 
+                    FigBlMC + theme(legend.position = "none"),
+                    ecol.legend,
+     labels=c('a', 'b', 'c', ""), label_size=8, hjust=-3, vjust= 3, ncol=4, nrow=1, rel_widths = c(1,1,1,0.3))
 Ecol.Fig
 
 ##### save the figure and export to directory? ####
-dev.copy(pdf, "figures/Ecol.Fig_col.pdf", width=7, height=4)
+dev.copy(pdf, "figures/execute code/Ecol.Fig_col2.pdf", width=7, height=4)
 dev.off()
 ```
   
@@ -773,16 +810,26 @@ The **first table output** shows the effects of bleaching on *total Montipora co
 
 # dataframe is 'ecology'
 
+  
+################
+# total  cover
+################
+ecology.bl.df<-ecology[(ecology$Status=="Bleaching"),]
+ecology.rec.df<-ecology[(ecology$Status=="Recovery"),]
+
+kruskal.test(coral.cover ~ Period, data = ecology) # Period effect
+kruskal.test(coral.cover ~ Period, data = ecology.bl.df) # bleaching different between 2 BL periods
+kruskal.test(coral.cover ~ Period, data = ecology.rec.df) # NO different between 2 REC periods
+kruskal.test(coral.cover ~ Site, data = ecology) # no Site effect
+
 ################
 # total MC cover
 ################
+kruskal.test(MC ~ Period, data = ecology) # Period effect
+kruskal.test(MC ~ Period, data = ecology.bl.df) # bleaching different between 2 BL periods
+kruskal.test(MC ~ Period, data = ecology.rec.df) # different between 2 REC periods
+kruskal.test(MC ~ Site, data = ecology) # no Site effect
 
-MC.cover.mod<-lm(asin(sqrt(MC))~Period*Site, data=ecology)
-anova(MC.cover.mod)
-
-posthoc<-lsmeans(MC.cover.mod, ~Site|Period)
-contrast(posthoc)
-multcomp::cld(posthoc, Letters=letters)
 ```
     
     
@@ -792,16 +839,14 @@ The **second table output** shows the effects of bleaching on *BLEACHED Montipor
 ################
 # bleached MC
 ################
+kruskal.test(total.MC.bleach ~ Period, data = ecology) # Period effect
+kruskal.test(total.MC.bleach ~ Period, data = ecology.bl.df) # bleaching different between 2 BL periods
+kruskal.test(total.MC.bleach ~ Period, data = ecology.rec.df) # no diff
 
-MC.bleach.mod<-lm(total.MC.bleach~Period*Site, data=ecology)
-anova(MC.bleach.mod)
+kruskal.test(total.MC.bleach ~ Site, data = ecology) #  Site effect
+kruskal.test(total.MC.bleach ~ Site, data = ecology.bl.df) #  Site effect
+kruskal.test(total.MC.bleach ~ Site, data = ecology.rec.df) #  Site effect
 
-posthoc<-lsmeans(MC.bleach.mod, ~Site)
-contrast(posthoc)
-multcomp::cld(posthoc, Letters=letters)
-
-posthoc<-lsmeans(MC.bleach.mod, ~Site|Period)
-multcomp::cld(posthoc, Letters=letters)
 ```
 
 
@@ -815,18 +860,24 @@ Raw data from physiological assessments is imported and normalized according to 
 ###########################################################################
 
 ### data file
-# all lab data from all time points (physio and immuno, PLUS color analysis)
-physimmun<-read.csv("data/Gates_Mydlarz_20142016_physimmun.csv", header=T, na.string=NA) #physimmuno data
-qPCR.data<-read.csv("data/Gates_Mydlarz_20142016_qPCR.csv", header=T, na.string=NA) #qPCR data
+# no lab or pre-2014 data
+# poor data removed prior to import (i.e., negative values in assay)
 
-data<-read.csv("data/Gates_Mydlarz_20142016_ALL_DATA.csv", header=T, na.string=NA) #qPCR data
+# all  data from all time points (physio and immuno)
+physimmun<-read.csv("data/Gates_Mydlarz_20142016.nolab.recal_physimmun.csv", header=T, na.string=NA)
+
+#qPCR data
+qPCR.data<-read.csv("data/Gates_Mydlarz_20142016_nolab_qPCR.csv", header=T, na.string=NA) #qPCR data
+
+# merged data with NAs added for blank data, or values <0 (errors)
+data<-read.csv("data/Gates_Mydlarz_20142016.nolab.recal_ALLDATA.csv")
 
 
 ################################################
 # PHYSIOLOGY: calculate, normalize dependent variables
 ################################################
 data$cells..ml<-as.numeric(data$cells..ml)
-data$ID<-as.factor(data$ID)
+data$Sample.ID<-as.factor(data$Sample.ID)
 
 # helpful shorthand
 SA<-data$surface.area.cm2 # surface area in cm2
@@ -853,26 +904,14 @@ data$prot<- (data$mg.prot..ml*blastate)/SA
 # drop unwanted columns by name
 data<-data[!colnames(data) %in% c("total.blastate.ml", "surface.area.cm2", "mg.prot..ml", "cells..ml", "ug.chla..ml", "g.AFDW..ml")]
 
-data<-data[!(data$ID=="N37"), ] # this coral has an NA for symbiont type, remove from df
+data<-data[!(data$dom=="NA"), ] # remove samples that don't have combined DNA + physio/immunity 
 
-# reorder columns to show: hierarchy of structure, physio., immuno., colorimetry
+# reorder columns to show: hierarchy of structure, physio., immuno., DNA
 # this is now the working dataframe
 df<-data[, c(1:6, 16:18,20,19, 7:15)]
 
-# remove negative values for MEL and POX and
-df$MEL[df$MEL <= 0]<- NA
-df$MEL[df$MEL > 0.05]<- NA
+write.csv(df, "output/Gates_Mydlarz_20142016_standardized.DF.csv")
 
-df$POX[df$POX <= 0]<- NA
-df$CAT[df$CAT <= 0]<- NA
-df$PPO[df$PPO <= 0]<- NA
-
-
-df$chlacell[df$chlacell >= 10]<- NA # removing 2 outliers
-df$CAT[df$CAT >= 900]<- NA # 2 outliers removed
-
-# don't need "Ramp" lab data, this was lab thermally stressed. Remove this.
-df<-df[!(df$Status=="Lab-Ramp"),]
 
 
 #########################################################
@@ -937,56 +976,14 @@ fig.df.phys<-cbind(zoox.m, zoox.SE[c(5,0)],chla.m[c(5,0)], chla.SE[c(5,0)], chla
 
 colnames(fig.df.phys)<-c("Site","Status", "Period", "dom", "zoox", "zoox.SE", "chla", "chla.SE", "chlacell", "chlacell.SE", "prot", "prot.SE", "AFDW", "AFDW.SE", "N-chla")
 
-# make an interaction column
-fig.df.phys$int<-interaction(fig.df.phys$dom, fig.df.phys$Site)
-fig.df.phys$int<-factor(fig.df.phys$int)
-fig.df.phys$SimpleSite<-c("Lilipuna", "Reef 14")
-####
-#### 
 
 #### immuno dataframe
 fig.df.immuno<-cbind(CAT.m, CAT.SE[c(5,0)], POX.m[c(5,0)], POX.SE[c(5,0)], SOD.m[c(5,0)], SOD.SE[c(5,0)], PPO.m[c(5,0)], PPO.SE[c(5,0)], MEL.m[c(5,0)], MEL.SE[c(5,0)])
 
 colnames(fig.df.immuno)<-c("Site","Status", "Period", "dom", "CAT", "CAT.SE", "POX", "POX.SE", "SOD", "SOD.SE", "PPO", "PPO.SE", "MEL", "MEL.SE")
 
+fig.df.immuno$int<-interaction(fig.df.immuno$dom, fig.df.immuno$Site)
 
-#### Use this code for 'PRE' Site immunity data without symbiont community data
-CAT.m2<-aggregate(CAT~Site+Status+Period,data=df, mean)
-POX.m2<-aggregate(POX~Site+Status+Period,data=df, mean)
-SOD.m2<-aggregate(SOD~Site+Status+Period,data=df, mean)
-PPO.m2<-aggregate(PPO~Site+Status+Period,data=df, mean)
-MEL.m2<-aggregate(MEL~Site+Status+Period,data=df, mean)
-
-### PRE------#### SE immunity
-CAT.SE2<-aggregate(CAT~Site+Status+Period,data=df, std.error)
-POX.SE2<-aggregate(POX~Site+Status+Period,data=df, std.error)
-SOD.SE2<-aggregate(SOD~Site+Status+Period,data=df, std.error)
-PPO.SE2<-aggregate(PPO~Site+Status+Period,data=df, std.error)
-MEL.SE2<-aggregate(MEL~Site+Status+Period,data=df, std.error)
-
-### PRE------#### n immunity (n = 6-8 for PRE-field)
-CAT.2n<-aggregate(CAT~Site+Status+Period,data=df, length)
-POX.2n<-aggregate(POX~Site+Status+Period,data=df, length)
-SOD.2n<-aggregate(SOD~Site+Status+Period,data=df, length)
-PPO.2n<-aggregate(PPO~Site+Status+Period,data=df, length)
-MEL.2n<-aggregate(MEL~Site+Status+Period,data=df, length)
-
-Pre.immuno<-cbind(CAT.m2[c(1:2),], CAT.SE2[c(1:2),4], POX.m2[c(1:2),4], POX.SE2[c(1:2),4], SOD.m2[c(1:2),4], SOD.SE2[c(1:2),4], PPO.m2[c(1:2),4], PPO.SE2[c(1:2),4], MEL.m2[c(1:2),4], MEL.SE2[c(1:2),4])
-colnames(Pre.immuno)<-c("Site","Status", "Period", "CAT", "CAT.SE", "POX", "POX.SE", "SOD", "SOD.SE", "PPO", "PPO.SE", "MEL", "MEL.SE")
-
-##########
-Pre.immuno$dom<-"unident"
-Pre.immuno<-Pre.immuno[, c(1:3, 14, 4:13)]
-
-## now this subset of site means can be overlayed with datafame from Oct 2014- Feb 2016
-fig.df.immuno.comp<-rbind(Pre.immuno, fig.df.immuno)
-
-# make an interaction column
-fig.df.immuno.comp$int<-interaction(fig.df.immuno.comp$dom, fig.df.immuno.comp$Site)
-fig.df.immuno.comp$int<-factor(fig.df.immuno.comp$int)
-fig.df.immuno.comp$SimpleSite<-c("Lilipuna", "Reef 14")
-
-fig.df.immuno.comp$int<-factor(fig.df.immuno.comp$int, levels=c("unident.Lilipuna.Pre", "unident.Reef 14.Pre", "C.Lilipuna", "C.Reef 14", "D.Lilipuna", "D.Reef 14"))
 ```
   
   
@@ -998,13 +995,11 @@ Multivariate non-dimensional scaling (NMDS) plots for the coral physiotype traje
 df.MV<-df
 
 # remove columns unnecessary for final analysis, few factors retained
-df.MV<-df.MV[ , !names(df.MV) %in% c("Species", "Status_Site", "ID", "propC", "propD", "syms")]
+df.MV<-df.MV[ , !names(df.MV) %in% c("Species", "Status_Site", "Sample.ID", "propC", "propD", "syms")]
 
 df.MV$Period.dom<-interaction(df.MV$Period, df.MV$dom)
 
 # remove prior-to-bleaching timepoints and unused levels that arise from this action
-df.MV<-df.MV[(!df.MV$Period=="2014 Lab"),] 
-df.MV<-df.MV[(!df.MV$Period=="2014 Field.Feb"),]
 df.MV$Period<-droplevels(df.MV$Period) 
 df.MV$Status<-droplevels(df.MV$Status)
 df.MV$Period.dom<-droplevels(df.MV$Period.dom)
@@ -1015,8 +1010,10 @@ df.MV.noNA<-df.MV %>% drop_na()
   
 #### Coral trajectories  
 The trajectories of corals in multivariate traitspace. Here is the **single panel NMDS** for Lilipuna and Reef 14 corals dominated by C- or D-symbionts through the 4 periods of bleaching and recovery.  
+
+Note that all PERMANOVA is performed on centered and scaled dataframes using Euclidian distance. NMDS ordination in 'metaMDS' automatically performs wisconsin(sqrt('response')) for metrics, using euclidean distance, preferred for non-ecological data.
   
-**PERMANOVA output** here is from adonis2 with a scaled and cnetered matrix.  
+**PERMANOVA output** this is from adonis2, with a scaled and centered matrix.  
 ```{r, PERMANOVA, message=FALSE}
 # cleaned data for full dataframe NMDS (Site, Period, dom)
 
@@ -1036,7 +1033,7 @@ all.Manova
 
 ## **not used**
 ##### test dispersion using PERMDISP
-disp <- betadisper(vegdist(resp.fullNMDS.scaled, method = "euclidian"), fac.fullNMDS$Period)
+#disp <- betadisper(vegdist(resp.fullNMDS.scaled, method = "euclidian"), fac.fullNMDS$Period)
 
 #test for overall differences
 #anova(disp)
@@ -1046,12 +1043,16 @@ disp <- betadisper(vegdist(resp.fullNMDS.scaled, method = "euclidian"), fac.full
 ```
   
 **NMDS trait space trajectory** 
-First showing the observed dissimilarily and fit of NMDS  in stress lot
+First showing the observed dissimilarily and fit of NMDS  in stress lot.  
+MetaMDS stressplot(NMDS.Lil.BR2)
 ```{r, full NMDS stress, results='hide', message=FALSE, fig.dim=c(6,6)}
 
 ###
-allNMDS<-metaMDS(resp.fullNMDS, distance='bray', k=2, trymax=100) 
+allNMDS<-metaMDS(resp.fullNMDS, distance='euclidean', k=2, trymax=100) 
+
 stressplot(allNMDS)
+dev.print(pdf, "output/Trajectory.NMDS.stressplot.pdf", height=5, width=5)
+
 ``` 
   
 ...now the 4 part convex hulls for coral trajectories.
@@ -1069,6 +1070,37 @@ colnames(allNMDS.df)[1:2]<-c("MDS1", "MDS2")
 #centroid means
 NMDS.mean=aggregate(allNMDS.df[,1:2],list(group=allNMDS.df$Period.Site.dom), mean)
 
+
+########## control plot of centroid distance
+
+NMDS.mean.period=aggregate(allNMDS.df[,1:2],list(group=allNMDS.df$Period), mean)
+# a2 + b2 = c2. Distance is (|x1|+|x2|)^2 + sqrt(|y1|+|y2|)^2 = sqrt(c)
+B1.R1<- sqrt(
+          (abs(NMDS.mean.period[1,2]) + abs(NMDS.mean.period[2,2]))^2 + #x
+          (abs(NMDS.mean.period[1,3]) + abs(NMDS.mean.period[2,3]))^2)  #y
+
+R1.B2<- sqrt(
+          (abs(NMDS.mean.period[2,2]) + abs(NMDS.mean.period[3,2]))^2 + #x
+          (abs(NMDS.mean.period[2,3]) + abs(NMDS.mean.period[3,3]))^2)  #y
+
+B2.R3<- sqrt(
+          (abs(NMDS.mean.period[3,2]) + abs(NMDS.mean.period[4,2]))^2 + #x
+          (abs(NMDS.mean.period[3,3]) + abs(NMDS.mean.period[4,3]))^2)  #y
+
+centroid.dist<-c(B1.R1,R1.B2,B2.R3)
+time=c("B1-R1", "R1-B2", "B2-R2")
+control.plot<-as.data.frame(cbind(centroid.dist,time))
+control.plot$centroid.dist=as.character(control.plot$centroid.dist)
+control.plot$time<-factor(control.plot$time, levels=c("B1-R1", "R1-B2", "B2-R2"))
+
+#### mean period control plot
+plot(control.plot$centroid.dist~control.plot$time, type='b', ylim=c(-0.05,0.15), col="orchid", pch=16,
+     xlab="time", xaxt="n", ylab="centroid distance", cex.axis=0.8)
+axis(1, at=control.plot$time, labels=control.plot$time, cex.axis=0.8, cex=0.8)
+abline(h = 0, lty = "dotted")
+
+
+
 ############### All groups NMDS
 fullNMDS$Period.Site.dom<-droplevels(fullNMDS$Period.Site.dom)
 groups<-fullNMDS$Period.Site.dom
@@ -1079,33 +1111,124 @@ colors=c(
   "steelblue1", # D Lilipuna
   "steelblue3") # D Reef 14
 
+#####  control plots, try for each level
+LilC<-NMDS.mean[1:4,]
+R14C<-NMDS.mean[5:8,]
+LilD<-NMDS.mean[9:12,]
+R14D<-NMDS.mean[13:16,]
+
+## LilC
+LilC.1<- sqrt(
+          (abs(LilC[1,2]) + abs(LilC[2,2]))^2 + #x
+          (abs(LilC[1,3]) + abs(LilC[2,3]))^2)  #y
+LilC.2<- sqrt(
+          (abs(LilC[2,2]) + abs(LilC[3,2]))^2 + #x
+          (abs(LilC[2,3]) + abs(LilC[3,3]))^2)  #y
+LilC.3<- sqrt(
+          (abs(LilC[3,2]) + abs(LilC[4,2]))^2 + #x
+          (abs(LilC[3,3]) + abs(LilC[4,3]))^2)  #y
+LilC.centroid.dist<-c(LilC.1,LilC.2,LilC.3)
+
+
+## R14C
+R14C.1<- sqrt(
+          (abs(R14C[1,2]) + abs(R14C[2,2]))^2 + #x
+          (abs(R14C[1,3]) + abs(R14C[2,3]))^2)  #y
+R14C.2<- sqrt(
+          (abs(R14C[2,2]) + abs(R14C[3,2]))^2 + #x
+          (abs(R14C[2,3]) + abs(R14C[3,3]))^2)  #y
+R14C.3<- sqrt(
+          (abs(R14C[3,2]) + abs(R14C[4,2]))^2 + #x
+          (abs(R14C[3,3]) + abs(R14C[4,3]))^2)  #y
+R14C.centroid.dist<-c(R14C.1,R14C.2,R14C.3)
+
+
+## LilD
+LilD.1<- sqrt(
+          (abs(LilD[1,2]) + abs(LilD[2,2]))^2 + #x
+          (abs(LilD[1,3]) + abs(LilD[2,3]))^2)  #y
+LilD.2<- sqrt(
+          (abs(LilD[2,2]) + abs(LilD[3,2]))^2 + #x
+          (abs(LilD[2,3]) + abs(LilD[3,3]))^2)  #y
+LilD.3<- sqrt(
+          (abs(LilD[3,2]) + abs(LilD[4,2]))^2 + #x
+          (abs(LilD[3,3]) + abs(LilD[4,3]))^2)  #y
+LilD.centroid.dist<-c(LilD.1,LilD.2,LilD.3)
+
+
+## R14D
+R14D.1<- sqrt(
+          (abs(R14D[1,2]) + abs(R14D[2,2]))^2 + #x
+          (abs(R14D[1,3]) + abs(R14D[2,3]))^2)  #y
+R14D.2<- sqrt(
+          (abs(R14D[2,2]) + abs(R14D[3,2]))^2 + #x
+          (abs(R14D[2,3]) + abs(R14D[3,3]))^2)  #y
+R14D.3<- sqrt(
+          (abs(R14D[3,2]) + abs(R14D[4,2]))^2 + #x
+          (abs(R14D[3,3]) + abs(R14D[4,3]))^2)  #y
+R14D.centroid.dist<-c(R14D.1,R14D.2,R14D.3)
+
+#make df
+cent.df<-as.data.frame(cbind(time,LilC.centroid.dist,R14C.centroid.dist,LilD.centroid.dist,R14D.centroid.dist))
+
+cent.df$LilC.centroid.dist<-as.character(cent.df$LilC.centroid.dist)
+cent.df$R14C.centroid.dist<-as.character(cent.df$R14C.centroid.dist)
+cent.df$LilD.centroid.dist<-as.character(cent.df$LilD.centroid.dist)
+cent.df$R14D.centroid.dist<-as.character(cent.df$R14D.centroid.dist)
+cent.df$time<-factor(cent.df$time, levels=c("B1-R1", "R1-B2", "B2-R2"))
+
+####  control plot
+
+#LilC
+plot(cent.df$LilC.centroid.dist~cent.df$time, type='b', ylim=c(0.0,0.2), col=colors[1], lty=2, pch=16,
+     xlab="time", xaxt="n", ylab="centroid distance", cex.axis=0.8)
+
+#R14C
+par(new=T)
+plot(cent.df$R14C.centroid.dist~cent.df$time, type='b', ylim=c(0.0,0.2), col=colors[2], lty=1, pch=16,
+     yaxt="n", xaxt="n", ylab="", xlab="")
+#LilD
+par(new=T)
+plot(cent.df$LilD.centroid.dist~cent.df$time, type='b', ylim=c(0.0,0.2), col=colors[3], lty=2, pch=16,
+     yaxt="n", xaxt="n", ylab="", xlab="")
+#R14D
+par(new=T)
+plot(cent.df$R14D.centroid.dist~cent.df$time, type='b', ylim=c(0.0,0.2), col=colors[4], lty=1, pch=16,
+     yaxt="n", xaxt="n", ylab="", xlab="")
+axis(1, at=cent.df$time, labels=cent.df$time, cex.axis=0.8, cex=0.8)
+abline(h = 0, lty = "dotted")
+legend("topright", legend=groups2, #inset=c(0.03, -0.01), x.intersp=0.6, y.intersp=0.9, 
+       cex=0.7, pch=16, col=colors, lty=c(1,3,1,3), seg.len=2, pt.cex=1, bty="n")
+
+
+
 ### 
 
-plot<-ordiplot(allNMDS, type="n", cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.3, 0.3))
+plot<-ordiplot(allNMDS, type="n", cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8) #ylim=c(-0.3, 0.3))
 axis(side = 1, labels = FALSE)
 abline(h = 0, lty = "dotted")
 abline(v = 0, lty = "dotted")
 ordihull(plot, groups=fullNMDS$Period, draw="polygon", alpha=30, col=c("gray20", "gray40", "gray30", "gray50"), border=FALSE)
 
 # points for start and end
-with(plot, points(NMDS.mean[1,2], NMDS.mean[1,3], col=colors[1], pch=16, cex=0.7, lwd=1)) # Lil C
+with(plot, points(NMDS.mean[1,2], NMDS.mean[1,3], bg="white", col=colors[1], pch=21, cex=1, lwd=1)) # Lil C
 with(plot, points(NMDS.mean[4,2], NMDS.mean[4,3], col=colors[1], pch=17, cex=1, lwd=1)) # Lil C
-with(plot, points(NMDS.mean[5,2], NMDS.mean[5,3], col=colors[2], pch=16, cex=0.7, lwd=1)) # R14 C
+with(plot, points(NMDS.mean[5,2], NMDS.mean[5,3], bg="white", col=colors[2], pch=21, cex=1, lwd=1)) # R14 C
 with(plot, points(NMDS.mean[8,2], NMDS.mean[8,3], col=colors[2], pch=17, cex=1, lwd=1)) # R14 C
-with(plot, points(NMDS.mean[9,2], NMDS.mean[9,3], col=colors[3], pch=16, cex=0.7, lwd=1)) # Lil D
+with(plot, points(NMDS.mean[9,2], NMDS.mean[9,3], bg="white", col=colors[3], pch=21, cex=1, lwd=1)) # Lil D
 with(plot, points(NMDS.mean[12,2], NMDS.mean[12,3], col=colors[3], pch=17, cex=1, lwd=1)) # Lil D
-with(plot, points(NMDS.mean[13,2], NMDS.mean[13,3], col=colors[4], pch=16, cex=0.7, lwd=1)) # R14 D
+with(plot, points(NMDS.mean[13,2], NMDS.mean[13,3], bg="white", col=colors[4], pch=21, cex=1, lwd=1)) # R14 D
 with(plot, points(NMDS.mean[16,2], NMDS.mean[16,3], col=colors[4], pch=17, cex=1, lwd=1)) # R14 D
 
 # points for others (if want)
-with(plot, points(NMDS.mean[2,2], NMDS.mean[2,3], col=colors[1], pch=16, cex=0.7, lwd=1)) # Lil C
-with(plot, points(NMDS.mean[3,2], NMDS.mean[3,3], col=colors[1], pch=16, cex=0.7, lwd=1)) # Lil C
-with(plot, points(NMDS.mean[6,2], NMDS.mean[6,3], col=colors[2], pch=16, cex=0.7, lwd=1)) # R14 C
-with(plot, points(NMDS.mean[7,2], NMDS.mean[7,3], col=colors[2], pch=16, cex=0.7, lwd=1)) # R14 C
-with(plot, points(NMDS.mean[10,2], NMDS.mean[10,3], col=colors[3], pch=16, cex=0.7, lwd=1)) # Lil D
-with(plot, points(NMDS.mean[11,2], NMDS.mean[11,3], col=colors[3], pch=16, cex=0.7, lwd=1)) # Lil D
-with(plot, points(NMDS.mean[14,2], NMDS.mean[14,3], col=colors[4], pch=16, cex=0.7, lwd=1)) # R14 D
-with(plot, points(NMDS.mean[15,2], NMDS.mean[15,3], col=colors[4], pch=16, cex=0.7, lwd=1)) # R14 D
+with(plot, points(NMDS.mean[2,2], NMDS.mean[2,3], col=colors[1], pch=16, cex=1, lwd=1)) # Lil C
+with(plot, points(NMDS.mean[3,2], NMDS.mean[3,3], col=colors[1], pch=16, cex=1, lwd=1)) # Lil C
+with(plot, points(NMDS.mean[6,2], NMDS.mean[6,3], col=colors[2], pch=16, cex=1, lwd=1)) # R14 C
+with(plot, points(NMDS.mean[7,2], NMDS.mean[7,3], col=colors[2], pch=16, cex=1, lwd=1)) # R14 C
+with(plot, points(NMDS.mean[10,2], NMDS.mean[10,3], col=colors[3], pch=16, cex=1, lwd=1)) # Lil D
+with(plot, points(NMDS.mean[11,2], NMDS.mean[11,3], col=colors[3], pch=16, cex=1, lwd=1)) # Lil D
+with(plot, points(NMDS.mean[14,2], NMDS.mean[14,3], col=colors[4], pch=16, cex=1, lwd=1)) # R14 D
+with(plot, points(NMDS.mean[15,2], NMDS.mean[15,3], col=colors[4], pch=16, cex=1, lwd=1)) # R14 D
 
 # lines for start and end
 with(plot, lines(NMDS.mean[c(1:4),2], NMDS.mean[c(1:4),3], lwd=1.5, col =colors[1], lty=2))# Lil C
@@ -1114,13 +1237,14 @@ with(plot, lines(NMDS.mean[c(9:12),2], NMDS.mean[c(9:12),3], lwd=1.5, col =color
 with(plot, lines(NMDS.mean[c(13:16),2], NMDS.mean[c(13:16),3], lwd=1.5, col =colors[4], lty=1))# R14 D
 
 # add labels
-text(-0.38, 0.28, "Bleaching \n 2015", cex=0.7, col="gray50")
-text(-0.28, -0.2, "Bleaching \n 2014", cex=0.7, col="gray50")
-text(0.25, -0.1, "Recovery \n 2015", cex=0.7, col="gray50")
-text(0.07, 0.21, "Recovery \n 2016", cex=0.7, col="gray50")
+text(-0.14, -0.05, "Bleaching \n 2014", cex=0.8, col="gray50")
+text(-0.14, 0.12, "Bleaching \n 2015", cex=0.8, col="gray50")
+text(0.14, 0.05, "Recovery \n 2015", cex=0.8, col="gray50")
+text(0.06, -0.07, "Recovery \n 2016", cex=0.8, col="gray50")
+text(0.12, -0.12, "2D Stress = 0.20", cex=0.8, col="black")
 legend("topright", legend=groups2, inset=c(0.03, -0.01), x.intersp=0.6, y.intersp=0.9, cex=0.7, pch=16, col=colors, lty=c(1,3,1,3), seg.len=2, pt.cex=1, bty="n")
 
-dev.copy(pdf, "figures/1panel_allNMDS.pdf", height=6, width=6, useDingbats=FALSE)
+dev.copy(pdf, "figures/execute code/1panel_allNMDS.pdf", height=5.5, width=6, useDingbats=FALSE)
 dev.off() 
 
 ```
@@ -1131,11 +1255,14 @@ The physiotypes of corals in multivariate traitspace. Here are the **four panel 
 **code** for NMDS analysis separated by sites in each time period.
 ```{r, NMDS separated by sites, fig.show='hide', results='hide', message=FALSE}
 ########## ########## ########## ########## ########## 
- ########## ########## ########## ########## ########## 
 ########## ########## ########## ########## ########## 
+########## ########## ########## ########## ##########  
 
 # for 4 panel NMDS separated by site and B-R periods
 ## build Manova dataframes 
+
+# rename "zoox" to symb cells"
+names(df.MV.noNA)[names(df.MV.noNA)=="zoox"] <- "symb cells"
 
 ########## Lilipuna 2014-2015
 ## Lilipuna only #######
@@ -1180,8 +1307,8 @@ MVA.Lilipuna.BR1<-adonis2(Manova.Lil.BR1.dat.scaled~Period*dom, data=Manova.Lil.
                           permutations=1000, method="euclidian")
 
 ## NMDS plots
-NMDS.Lil.BR1<-metaMDS(Manova.Lil.BR1.dat, distane='bray', k=2, trymax=100) 
-stressplot(NMDS.Lil.BR1)
+NMDS.Lil.BR1<-metaMDS(Manova.Lil.BR1.dat, distance='euclidian', k=2, trymax=100) 
+stressplot(NMDS.Lil.BR1, main="Lilipuna 2014-2015")
 
 factor.df.Lil.BR1<-Manova.Lil.BR1.lev.dat %>% 
   select(c(Period, Site, Status, dom, Period.dom)) # get just the factors
@@ -1210,8 +1337,8 @@ MVA.Lilipuna.BR2<-adonis2(Manova.Lil.BR2.dat.scaled~Period*dom, data=Manova.Lil.
                           permutations=1000, method="euclidian")
 
 ## NMDS
-NMDS.Lil.BR2<-metaMDS(Manova.Lil.BR2.dat, distane='bray', k=2, trymax=100) 
-stressplot(NMDS.Lil.BR2)
+NMDS.Lil.BR2<-metaMDS(Manova.Lil.BR2.dat, distance='euclidian', k=2, trymax=100) 
+stressplot(NMDS.Lil.BR2, main="Lilipuna 2015-2016")
 
 factor.df.Lil.BR2<-Manova.Lil.BR2.lev.dat %>% 
   select(c(Period, Site, Status, dom, Period.dom)) # get just the factors
@@ -1239,7 +1366,7 @@ Manova.R14.lev.dat<-df.MV.noNA %>% # "lev.dat" has levels and data
   filter(Site=="Reef 14") 
 
 # Reef 14 bleaching-recovery1
-Manova.R14.BR1.lev.dat<-Manova.R14.lev.dat %>% # "BR1" is bleachigng and recovery 2014-2015
+Manova.R14.BR1.lev.dat<-Manova.R14.lev.dat %>% # "BR1" is bleaching and recovery 2014-2015
   filter(Period=="2014 Oct" | Period=="2015 Feb") 
 
 # Reef 14 bleaching-recovery2
@@ -1273,8 +1400,8 @@ MVA.R14.BR1<-adonis2(Manova.R14.BR1.dat.scaled~Period*dom, data=Manova.R14.BR1.l
                 method="euclidian")
 
 ## NMDS
-NMDS.R14.BR1<-metaMDS(Manova.R14.BR1.dat, distane='bray', k=2, trymax=100) 
-stressplot(NMDS.R14.BR1)
+NMDS.R14.BR1<-metaMDS(Manova.R14.BR1.dat, distance='euclidian', k=2, trymax=100) 
+stressplot(NMDS.R14.BR1, main="Reef 14 2014-2015")
 
 factor.df.R14.BR1<-Manova.R14.BR1.lev.dat %>% 
   select(c(Period, Site, Status, dom, Period.dom)) # get just the factors
@@ -1303,8 +1430,8 @@ MVA.R14.BR2<-adonis2(Manova.R14.BR2.dat.scaled~Period*dom, data=Manova.R14.BR2.l
                 method="euclidean")
 
 ## NMDS
-NMDS.R14.BR2<-metaMDS(Manova.R14.BR2.dat, distane='bray', k=2, trymax=100) 
-stressplot(NMDS.R14.BR2)
+NMDS.R14.BR2<-metaMDS(Manova.R14.BR2.dat, distance='euclidian', k=2, trymax=100) 
+stressplot(NMDS.R14.BR2,main="Reef 14 2015-2016")
 
 factor.df.R14.BR2<-Manova.R14.BR2.lev.dat %>% 
   select(c(Period, Site, Status, dom, Period.dom)) # get just the factors
@@ -1321,12 +1448,22 @@ colnames(NMDS.df.R14.BR2)[1:2]<-c("MDS1", "MDS2")
 # vectors for variables
 vars.R14.BR2<-envfit(NMDS.R14.BR2, Manova.R14.BR2.dat, permu=999)
 #scores(vars, "vectors")
+
+# stress plots
+par(mfrow=c(2,2))
+stressplot(NMDS.Lil.BR1,main="Lilipuna 2014-2015")
+stressplot(NMDS.Lil.BR2,main="Lilipuna 2015-2016")
+stressplot(NMDS.R14.BR1,main="Reef 14 2014-2015")
+stressplot(NMDS.R14.BR2,main="Reef 14 2015-2016")
+dev.print(pdf, "output/4.panel.NMDS.stress.pdf", height=8, width=8)
 ```
   
 **code** for NMDS figures separated by sites in each time period.
 ```{r, 4 panel NMDS plots, fig.dim=c(8,7), results='hide', fig.cap="**Figure 4.** Non-metric multidimensional scaling (NMDS) analyses identify coral physiotypes separated by dominant symbiont type (colors), bleaching-recovery periods (lighter and darker shades), sites (columns), and events (rows)."}
+
 # for exporting 4 panel plot
 par(mfcol=c(2,2), mar=c(4,4,1,1))
+
 
 ###################################### plots
 ###################################### start with Lilipuna 2014-2015, then 2015-2016... then Reef 14
@@ -1341,15 +1478,18 @@ MDS.lev.leg<-c("C-Bleach '14", "D-Bleach '14", "C-Recov '15", "D-Recov '15")
 MDS.colors<-c("lightpink", "slategray1", "firebrick3", "dodgerblue3")
 
 ### 
-NMDS.plot<-ordiplot(NMDS.Lil.BR1, type="n", main=substitute(paste("Lilipuna")), cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.4, 0.4), xlim=c(-0.6, 0.5), xaxt="n", xlab="")
+NMDS.plot<-ordiplot(NMDS.Lil.BR1, type="n", main=substitute(paste("Lilipuna")), cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.15, 0.15), xlim=c(-0.2, 0.2), xaxt="n", xlab="")
 axis(side = 1, labels = FALSE, tck = -0.05)
 abline(h = 0, lty = "dotted")
 abline(v = 0, lty = "dotted")
 points(NMDS.plot, "sites", cex=0.8, pch=16, col=MDS.colors[groups])
 ordihull(NMDS.plot, groups=NMDS.df.Lil.BR1$Period.dom, draw="polygon", alpha=100, col=MDS.colors, border=MDS.colors)
-legend("topright", legend=MDS.lev.leg, inset=c(0.7, 0), x.intersp=0.9, y.intersp=1, cex=0.7, pch=16, col=MDS.colors, pt.cex=1, bty="n")
+legend("topright", legend=MDS.lev.leg, inset=c(0.75, 0), x.intersp=0.9, y.intersp=1, cex=0.7, pch=16, col=MDS.colors, pt.cex=1, bty="n")
+text(0.15, -0.15, "2D Stress = 0.13", cex=0.7, col="black")
+
 par.new=T
 plot(vars.Lil.BR1, col="black", p.max=0.05, cex=0.8, lwd=1)
+
 
 
 ############### Lilipuna 2015-2016
@@ -1361,13 +1501,15 @@ groups<-NMDS.df.Lil.BR2$Period.dom
 MDS.lev.leg<-c("C-Bleach '15", "D-Bleach '15", "C-Recov '16", "D-Recov '16")
 MDS.colors<-c("lightpink", "slategray1", "firebrick3", "dodgerblue3")
 
-NMDS.plot<-ordiplot(NMDS.Lil.BR2, type="n", cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.4, 0.4), xlim=c(-0.6, 0.5))
+NMDS.plot<-ordiplot(NMDS.Lil.BR2, type="n", cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.15, 0.15), xlim=c(-0.2, 0.2))
 axis(side = 2, labels = FALSE, tck = -0.05)
 abline(h = 0, lty = "dotted")
 abline(v = 0, lty = "dotted")
 points(NMDS.plot, "sites", cex=0.8, pch=16,  col=MDS.colors[groups])
 ordihull(NMDS.plot, groups=NMDS.df.Lil.BR2$Period.dom, draw="polygon", alpha=100, col=MDS.colors, border=MDS.colors)
-legend("topright", legend=MDS.lev.leg, inset=c(0.7, 0), x.intersp=0.9, y.intersp=1, cex=0.7, pch=16, col=MDS.colors, pt.cex=1, bty="n")
+legend("topright", legend=MDS.lev.leg, inset=c(0.75, 0), x.intersp=0.9, y.intersp=1, cex=0.7, pch=16, col=MDS.colors, pt.cex=1, bty="n")
+text(0.15, -0.15, "2D Stress = 0.14", cex=0.7, col="black")
+
 par.new=T
 plot(vars.Lil.BR2, col="black", p.max=0.05, cex=0.8, lwd=1)
 
@@ -1382,13 +1524,14 @@ groups<-NMDS.df.R14.BR1$Period.dom
 MDS.lev.leg<-c("C-Bleach '14", "D-Bleach '14", "C-Recov '15", "D-Recov '15")
 MDS.colors<-c("lightpink", "slategray1", "firebrick2", "dodgerblue2")
 
-NMDS.plot<-ordiplot(NMDS.R14.BR1, type="n", main=substitute(paste("Reef 14")), cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.4, 0.4), xlim=c(-0.6, 0.5), yaxt="n", ylab="", xaxt="n", xlab="")
+NMDS.plot<-ordiplot(NMDS.R14.BR1, type="n", main=substitute(paste("Reef 14")), cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.15, 0.15), xlim=c(-0.2, 0.2), yaxt="n", ylab="", xaxt="n", xlab="")
 axis(side = 1, labels = FALSE, tck = -0.05)
 axis(side = 2, labels = FALSE, tck = -0.05)
 abline(h = 0, lty = "dotted")
 abline(v = 0, lty = "dotted")
 points(NMDS.plot, "sites", cex=0.8, pch=16,  col=MDS.colors[groups])
 ordihull(NMDS.plot, groups=NMDS.df.R14.BR1$Period.dom, draw="polygon", alpha=100, col=MDS.colors, border=MDS.colors)
+text(0.15, -0.15, "2D Stress = 0.13", cex=0.7, col="black")
 par.new=T
 plot(vars.R14.BR1, col="black", p.max=0.05, cex=0.8, lwd=1)
 
@@ -1402,18 +1545,20 @@ groups<-NMDS.df.R14.BR2$Period.dom
 MDS.lev.leg<-c("C-Bleach '15", "D-Bleach '15", "C-Recov '16", "D-Recov '16")
 MDS.colors<-c("lightpink", "slategray1", "firebrick2", "dodgerblue2")
 
-NMDS.plot<-ordiplot(NMDS.R14.BR2, type="n", cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.4, 0.4), xlim=c(-0.6, 0.5), yaxt="n", ylab="")
+NMDS.plot<-ordiplot(NMDS.R14.BR2, type="n", cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8, ylim=c(-0.15, 0.15), xlim=c(-0.2, 0.2), yaxt="n", ylab="")
 axis(side = 2, labels = FALSE, tck = -0.05)
 abline(h = 0, lty = "dotted")
 abline(v = 0, lty = "dotted")
 points(NMDS.plot, "sites", cex=0.8, pch=16,  col=MDS.colors[groups])
 ordihull(NMDS.plot, groups=NMDS.df.R14.BR2$Period.dom, draw="polygon", alpha=100, col=MDS.colors, border=MDS.colors)
+text(0.15, -0.15, "2D Stress = 0.19", cex=0.7, col="black")
+
 par.new=T
 plot(vars.R14.BR2, col="black", p.max=0.05, cex=0.8, lwd=1)
 
 
 
-dev.copy(pdf, "figures/4panel_NMDS.pdf", height=6, width=7, useDingbats=FALSE)
+dev.copy(pdf, "figures/execute code/4panel_NMDS.pdf", height=6, width=7, useDingbats=FALSE)
 dev.off() 
 ```
 
@@ -1424,17 +1569,14 @@ dev.off()
 # side by side figures separated by Sites 
 ### Physiological figures
 
-color.scheme<-c("gray85", "gray65", "gray50", "gray20", 
-                "firebrick1", #C Lilipuna
+color.scheme<-c("firebrick1", #C Lilipuna
                 "firebrick3", #C Reef 14
                 "steelblue1", # D Lilipuna
                 "steelblue3") # D Reef 14
 
-break.points<-c("C.Lilipuna.Pre", "C.Reef 14.Pre", "D.Lilipuna.Pre", 
-                "D.Reef 14.Pre", "C.Lilipuna", "C.Reef 14", "D.Lilipuna", "D.Reef 14")
-legend.names<-c("C-Lilipuna Pre", "C-Reef 14 Pre", "D-Lilipuna Pre", "D-Reef 14 Pre",
-                "C-Lilipuna", "C-Reef 14", "D-Lilipuna", "D-Reef 14")
-axis.labels<-c("Prev", "Oct'14 \nBl","Feb'15 \nRc","Oct'15 \nBl", "Feb'16 \nRc")
+break.points<-c("C.Lilipuna", "C.Reef 14", "D.Lilipuna", "D.Reef 14")
+legend.names<-c("C-Lilipuna", "C-Reef 14", "D-Lilipuna", "D-Reef 14")
+axis.labels<-c("Oct'14 \nBl","Feb'15 \nRc","Oct'15 \nBl", "Feb'16 \nRc")
 
 
 Fig.formatting<-(theme_classic()) +
@@ -1444,14 +1586,13 @@ Fig.formatting<-(theme_classic()) +
   legend.text=element_text(size=5),
     #legend.title = element_blank(),
       panel.border = element_rect(fill=NA, colour = "black", size=0.7),
-      aspect.ratio=1, 
+      aspect.ratio=1.6, 
     axis.ticks.length=unit(0.2, "cm"),
     axis.text.y=element_text(
       margin=unit(c(0.5, 0.5, 0.5, 0.5), "cm"), colour="black", size=6), 
     axis.text.x=element_text(
       margin=unit(c(0.5, 0.5, 0.5, 0.5), "cm"), colour="black", size=6)) +
   theme(legend.key.size = unit(0.4, "cm")) +
-  theme(aspect.ratio=1) +
   theme(panel.spacing=unit(c(0, 0, 0, 0), "cm"))
 
 
@@ -1462,7 +1603,7 @@ pd <- position_dodge(0.15) #offset for error bars
 #### graph as category of C/D
 ######################## 
 
-fig.df.phys$int<-factor(fig.df.phys$int, levels=c("C.Lilipuna.Pre", "C.Reef 14.Pre", "D.Lilipuna.Pre", "D.Reef 14.Pre", "C.Lilipuna", "C.Reef 14", "D.Lilipuna", "D.Reef 14"))
+fig.df.phys$int<-interaction(fig.df.phys$dom, fig.df.phys$Site)
 
 
 ########################
@@ -1474,11 +1615,11 @@ fig.df.phys$int<-factor(fig.df.phys$int, levels=c("C.Lilipuna.Pre", "C.Reef 14.P
 ###################
 # zoox 
 zoox.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=zoox/10^6, group=int, color=int)) + geom_errorbar(aes(ymin=zoox/10^6-zoox.SE/10^6, ymax=zoox/10^6+zoox.SE/10^6), size=.4, width=0, position=pd) + 
-  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
+  geom_line(aes(linetype=Site), position=pd, lwd=0.3) +
   scale_linetype_manual(values=c("solid", "longdash"))+
-  geom_point(position=pd, size=1.5, pch=19) +
+  geom_point(position=pd, size=0.7, pch=19) +
   coord_cartesian(ylim=c(0, 3)) +
-  ylab(expression(paste(~("symbionts") ~(x10^6~cells~cm^-2), sep=""))) +
+  ylab(expression(paste(~("symbionts" ~x10^6~cells~cm^-2), sep=""))) +
   scale_color_manual(values=c(color.scheme),
                      name= "Symbiont:Site",
                      breaks=break.points,
@@ -1491,9 +1632,9 @@ zoox.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=zoox/10^6, group=int, color=i
 
 ########## chla cm2 ############
 chla.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=chla, group=int, color=int)) + geom_errorbar(aes(ymin=chla-chla.SE, ymax=chla+chla.SE), size=.4, width=0, position=pd) +
-  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
+  geom_line(aes(linetype=Site), position=pd, lwd=0.3) +
   scale_linetype_manual(values=c("solid", "longdash"))+
-  geom_point(position=pd, size=1.5) +
+  geom_point(position=pd, size=0.7) +
   coord_cartesian(ylim=c(0, 8)) +
   ylab(expression(paste("Chlorophyll", ~italic("a"), ~(mu*g~cm^-2), sep=""))) +
   scale_color_manual(values=c(color.scheme),
@@ -1507,9 +1648,9 @@ chla.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=chla, group=int, color=int)) 
 
 ########## chla cell ############
 chlacell.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=chlacell, group=int, color=int)) + geom_errorbar(aes(ymin=chlacell-chlacell.SE, ymax=chlacell+chlacell.SE), size=.4, width=0, position=pd) +
-  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
+  geom_line(aes(linetype=Site), position=pd, lwd=0.3) +
   scale_linetype_manual(values=c("solid", "longdash"))+
-  geom_point(position=pd, size=1.5) +
+  geom_point(position=pd, size=0.7) +
   coord_cartesian(ylim=c(0, 8)) +
   ylab(expression(paste("Chlorophyll", ~italic("a"), ~(pg~cell^-1), sep=""))) +
   scale_color_manual(values=c(color.scheme),
@@ -1524,9 +1665,9 @@ chlacell.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=chlacell, group=int, colo
 
 ########## protein ############
 prot.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=prot, group=int, color=int)) + geom_errorbar(aes(ymin=prot-prot.SE, ymax=prot+prot.SE), size=.4, width=0, position=pd) +
-  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
+  geom_line(aes(linetype=Site), position=pd, lwd=0.3) +
   scale_linetype_manual(values=c("solid", "longdash"))+
-  geom_point(position=pd, size=1.5) +
+  geom_point(position=pd, size=0.7) +
   coord_cartesian(ylim=c(0.2, 0.7)) +
   ylab(expression(paste("Protein", ~(mg~cm^-2), sep=""))) +
   scale_color_manual(values=c(color.scheme),
@@ -1540,9 +1681,9 @@ prot.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=prot, group=int, color=int)) 
 
 ########## AFDW ############
 AFDW.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=AFDW, group=int, color=int)) + geom_errorbar(aes(ymin=AFDW-AFDW.SE, ymax=AFDW+AFDW.SE), size=.4, width=0, position=pd) +
-  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
+  geom_line(aes(linetype=Site), position=pd, lwd=0.3) +
   scale_linetype_manual(values=c("solid", "longdash"))+
-  geom_point(position=pd, size=1.5) +
+  geom_point(position=pd, size=0.7) +
   coord_cartesian(ylim=c(10, 60)) +
   ylab(expression(paste("Total biomass", ~(mg~cm^-2), sep=""))) +
   scale_color_manual(values=c(color.scheme),
@@ -1559,27 +1700,24 @@ AFDW.fig<-ggplot(data=fig.df.phys, aes(x=Period, y=AFDW, group=int, color=int)) 
 
 ### ### ### ### ### Immunity figures ### ### ### ### ### 
 
-color.scheme.immuno<-c("gray70", "gray50", 
-                "firebrick1", #C Lilipuna
+color.scheme.immuno<-c("firebrick1", #C Lilipuna
                 "firebrick3", #C Reef 14
                 "steelblue1", # D Lilipuna
                 "steelblue3") # D Reef 14
 
 
-break.points.immuno<-c("unident.Lilipuna.Pre", "unident.Reef 14.Pre", 
-                       "C.Lilipuna", "C.Reef 14", "D.Lilipuna", "D.Reef 14")
-legend.names.immuno<-c("unk-Lilipuna Pre", "unk-Reef 14 Pre",
-                       "C-Lilipuna", "C-Reef 14", "D-Lilipuna", "D-Reef 14")
-axis.labels.immuno<-c("Prev", "Oct'14 \nBl","Feb'15 \nRc","Oct'15 \nBl", "Feb'16 \nRc")
+break.points.immuno<-c("C.Lilipuna", "C.Reef 14", "D.Lilipuna", "D.Reef 14")
+legend.names.immuno<-c("C-Lilipuna", "C-Reef 14", "D-Lilipuna", "D-Reef 14")
+axis.labels.immuno<-c("Oct'14 \nBl", "Feb'15 \nRc", "Oct'15 \nBl", "Feb'16 \nRc")
 
 
 ########## Prophenoloxidase (PPO) ############
-PPO.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=PPO, group=int, color=int)) + geom_errorbar(aes(ymin=PPO-PPO.SE, ymax=PPO+PPO.SE), size=.4, width=0, position=pd) +
-  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
+PPO.fig<-ggplot(data=fig.df.immuno, aes(x=Period, y=PPO, group=int, color=int)) + geom_errorbar(aes(ymin=PPO-PPO.SE, ymax=PPO+PPO.SE), size=.4, width=0, position=pd) +
+  geom_line(aes(linetype=Site), position=pd, lwd=0.3) +
   scale_linetype_manual(values=c("solid", "longdash"))+
-  geom_point(position=pd, size=1.5) +
+  geom_point(position=pd, size=0.7) +
   coord_cartesian(ylim=c(0, 2)) +
-  ylab(expression(paste("PPO Activity", ~(Delta~Abs~"490nm"~min^-1~mg~prot^-1), sep=""))) +
+  ylab(expression(paste("PPO Activity", ~(Delta~Abs~"490nm"~mg~prot^-1~min^-1), sep=""))) +
   scale_color_manual(values=c(color.scheme.immuno),
                      name= "Symbiont:Site",
                      breaks=break.points.immuno,
@@ -1589,20 +1727,13 @@ PPO.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=PPO, group=int, color=i
   Fig.formatting
 
 
-### Melanin ###
-MEL.lab<-aggregate(MEL~Site+Status+Period,data=data, mean)
-MEL.labSE<-aggregate(MEL~Site+Status+Period,data=data, std.error)
-MEL.df<-cbind(MEL.lab, MEL.labSE[c(4,0)]); colnames(MEL.df[,4:5])<-c("MEL", "MEL.labSE")
-MEL.df$Period<-factor(MEL.df$Period, levels=c("2014 Field.Feb", "2014 Lab", "2014 Oct", "2015 Feb", "2015 Oct", "2016 Feb"))
-
-
 ######## Melanin (MEL) #############
-MEL.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=MEL, group=int, color=int)) + geom_errorbar(aes(ymin=MEL-MEL.SE, ymax=MEL+MEL.SE), size=.4, width=0, position=pd) +
-  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
+MEL.fig<-ggplot(data=fig.df.immuno, aes(x=Period, y=MEL, group=int, color=int)) + geom_errorbar(aes(ymin=MEL-MEL.SE, ymax=MEL+MEL.SE), size=.4, width=0, position=pd) +
+  geom_line(aes(linetype=Site), position=pd, lwd=0.3) +
   scale_linetype_manual(values=c("solid", "longdash"))+
-  geom_point(position=pd, size=1.5) +
+  geom_point(position=pd, size=0.7) +
   coord_cartesian(ylim=c(0, 0.02)) +
-  ylab(expression(paste("MEL", ~(Abs~"490nm"~mg~tissue^-1), sep="")))+
+  ylab(expression(paste("MEL", ~(mg~melanin~mg~tissue^-1), sep="")))+
   scale_color_manual(values=c(color.scheme.immuno),
                      name= "Symbiont:Site",
                      breaks=break.points.immuno,
@@ -1613,12 +1744,12 @@ MEL.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=MEL, group=int, color=i
 
 
 ########## Peroxidase (POX) ##############
-POX.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=POX, group=int, color=int)) + geom_errorbar(aes(ymin=POX-POX.SE, ymax=POX+POX.SE), size=.4, width=0, position=pd) +
-  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
+POX.fig<-ggplot(data=fig.df.immuno, aes(x=Period, y=POX, group=int, color=int)) + geom_errorbar(aes(ymin=POX-POX.SE, ymax=POX+POX.SE), size=.4, width=0, position=pd) +
+  geom_line(aes(linetype=Site), position=pd, lwd=0.3) +
   scale_linetype_manual(values=c("solid", "longdash"))+
-  geom_point(position=pd, size=1.5) +
+  geom_point(position=pd, size=0.7) +
   coord_cartesian(ylim=c(0, 1.25)) +
-  ylab(expression(paste("POX activity", ~(Delta~Abs~"470nm"~min^-1~mg~prot^-1), sep=""))) +
+  ylab(expression(paste("POX activity", ~(Delta~Abs~"470nm"~mg~prot^-1~min^-1), sep=""))) +
   scale_color_manual(values=c(color.scheme.immuno),
                      name= "Symbiont:Site",
                      breaks=break.points.immuno,
@@ -1629,12 +1760,12 @@ POX.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=POX, group=int, color=i
 
 
 ###### Catalase (CAT) ########
-CAT.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=CAT, group=int, color=int)) + geom_errorbar(aes(ymin=CAT-CAT.SE, ymax=CAT+CAT.SE), size=.4, width=0, position=pd) +
-  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
+CAT.fig<-ggplot(data=fig.df.immuno, aes(x=Period, y=CAT, group=int, color=int)) + geom_errorbar(aes(ymin=CAT-CAT.SE, ymax=CAT+CAT.SE), size=.4, width=0, position=pd) +
+  geom_line(aes(linetype=Site), position=pd, lwd=0.3) +
   scale_linetype_manual(values=c("solid", "longdash"))+
-  geom_point(position=pd, size=1.5) +
-  coord_cartesian(ylim=c(0, 500)) +
-  ylab(expression(paste("CAT activity", ~(min^-1~mg~prot^-1), sep="")))+
+  geom_point(position=pd, size=0.7) +
+  coord_cartesian(ylim=c(0, 4.5)) +
+  ylab(expression(paste("CAT activity", ~(mu*mol~"H"[2]~"O"[2]~scavenged~mg~prot^-1~min^-1), sep="")))+
   scale_color_manual(values=c(color.scheme.immuno),
                      name= "Symbiont:Site",
                      breaks=break.points.immuno,
@@ -1645,12 +1776,12 @@ CAT.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=CAT, group=int, color=i
 
 
 ######### Superoxide dismutase (SOD) ########
-SOD.fig<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=SOD/10^3, group=int, color=int)) + geom_errorbar(aes(ymin=SOD/10^3-SOD.SE/10^3, ymax=SOD/10^3+SOD.SE/10^3), size=.4, width=0, position=pd) +
-  geom_line(aes(linetype=SimpleSite), position=pd, lwd=0.4) +
+SOD.fig<-ggplot(data=fig.df.immuno, aes(x=Period, y=SOD, group=int, color=int)) + geom_errorbar(aes(ymin=SOD-SOD.SE, ymax=SOD+SOD.SE), size=.4, width=0, position=pd) +
+  geom_line(aes(linetype=Site), position=pd, lwd=0.3) +
   scale_linetype_manual(values=c("solid", "longdash"))+
-  geom_point(position=pd, size=1.5) +
-  coord_cartesian(ylim=c(10, 40)) +
-  ylab(expression(paste("SOD activity", ~(x10^3~mg~prot^-1), sep=""))) +
+  geom_point(position=pd, size=0.7) +
+  coord_cartesian(ylim=c(200, 800)) +
+  ylab(expression(paste("SOD activity", ~(U~SOD~mg~prot^-1), sep=""))) +
   scale_color_manual(values=c(color.scheme.immuno),
                      name= "Symbiont:Site",
                      breaks=break.points.immuno,
@@ -1664,60 +1795,44 @@ The combined plots for physiology and immunity data.
 ```{r, physiology figures, fig.align='center', results="hide", fig.dim=c(8,5), fig.cap="**Supplementary Figure 2.** Physiological metrics for *M. capitata* corals dominated dominated by *Cladocopium* sp. or *Durusdinium* sp. symbionts (C or D) from two reefs in Kāne‘ohe Bay during repeated bleaching and recovery periods."}
 
 # legend plot
-fig.legend.phys<-ggplot(data=fig.df.phys, aes(x=Period, y=zoox, group=int, color=int, linetype=int)) +
-  geom_line() +
-  geom_point(position=pd, size=3) +
-  coord_cartesian(ylim=c(0, 1)) +
-  scale_color_manual(values=c(color.scheme),
-                     name= "Symbiont:Site",
-                     breaks=break.points,
-                     labels=legend.names) +
-  scale_linetype_manual(values=c(0,0,0,0,1,3,1,3),
-                     name= "Symbiont:Site",
-                     breaks=break.points,
-                     labels=legend.names) +
-  theme_void()
+fig.legend<-get_legend(zoox.fig)
 
 Phys.figs<-plot_grid( (zoox.fig + theme(legend.position = "none")), 
            (chla.fig + theme(legend.position = "none")),
            (chlacell.fig + theme(legend.position = "none")), 
            (prot.fig+ theme(legend.position = "none")),
-           (AFDW.fig+ theme(legend.position = "none")),
-           fig.legend.phys,
-          labels = c("a", "b", "c", "d", "e",""), ncol = 3, label_size=8)
-Phys.figs
-dev.copy(pdf, "figures/Phys.figs.pdf", encod="MacRoman", height=5, width=8)
+           (AFDW.fig+ theme(legend.position = "none")), 
+           labels = c("a", "b", "c", "d", "e"), ncol = 5, label_size=8, 
+           rel_widths = c(1.5, 1.5, 1.5, 1.55, 1.52))
+
+Phys.fig.leg<- plot_grid(Phys.figs, fig.legend, rel_widths = c(10,0.6))
+
+Phys.fig.leg
+dev.copy(pdf, "figures/execute code/Phys.figs2.pdf", encod="MacRoman", height=4, width=10)
 dev.off()
 ```
 
 ```{r, immunity figures, fig.align='center', results="hide", fig.dim=c(8,5), fig.cap="**Supplementary Figure 3.** Immunity metrics for *M. capitata* corals dominated dominated by *Cladocopium* sp. or *Durusdinium* sp. symbionts (C or D) from two reefs in Kāne‘ohe Bay during repeated bleaching and recovery periods."}
-
-fig.legend.immun<-ggplot(data=fig.df.immuno.comp, aes(x=Period, y=SOD, group=int, color=int, linetype=int)) +
-  geom_point(position=pd, size=3) +
-  geom_line() +
-  coord_cartesian(ylim=c(0, 1)) +
-  scale_color_manual(values=c(color.scheme.immuno),
-                     name= "Symbiont:Site",
-                     breaks=break.points.immuno,
-                     labels=legend.names.immuno) +
-  scale_linetype_manual(values=c(0,0,1,3,1,3),
-                     name= "Symbiont:Site",
-                     breaks=break.points.immuno,
-                     labels=legend.names.immuno) +
-  theme_void()
-
 
 Immuno.figs<-plot_grid( (MEL.fig + theme(legend.position = "none")),
            (PPO.fig + theme(legend.position = "none")), 
            (POX.fig+ theme(legend.position = "none")),
            (CAT.fig+ theme(legend.position = "none")),
            SOD.fig + theme(legend.position = "none"),
-           fig.legend.immun,
-          labels = c("a", "b", "c", "d", "e",""), ncol = 3, label_size=8)
-Immuno.figs
-dev.copy(pdf, "figures/Immuno.figs.pdf", encod="MacRoman", height=5, width=8)
+           labels = c("e", "f", "g", "h", "i"), ncol = 5, label_size=8,
+           rel_widths = c(1.55, 1.5, 1.5, 1.45, 1.51))
+
+Immuno.fig.leg<- plot_grid(Immuno.figs, fig.legend, rel_widths = c(10,0.6))
+
+Immuno.fig.leg
+dev.copy(pdf, "figures/execute code/Immuno.figs2.pdf", encod="MacRoman", height=4, width=10)
 dev.off()
 
+##### All grouped figure
+Phys.immuno.leg<-plot_grid(Phys.fig.leg, Immuno.fig.leg, ncol=1, rel_widths = c(10,0.6))
+Phys.immuno.leg
+dev.copy(pdf, "figures/execute code/Phys.Immuno.figs.pdf", encod="MacRoman", height=7, width=10)
+dev.off()
 ```
 
 
@@ -1754,7 +1869,7 @@ for(i in c(7:16)){
 }
 
 # need BoxCox transformation for most immuno data
-Yx<-(model.data$AFDW) 
+Yx<-(model.data$chlacell) 
 
 ### test with transformations
 boxcox(Yx~Period*Site*dom, data=model.data, lambda=seq(-0.25, 1, length=10))
@@ -1768,6 +1883,8 @@ full<-lm(Yx~Period*Site*dom, data=model.data, na.action=na.exclude)
   hist(R, xlab="Residuals")
 
 ##### revised model.data (below are data needing transformations)
+model.data$chlacell<-(model.data$chlacell)^0.25
+
 model.data$AFDW<-(model.data$AFDW)^0.25
 model.data$CAT<-(model.data$CAT)^0.5
 model.data$POX<-(model.data$POX)^0.25
@@ -1790,6 +1907,7 @@ full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
 #summary(full)
 print(Anova(full, type=2), digits=4)
 
+## if want p values for comparisons, lsmeans(full, pairwise~Period)
 posthoc<-lsmeans(full, ~Period)
 multcomp::cld(posthoc, Letters=letters)
 
@@ -1834,21 +1952,19 @@ models and post-hoc comparisons
 # chlacell ---- 
 Y<-model.data$chlacell
 full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
+
 ##summary(full)
 print(Anova(full, type=2), digits=4)
 
 posthoc<-lsmeans(full, ~Period)
 multcomp::cld(posthoc, Letters=letters)
 
-posthoc<-lsmeans(full, ~Site)
-multcomp::cld(posthoc, Letters=letters)
-
 posthoc<-lsmeans(full, ~dom)
 multcomp::cld(posthoc, Letters=letters)
 
-posthoc<-lsmeans(full, ~dom|Period)
+posthoc<-lsmeans(full, ~Period|dom)
 multcomp::cld(posthoc, Letters=letters)
-plot(allEffects(full), ylab="AFDW", par.strip.text=list(cex=0.7))
+plot(allEffects(full), ylab="chlacell", par.strip.text=list(cex=0.7))
 ```
 
 **Protein cm^-2^**  
@@ -1877,6 +1993,9 @@ full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
 #summary(full)
 print(Anova(full, type=2), digits=4)
 
+posthoc<-lsmeans(full, ~Period)
+multcomp::cld(posthoc, Letters=letters)
+
 posthoc<-lsmeans(full, ~Site|Period)
 multcomp::cld(posthoc, Letters=letters)
 
@@ -1894,7 +2013,7 @@ models and post-hoc comparisons
 Y<-model.data$MEL
 full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
 #summary(full)
-print(Anova(full, type=2), digits=4)
+print(Anova(full, type=2), digits=6)
 
 posthoc<-lsmeans(full, ~Period)
 multcomp::cld(posthoc, Letters=letters)
@@ -1925,24 +2044,6 @@ plot(allEffects(full), ylab="PPO", par.strip.text=list(cex=0.7))
 ```
 
 
-**Peroxidase (POX)**  
-models and post-hoc comparisons
-```{r POX model, warning=FALSE, message=FALSE}
-# POX ---- 
-Y<-model.data$POX
-full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
-#summary(full)
-print(Anova(full, type=2), digits=4)
-
-posthoc<-lsmeans(full, ~Period)
-multcomp::cld(posthoc, Letters=letters)
-
-posthoc<-lsmeans(full, ~dom|Period)
-multcomp::cld(posthoc, Letters=letters)
-
-plot(allEffects(full), ylab="POX", par.strip.text=list(cex=0.7))
-```
-
 **Catalase (CAT)**  
 models and post-hoc comparisons
 ```{r CAT Model, warning=FALSE, message=FALSE}
@@ -1969,7 +2070,31 @@ posthoc<-lsmeans(full, ~Site|Period)
 multcomp::cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="CAT", par.strip.text=list(cex=0.7))
 ```
+  
+  
+**Peroxidase (POX)**  
+models and post-hoc comparisons
+```{r POX model, warning=FALSE, message=FALSE}
+# POX ---- 
+Y<-model.data$POX
+full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
+#summary(full)
+print(Anova(full, type=2), digits=4)
 
+posthoc<-lsmeans(full, ~Period)
+contrast(posthoc, method="pairwise", adjust="Tukey")
+multcomp::cld(posthoc, Letters=letters)
+
+posthoc<-lsmeans(full, ~Site)
+multcomp::cld(posthoc, Letters=letters)
+
+
+posthoc<-lsmeans(full, ~dom|Period)
+multcomp::cld(posthoc, Letters=letters)
+
+plot(allEffects(full), ylab="POX", par.strip.text=list(cex=0.7))
+```
+  
 **Superoxide dismutase (SOD)**  
 models and post-hoc comparisons
 ```{r SOD model, warning=FALSE, message=FALSE}
@@ -1993,6 +2118,6 @@ Taking into account the observed patterns for bleaching and recovery in *M. capi
 
 <center>  
   
-![**Figure 5.**.  Schematic of coral responses to repeated bleaching and recovery.](figures/Fig 5. schematic4panel.jpg){ width=100%}
+![**Figure 5.**.  Schematic of coral responses to repeated bleaching and recovery.](figures/execute code/Fig 5. schematic4panel.jpg){ width=100%}
   
 </center>  
