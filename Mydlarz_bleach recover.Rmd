@@ -304,7 +304,7 @@ annual.day.temps <- aggregate(data.frame(mean=annual.temps$Water.temp), by=list(
 #### Degree Heating Weeks (DHW)
   
 With a 27.7 °C Summer Monthly Maximum Temp (Jokiel and Brown 2004) for Kāne'ohe Bay, total DHW for 2014 and 2015 are calculated from NOAA Molu o Lo'e buoy data.  
-These show a maximum sustained DHW in 2014 of 7.1 (peaked from 04 Oct - 19 Nov). DHW began accumulating 2014-08-30. In 2015 10.2 DHW were sustained (peaked 12 - 19 Nov), with DHW accumulating 2014-07-01. 
+These show a maximum sustained DHW in 2014 of 7.1 (peaked from 04 Oct - 19 Nov). DHW began accumulating 2014-08-30. In 2015 10.2 DHW were sustained (peaked 12 - 19 Nov), with DHW accumulating 2015-07-01. 
   
 ```{r, results="hide", fig.dim=c(5,5), fig.cap="**Figure NA.** Degree Heating Weeks over 2014-2016 (data reported, figure not in mansucript)."}
 
@@ -392,7 +392,7 @@ write.csv(KBay.DHW, "output/KBay.DHW.csv")
 #plot(KBay.DHW$half.wk.dates, KBay.DHW$DHW, type="l", xlab="Time", ylab=paste(expression("DHW (°C)")), col="red")
 ```
 
-Temperature plots for logger temp at each site (color, top) and temperatures for the 2 bleachin years (2014-2015) (2015-2016).   These plots, along with the benthic data (futher down) constitute **Figure 1**.
+Temperature plots for logger temp at each site (color, top) and temperatures for the 2 bleaching years (2014-2015) (2015-2016).   These plots, along with the benthic data (futher down) constitute **Figure 1**.
 ```{r, temp plot, message=FALSE, results="hide", fig.dim=c(7,3), fig.show='hold', fig.cap="**Figure 1 (partial)**. Temperatures in Kāne'ohe Bay and the two reefs sites during repeated bleaching and recovery periods"}
 
 #######################
@@ -735,43 +735,45 @@ pd <- position_dodge(0.15) #offset for error bars
 
 ##############
 # all corals
-Fig.cor <- ggplot(data=df.fig, aes(x=Period, y=coral.cover,  group=Site, color=Site)) +
-  geom_errorbar(aes(ymin=coral.cover-coral.SD, ymax= coral.cover+coral.SD), width=0, position=pd) +
+Fig.cor <- ggplot(data=df.fig, aes(x=Period, y=coral.cover*100,  group=Site, color=Site)) +
+  geom_errorbar(aes(ymin=coral.cover*100-coral.SD*100, ymax= coral.cover*100+coral.SD*100), 
+                width=0, position=pd) +
   geom_line(position=pd, size=.6) +
   geom_point(position=pd, size=1) +
   ylab("% benthic cover") +
   scale_color_manual(values=reefcols2) +
   ggtitle(expression(bold(paste(~"Coral cover"), sep=""))) +
   theme(plot.title = element_text(hjust = 0.5)) +
-  scale_y_continuous(limits=c(0,1.05),oob = rescale_none)+ 
+  scale_y_continuous(limits=c(0,105),oob = rescale_none)+ 
   scale_x_discrete(name ="Year and Period", 
       labels=ecol.labs)+
   text.formatting
 
 # MC corals
-FigMC <- ggplot(df.fig, aes(x=Period, y=MC, group=Site, color=Site)) + 
-  geom_errorbar(aes(ymin=MC-MCSD, ymax= MC+MCSD), width=0, position=pd) +
+FigMC <- ggplot(df.fig, aes(x=Period, y=MC*100, group=Site, color=Site)) + 
+  geom_errorbar(aes(ymin=MC*100-MCSD*100, ymax= MC*100+MCSD*100), width=0, position=pd) +
   geom_line(position=pd, size=.6) +
   geom_point(position=pd, size=1) +
   ylab("") +
   scale_color_manual(values=reefcols2) +
   ggtitle(expression(bold(paste(~bolditalic("M. capitata")~cover, sep="")))) +
   theme(plot.title = element_text(hjust = 0.5)) +
-  scale_y_continuous(limits=c(0,1.05),oob = rescale_none)+ 
+  scale_y_continuous(limits=c(0,105),oob = rescale_none)+ 
   scale_x_discrete(name ="Year and Period", 
       labels=ecol.labs)+
   text.formatting
 
 # bleached MC coral
-FigBlMC <- ggplot(df.fig, aes(x=Period, y=totalMC.bleach, group=Site, color=Site)) + 
-  geom_errorbar(aes(ymin=totalMC.bleach-MC.blSD, ymax= totalMC.bleach+MC.blSD), width=0.0, position=pd) +
+FigBlMC <- ggplot(df.fig, aes(x=Period, y=totalMC.bleach*100, group=Site, color=Site)) + 
+  geom_errorbar(aes(ymin=totalMC.bleach*100-MC.blSD*100, ymax= totalMC.bleach*100+MC.blSD*100), 
+                width=0.0, position=pd) +
   geom_line(position=pd, size=.6) +
   geom_point(position=pd, size=1) +
   ylab("") +
   xlab(ecol.labs) +
   scale_color_manual(values=reefcols2) +
   ggtitle(expression(bold(paste(~Bleached, bolditalic(" M. capitata")~cover, sep="")))) +
-  scale_y_continuous(limits=c(0,1.05),oob = rescale_none)+ 
+  scale_y_continuous(limits=c(0,105),oob = rescale_none)+ 
   scale_x_discrete(name ="Year and Period", 
       labels=ecol.labs)+ text.formatting
 
@@ -799,8 +801,12 @@ dev.off()
   
 **Statistics for bleaching and recovery bethic data.**   
 
-The **first table output** shows the effects of bleaching on *total Montipora cover* and post-hoc test for the 4 periods, 'sliced' by Period to show Site effects.
-```{r, B and R Montipora}
+Used Kruskal Wallis nonparamtetirc tests to examine  effects of bleaching on *total coral cover*, *total Montipora cover*, and *BLEACHED Montipora cover*.  Used separate dataframes for non-parametric tests, with all data (4 periods) just bleaching, and just recovery (2 periods each). Tested effects of two sites, but only significant for bleached *M. capitata.*    
+(1) *total coral cover*: period effect, difference between bleaching years (p=0.029)  
+(2) *total M capitata cover*: period effect, difference between bleaching (p=0.003) & recoverey (p=0.033) years 
+(3a) *bleached M capitata*: period effect, difference between bleaching years (p<0.001)  
+(3b) *bleached M capitata*: site effect, sites different in bleaching (p=0.001), and recovery (p=0.013) years  
+```{r, B and R Montipora, results='hide'}
 ##################
 ###############
 ##########
@@ -830,11 +836,6 @@ kruskal.test(MC ~ Period, data = ecology.bl.df) # bleaching different between 2 
 kruskal.test(MC ~ Period, data = ecology.rec.df) # different between 2 REC periods
 kruskal.test(MC ~ Site, data = ecology) # no Site effect
 
-```
-    
-    
-The **second table output** shows the effects of bleaching on *BLEACHED Montipora cover* and post-hoc test for the 4 periods. THe post-hoc tests show effects of Site, then the effects of Site within each period.
-```{r, B and R bleached Montipora}
 
 ################
 # bleached MC
@@ -990,7 +991,7 @@ fig.df.immuno$int<-interaction(fig.df.immuno$dom, fig.df.immuno$Site)
 ### Multivariate analyses  
 Multivariate non-dimensional scaling (NMDS) plots for the coral physiotype trajectories and the plot of physiotypes through time with response vectors.  
 
-```{r, MultiVariate, fig.show='hide', results='hide', message=FALSE}
+```{r, Multivariate, fig.show='hide', results='hide', message=FALSE}
 # multivariate test using adonis-- Manova, mutivariate analysis of variance
 df.MV<-df
 
@@ -1031,20 +1032,10 @@ resp.fullNMDS.scaled <- scale(resp.fullNMDS, center = TRUE, scale = TRUE)
 all.Manova<-adonis2(resp.fullNMDS.scaled~Period*Site*dom, data=fullNMDS, permutations=1000,  method="euclidian")
 all.Manova
 
-## **not used**
-##### test dispersion using PERMDISP
-#disp <- betadisper(vegdist(resp.fullNMDS.scaled, method = "euclidian"), fac.fullNMDS$Period)
-
-#test for overall differences
-#anova(disp)
-
-## Permutation test for pairwise comparisons
-#permutest(disp, pairwise = TRUE)
 ```
   
-**NMDS trait space trajectory** 
+**NMDS trait-space trajectory**  
 First showing the observed dissimilarily and fit of NMDS  in stress lot.  
-MetaMDS stressplot(NMDS.Lil.BR2)
 ```{r, full NMDS stress, results='hide', message=FALSE, fig.dim=c(6,6)}
 
 ###
@@ -1071,6 +1062,62 @@ colnames(allNMDS.df)[1:2]<-c("MDS1", "MDS2")
 NMDS.mean=aggregate(allNMDS.df[,1:2],list(group=allNMDS.df$Period.Site.dom), mean)
 
 
+############### All groups NMDS
+fullNMDS$Period.Site.dom<-droplevels(fullNMDS$Period.Site.dom)
+groups<-fullNMDS$Period.Site.dom
+groups2<-c("C-Lilipuna", "C-Reef 14", "D-Lilipuna", "D-Reef 14")
+colors=c(
+  "firebrick1", #C Lilipuna
+  "firebrick3", #C Reef 14
+  "steelblue1", # D Lilipuna
+  "steelblue3") # D Reef 14
+plot<-ordiplot(allNMDS, type="n", cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8) #ylim=c(-0.3, 0.3))
+axis(side = 1, labels = FALSE)
+abline(h = 0, lty = "dotted")
+abline(v = 0, lty = "dotted")
+ordihull(plot, groups=fullNMDS$Period, draw="polygon", alpha=30, col=c("gray20", "gray40", "gray30", "gray50"), border=FALSE)
+
+# points for start and end
+with(plot, points(NMDS.mean[1,2], NMDS.mean[1,3], bg="white", col=colors[1], pch=21, cex=1, lwd=1)) # Lil C
+with(plot, points(NMDS.mean[4,2], NMDS.mean[4,3], col=colors[1], pch=17, cex=1, lwd=1)) # Lil C
+with(plot, points(NMDS.mean[5,2], NMDS.mean[5,3], bg="white", col=colors[2], pch=21, cex=1, lwd=1)) # R14 C
+with(plot, points(NMDS.mean[8,2], NMDS.mean[8,3], col=colors[2], pch=17, cex=1, lwd=1)) # R14 C
+with(plot, points(NMDS.mean[9,2], NMDS.mean[9,3], bg="white", col=colors[3], pch=21, cex=1, lwd=1)) # Lil D
+with(plot, points(NMDS.mean[12,2], NMDS.mean[12,3], col=colors[3], pch=17, cex=1, lwd=1)) # Lil D
+with(plot, points(NMDS.mean[13,2], NMDS.mean[13,3], bg="white", col=colors[4], pch=21, cex=1, lwd=1)) # R14 D
+with(plot, points(NMDS.mean[16,2], NMDS.mean[16,3], col=colors[4], pch=17, cex=1, lwd=1)) # R14 D
+
+# points for others (if want)
+with(plot, points(NMDS.mean[2,2], NMDS.mean[2,3], col=colors[1], pch=16, cex=1, lwd=1)) # Lil C
+with(plot, points(NMDS.mean[3,2], NMDS.mean[3,3], col=colors[1], pch=16, cex=1, lwd=1)) # Lil C
+with(plot, points(NMDS.mean[6,2], NMDS.mean[6,3], col=colors[2], pch=16, cex=1, lwd=1)) # R14 C
+with(plot, points(NMDS.mean[7,2], NMDS.mean[7,3], col=colors[2], pch=16, cex=1, lwd=1)) # R14 C
+with(plot, points(NMDS.mean[10,2], NMDS.mean[10,3], col=colors[3], pch=16, cex=1, lwd=1)) # Lil D
+with(plot, points(NMDS.mean[11,2], NMDS.mean[11,3], col=colors[3], pch=16, cex=1, lwd=1)) # Lil D
+with(plot, points(NMDS.mean[14,2], NMDS.mean[14,3], col=colors[4], pch=16, cex=1, lwd=1)) # R14 D
+with(plot, points(NMDS.mean[15,2], NMDS.mean[15,3], col=colors[4], pch=16, cex=1, lwd=1)) # R14 D
+
+# lines for start and end
+with(plot, lines(NMDS.mean[c(1:4),2], NMDS.mean[c(1:4),3], lwd=1.5, col =colors[1], lty=2))# Lil C
+with(plot, lines(NMDS.mean[c(5:8),2], NMDS.mean[c(5:8),3], lwd=1.5, col =colors[2], lty=1))# R14 C
+with(plot, lines(NMDS.mean[c(9:12),2], NMDS.mean[c(9:12),3], lwd=1.5, col =colors[3], lty=2))# Lil D
+with(plot, lines(NMDS.mean[c(13:16),2], NMDS.mean[c(13:16),3], lwd=1.5, col =colors[4], lty=1))# R14 D
+
+# add labels
+text(-0.14, -0.05, "Bleaching \n 2014", cex=0.8, col="gray50")
+text(-0.14, 0.12, "Bleaching \n 2015", cex=0.8, col="gray50")
+text(0.14, 0.05, "Recovery \n 2015", cex=0.8, col="gray50")
+text(0.06, -0.07, "Recovery \n 2016", cex=0.8, col="gray50")
+text(0.12, -0.12, "2D Stress = 0.20", cex=0.8, col="black")
+legend("topright", legend=groups2, inset=c(0.03, -0.01), x.intersp=0.6, y.intersp=0.9, cex=0.7, pch=16, col=colors, lty=c(1,3,1,3), seg.len=2, pt.cex=1, bty="n")
+
+dev.copy(pdf, "figures/execute code/1panel_allNMDS.pdf", height=5.5, width=6, useDingbats=FALSE)
+dev.off() 
+
+```
+
+```{r, control plot example, eval=FALSE, include=FALSE}
+
 ########## ########## ########## ########## ########## ########## ########## 
 ########## control plot of centroid distance (not useful since NMDS is rank-based, so distance non-informative)
 
@@ -1095,23 +1142,11 @@ control.plot$centroid.dist=as.character(control.plot$centroid.dist)
 control.plot$time<-factor(control.plot$time, levels=c("B1-R1", "R1-B2", "B2-R2"))
 
 #### mean period control plot
-plot(control.plot$centroid.dist~control.plot$time, type='b', ylim=c(-0.05,0.15), col="orchid", pch=16,
-     xlab="time", xaxt="n", ylab="centroid distance", cex.axis=0.8)
-axis(1, at=control.plot$time, labels=control.plot$time, cex.axis=0.8, cex=0.8)
-abline(h = 0, lty = "dotted")
-########### ########## ######### ########## ########## ########## ########## ########## ########## 
-########## ########## ########## ########## ########## ########## ########## ########## ########## 
+#plot(control.plot$centroid.dist~control.plot$time, type='b', ylim=c(-0.05,0.15), col="orchid", pch=16, xlab="time", xaxt="n", ylab="centroid distance", cex.axis=0.8)
 
+#axis(1, at=control.plot$time, labels=control.plot$time, cex.axis=0.8, cex=0.8)
+#abline(h = 0, lty = "dotted")
 
-############### All groups NMDS
-fullNMDS$Period.Site.dom<-droplevels(fullNMDS$Period.Site.dom)
-groups<-fullNMDS$Period.Site.dom
-groups2<-c("C-Lilipuna", "C-Reef 14", "D-Lilipuna", "D-Reef 14")
-colors=c(
-  "firebrick1", #C Lilipuna
-  "firebrick3", #C Reef 14
-  "steelblue1", # D Lilipuna
-  "steelblue3") # D Reef 14
 
 #####  control plots, try for each level
 LilC<-NMDS.mean[1:4,]
@@ -1201,54 +1236,6 @@ axis(1, at=cent.df$time, labels=cent.df$time, cex.axis=0.8, cex=0.8)
 abline(h = 0, lty = "dotted")
 legend("topright", legend=groups2, #inset=c(0.03, -0.01), x.intersp=0.6, y.intersp=0.9, 
        cex=0.7, pch=16, col=colors, lty=c(1,3,1,3), seg.len=2, pt.cex=1, bty="n")
-
-
-
-### 
-
-plot<-ordiplot(allNMDS, type="n", cex.main=1, display="sites", cex.lab=0.8, cex.axis=0.8) #ylim=c(-0.3, 0.3))
-axis(side = 1, labels = FALSE)
-abline(h = 0, lty = "dotted")
-abline(v = 0, lty = "dotted")
-ordihull(plot, groups=fullNMDS$Period, draw="polygon", alpha=30, col=c("gray20", "gray40", "gray30", "gray50"), border=FALSE)
-
-# points for start and end
-with(plot, points(NMDS.mean[1,2], NMDS.mean[1,3], bg="white", col=colors[1], pch=21, cex=1, lwd=1)) # Lil C
-with(plot, points(NMDS.mean[4,2], NMDS.mean[4,3], col=colors[1], pch=17, cex=1, lwd=1)) # Lil C
-with(plot, points(NMDS.mean[5,2], NMDS.mean[5,3], bg="white", col=colors[2], pch=21, cex=1, lwd=1)) # R14 C
-with(plot, points(NMDS.mean[8,2], NMDS.mean[8,3], col=colors[2], pch=17, cex=1, lwd=1)) # R14 C
-with(plot, points(NMDS.mean[9,2], NMDS.mean[9,3], bg="white", col=colors[3], pch=21, cex=1, lwd=1)) # Lil D
-with(plot, points(NMDS.mean[12,2], NMDS.mean[12,3], col=colors[3], pch=17, cex=1, lwd=1)) # Lil D
-with(plot, points(NMDS.mean[13,2], NMDS.mean[13,3], bg="white", col=colors[4], pch=21, cex=1, lwd=1)) # R14 D
-with(plot, points(NMDS.mean[16,2], NMDS.mean[16,3], col=colors[4], pch=17, cex=1, lwd=1)) # R14 D
-
-# points for others (if want)
-with(plot, points(NMDS.mean[2,2], NMDS.mean[2,3], col=colors[1], pch=16, cex=1, lwd=1)) # Lil C
-with(plot, points(NMDS.mean[3,2], NMDS.mean[3,3], col=colors[1], pch=16, cex=1, lwd=1)) # Lil C
-with(plot, points(NMDS.mean[6,2], NMDS.mean[6,3], col=colors[2], pch=16, cex=1, lwd=1)) # R14 C
-with(plot, points(NMDS.mean[7,2], NMDS.mean[7,3], col=colors[2], pch=16, cex=1, lwd=1)) # R14 C
-with(plot, points(NMDS.mean[10,2], NMDS.mean[10,3], col=colors[3], pch=16, cex=1, lwd=1)) # Lil D
-with(plot, points(NMDS.mean[11,2], NMDS.mean[11,3], col=colors[3], pch=16, cex=1, lwd=1)) # Lil D
-with(plot, points(NMDS.mean[14,2], NMDS.mean[14,3], col=colors[4], pch=16, cex=1, lwd=1)) # R14 D
-with(plot, points(NMDS.mean[15,2], NMDS.mean[15,3], col=colors[4], pch=16, cex=1, lwd=1)) # R14 D
-
-# lines for start and end
-with(plot, lines(NMDS.mean[c(1:4),2], NMDS.mean[c(1:4),3], lwd=1.5, col =colors[1], lty=2))# Lil C
-with(plot, lines(NMDS.mean[c(5:8),2], NMDS.mean[c(5:8),3], lwd=1.5, col =colors[2], lty=1))# R14 C
-with(plot, lines(NMDS.mean[c(9:12),2], NMDS.mean[c(9:12),3], lwd=1.5, col =colors[3], lty=2))# Lil D
-with(plot, lines(NMDS.mean[c(13:16),2], NMDS.mean[c(13:16),3], lwd=1.5, col =colors[4], lty=1))# R14 D
-
-# add labels
-text(-0.14, -0.05, "Bleaching \n 2014", cex=0.8, col="gray50")
-text(-0.14, 0.12, "Bleaching \n 2015", cex=0.8, col="gray50")
-text(0.14, 0.05, "Recovery \n 2015", cex=0.8, col="gray50")
-text(0.06, -0.07, "Recovery \n 2016", cex=0.8, col="gray50")
-text(0.12, -0.12, "2D Stress = 0.20", cex=0.8, col="black")
-legend("topright", legend=groups2, inset=c(0.03, -0.01), x.intersp=0.6, y.intersp=0.9, cex=0.7, pch=16, col=colors, lty=c(1,3,1,3), seg.len=2, pt.cex=1, bty="n")
-
-dev.copy(pdf, "figures/execute code/1panel_allNMDS.pdf", height=5.5, width=6, useDingbats=FALSE)
-dev.off() 
-
 ```
 
 #### Coral physiotypes  
