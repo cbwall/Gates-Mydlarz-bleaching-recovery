@@ -1951,7 +1951,10 @@ multcomp::cld(posthoc, Letters=letters)
 posthoc<-lsmeans(full, ~dom)
 multcomp::cld(posthoc, Letters=letters)
 
-posthoc<-lsmeans(full, ~Period|dom)
+posthoc<-lsmeans(full, ~dom|Period)
+multcomp::cld(posthoc, Letters=letters)
+
+posthoc<-lsmeans(full, ~dom|Site)
 multcomp::cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="chlacell", par.strip.text=list(cex=0.7))
 ```
@@ -1976,7 +1979,7 @@ plot(allEffects(full), ylab="prot", par.strip.text=list(cex=0.7))
 **Total biomass cm^-2^**  
 models and post-hoc comparisons
 ```{r AFDW model, warning=FALSE, message=FALSE}
-# prot ---- 
+# AFDW ---- 
 Y<-model.data$AFDW
 full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
 #summary(full)
@@ -2032,6 +2035,28 @@ multcomp::cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="PPO", par.strip.text=list(cex=0.7))
 ```
 
+  
+**Peroxidase (POX)**  
+models and post-hoc comparisons
+```{r POX model, warning=FALSE, message=FALSE}
+# POX ---- 
+Y<-model.data$POX
+full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
+#summary(full)
+print(Anova(full, type=2), digits=4)
+
+posthoc<-lsmeans(full, ~Period)
+contrast(posthoc, method="pairwise", adjust="Tukey")
+multcomp::cld(posthoc, Letters=letters)
+
+posthoc<-lsmeans(full, ~Site)
+multcomp::cld(posthoc, Letters=letters)
+
+posthoc<-lsmeans(full, ~dom|Period)
+multcomp::cld(posthoc, Letters=letters)
+
+plot(allEffects(full), ylab="POX", par.strip.text=list(cex=0.7))
+```
 
 **Catalase (CAT)**  
 models and post-hoc comparisons
@@ -2058,30 +2083,6 @@ multcomp::cld(posthoc, Letters=letters)
 posthoc<-lsmeans(full, ~Site|Period)
 multcomp::cld(posthoc, Letters=letters)
 plot(allEffects(full), ylab="CAT", par.strip.text=list(cex=0.7))
-```
-  
-  
-**Peroxidase (POX)**  
-models and post-hoc comparisons
-```{r POX model, warning=FALSE, message=FALSE}
-# POX ---- 
-Y<-model.data$POX
-full<-lm(Y~Period*Site*dom, data=model.data, na.action=na.exclude)
-#summary(full)
-print(Anova(full, type=2), digits=4)
-
-posthoc<-lsmeans(full, ~Period)
-contrast(posthoc, method="pairwise", adjust="Tukey")
-multcomp::cld(posthoc, Letters=letters)
-
-posthoc<-lsmeans(full, ~Site)
-multcomp::cld(posthoc, Letters=letters)
-
-
-posthoc<-lsmeans(full, ~dom|Period)
-multcomp::cld(posthoc, Letters=letters)
-
-plot(allEffects(full), ylab="POX", par.strip.text=list(cex=0.7))
 ```
   
 **Superoxide dismutase (SOD)**  
