@@ -1036,7 +1036,7 @@ all.Manova
   
 **NMDS trait-space trajectory**  
 First showing the observed dissimilarily and fit of NMDS  in stress lot.  
-```{r, full NMDS stress, results='hide', message=FALSE, fig.dim=c(6,6)}
+```{r, full NMDS stress, results='hide', message=FALSE, fig.dim=c(4,4)}
 
 ###
 allNMDS<-metaMDS(resp.fullNMDS, distance='euclidean', k=2, trymax=100) 
@@ -1781,7 +1781,7 @@ SOD.fig<-ggplot(data=fig.df.immuno, aes(x=Period, y=SOD, group=int, color=int)) 
 ```
 
 The combined plots for physiology and immunity data.
-```{r, physiology figures, fig.align='center', results="hide", fig.dim=c(8,5), fig.cap="**Supplementary Figure 2.** Physiological metrics for *M. capitata* corals dominated dominated by *Cladocopium* sp. or *Durusdinium* sp. symbionts (C or D) from two reefs in Kāne‘ohe Bay during repeated bleaching and recovery periods."}
+```{r, physiology immuno figures, echo=FALSE}
 
 # legend plot
 fig.legend<-get_legend(zoox.fig)
@@ -1797,11 +1797,8 @@ Phys.figs<-plot_grid( (zoox.fig + theme(legend.position = "none")),
 Phys.fig.leg<- plot_grid(Phys.figs, fig.legend, rel_widths = c(10,0.6))
 
 Phys.fig.leg
-dev.copy(pdf, "figures/execute code/Phys.figs2.pdf", encod="MacRoman", height=4, width=10)
+dev.copy(pdf, "figures/execute code/Phys.fig.pdf", encod="MacRoman", height=4, width=10)
 dev.off()
-```
-
-```{r, immunity figures, fig.align='center', results="hide", fig.dim=c(8,5), fig.cap="**Supplementary Figure 3.** Immunity metrics for *M. capitata* corals dominated dominated by *Cladocopium* sp. or *Durusdinium* sp. symbionts (C or D) from two reefs in Kāne‘ohe Bay during repeated bleaching and recovery periods."}
 
 Immuno.figs<-plot_grid( (MEL.fig + theme(legend.position = "none")),
            (PPO.fig + theme(legend.position = "none")), 
@@ -1816,7 +1813,9 @@ Immuno.fig.leg<- plot_grid(Immuno.figs, fig.legend, rel_widths = c(10,0.6))
 Immuno.fig.leg
 dev.copy(pdf, "figures/execute code/Immuno.figs2.pdf", encod="MacRoman", height=4, width=10)
 dev.off()
+```
 
+```{r, phys imm figures, fig.align='center', results="hide", fig.dim=c(10,5), fig.cap="**Figure 5.** Physiological and immunity metrics for *M. capitata* corals dominated dominated by *Cladocopium* sp. or *Durusdinium* sp. symbionts (C or D) from two reefs in Kāne‘ohe Bay during repeated bleaching and recovery periods."}
 ##### All grouped figure
 Phys.immuno.leg<-plot_grid(Phys.fig.leg, Immuno.fig.leg, ncol=1, rel_widths = c(10,0.6))
 Phys.immuno.leg
@@ -1912,7 +1911,7 @@ multcomp::cld(posthoc, Letters=letters)
 posthoc<-lsmeans(full, ~Site*dom|Period)
 multcomp::cld(posthoc, Letters=letters)
 
-plot(allEffects(full), ylab="zoox", par.strip.text=list(cex=0.7))
+#plot(allEffects(full), ylab="zoox", par.strip.text=list(cex=0.7))
 ```
 
 **Chlorophyll *a* cm^-2^**  
@@ -1932,7 +1931,7 @@ multcomp::cld(posthoc, Letters=letters)
 
 posthoc<-lsmeans(full, ~dom|Period)
 multcomp::cld(posthoc, Letters=letters)
-plot(allEffects(full), ylab="chla", par.strip.text=list(cex=0.7))
+#plot(allEffects(full), ylab="chla", par.strip.text=list(cex=0.7))
 ```
 
 **chlorophyll *a* cell^-1^**  
@@ -1956,7 +1955,7 @@ multcomp::cld(posthoc, Letters=letters)
 
 posthoc<-lsmeans(full, ~dom|Site)
 multcomp::cld(posthoc, Letters=letters)
-plot(allEffects(full), ylab="chlacell", par.strip.text=list(cex=0.7))
+#plot(allEffects(full), ylab="chlacell", par.strip.text=list(cex=0.7))
 ```
 
 **Protein cm^-2^**  
@@ -1973,7 +1972,7 @@ multcomp::cld(posthoc, Letters=letters)
 
 posthoc<-lsmeans(full, ~Site|Period)
 multcomp::cld(posthoc, Letters=letters)
-plot(allEffects(full), ylab="prot", par.strip.text=list(cex=0.7))
+#plot(allEffects(full), ylab="prot", par.strip.text=list(cex=0.7))
 ```
 
 **Total biomass cm^-2^**  
@@ -1993,7 +1992,7 @@ multcomp::cld(posthoc, Letters=letters)
 
 posthoc<-lsmeans(full, ~dom|Period)
 multcomp::cld(posthoc, Letters=letters)
-plot(allEffects(full), ylab="AFDW", par.strip.text=list(cex=0.7))
+#plot(allEffects(full), ylab="AFDW", par.strip.text=list(cex=0.7))
 ```
 
 ### Immunity models
@@ -2012,7 +2011,7 @@ multcomp::cld(posthoc, Letters=letters)
 
 posthoc<-lsmeans(full, ~Site|Period)
 multcomp::cld(posthoc, Letters=letters)
-plot(allEffects(full), ylab="prot", par.strip.text=list(cex=0.7))
+#plot(allEffects(full), ylab="prot", par.strip.text=list(cex=0.7))
 ```
 
 **Prophenoloxidase (PPO)**  
@@ -2032,7 +2031,7 @@ multcomp::cld(posthoc, Letters=letters)
 
 posthoc<-lsmeans(full, ~dom)
 multcomp::cld(posthoc, Letters=letters)
-plot(allEffects(full), ylab="PPO", par.strip.text=list(cex=0.7))
+#plot(allEffects(full), ylab="PPO", par.strip.text=list(cex=0.7))
 ```
 
   
@@ -2055,7 +2054,7 @@ multcomp::cld(posthoc, Letters=letters)
 posthoc<-lsmeans(full, ~dom|Period)
 multcomp::cld(posthoc, Letters=letters)
 
-plot(allEffects(full), ylab="POX", par.strip.text=list(cex=0.7))
+#plot(allEffects(full), ylab="POX", par.strip.text=list(cex=0.7))
 ```
 
 **Catalase (CAT)**  
@@ -2082,7 +2081,7 @@ multcomp::cld(posthoc, Letters=letters)
 
 posthoc<-lsmeans(full, ~Site|Period)
 multcomp::cld(posthoc, Letters=letters)
-plot(allEffects(full), ylab="CAT", par.strip.text=list(cex=0.7))
+#plot(allEffects(full), ylab="CAT", par.strip.text=list(cex=0.7))
 ```
   
 **Superoxide dismutase (SOD)**  
@@ -2100,7 +2099,7 @@ multcomp::cld(posthoc, Letters=letters)
 posthoc<-lsmeans(full, ~Site)
 multcomp::cld(posthoc, Letters=letters)
 
-plot(allEffects(full), ylab="SOD", par.strip.text=list(cex=0.7))
+#plot(allEffects(full), ylab="SOD", par.strip.text=list(cex=0.7))
 ```
 
 ### Schematic 
@@ -2108,6 +2107,6 @@ Taking into account the observed patterns for bleaching and recovery in *M. capi
 
 <center>  
   
-![**Figure 5.**.  Schematic of coral responses to repeated bleaching and recovery.](figures/execute code/Fig 5. schematic4panel.jpg){ width=100%}
+![**Figure 6**.  Schematic of coral responses to repeated bleaching and recovery.](figures/execute code/Fig 6. schematic4panel.jpg){ width=100%}
   
 </center>  
