@@ -1,6 +1,9 @@
-# Repeat bleaching effects on coral physiotypes 
-This project examines the response of coral physiology and immunity to repeated bleaching and subsequent recovery during repeat bleaching events in 2014 and 2015 in Hawai'i. The coral *Montipira capitata* was collected from two reef locations within Kāne'ohe Bay, O'ahu, Hawai'i: Lilipuna and Reef 14 in southern and central Kāne'ohe Bay, respectively (reefs previously described in, Wall et al. (2018) Marine Biology 165:56-71).
+# Repeat bleaching effects on coral physiotypes  
+https://zenodo.org/badge/140484586.svg
 
+Wall CB, Ricci CA, Wen AD, Ledbetter BE, Klinger DE, Mydlarz LD, Gates RD, Putnam HM (2021) Shifting Baselines: Physiological legacies contribute to the response of reef corals to frequent heatwaves. *Functional Ecology*
+ 
+This project examines the response of coral physiology and immunity to repeated bleaching and subsequent recovery during repeat bleaching events in 2014 and 2015 in Hawai'i. The coral *Montipira capitata* was collected from two reef locations within Kāne'ohe Bay, O'ahu, Hawai'i: Lilipuna and Reef 14 in southern and central Kāne'ohe Bay, respectively (reefs previously described in, Wall et al. (2018) Marine Biology 165:56-71).
 
 ### Folders
 - data
