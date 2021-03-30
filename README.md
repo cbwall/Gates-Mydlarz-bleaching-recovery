@@ -1,5 +1,5 @@
 # Repeat bleaching effects on coral physiotypes  
-https://zenodo.org/badge/140484586.svg
+[![DOI](https://zenodo.org/badge/140484586.svg)](https://zenodo.org/badge/latestdoi/140484586)
 
 Wall CB, Ricci CA, Wen AD, Ledbetter BE, Klinger DE, Mydlarz LD, Gates RD, Putnam HM (2021) Shifting Baselines: Physiological legacies contribute to the response of reef corals to frequent heatwaves. *Functional Ecology*
  
